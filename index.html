@@ -1,392 +1,545 @@
 <!DOCTYPE html>
-
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login — E-Attendance Sido Muncul</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<title>E-Attendance — PT Sido Muncul</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --primary: #059669;
-  --primary-dark: #047857;
-  --bg: #f1f5f9;
-  --white: #fff;
-  --text: #0f172a;
-  --muted: #64748b;
-  --border: #e2e8f0;
-  --red: #ef4444;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  background: var(--bg);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-}
-/* Background dekoratif */
-body::before {
-  content: '';
-  position: fixed;
-  top: -100px; right: -100px;
-  width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(5,150,105,0.08) 0%, transparent 70%);
-  pointer-events: none;
-}
-body::after {
-  content: '';
-  position: fixed;
-  bottom: -100px; left: -100px;
-  width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(16,185,129,0.06) 0%, transparent 70%);
-  pointer-events: none;
-}
-.login-wrap {
-  width: 100%;
-  max-width: 380px;
-  animation: fadeUp 0.5s ease both;
-}
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-.login-card {
-  background: white;
-  border-radius: 22px;
-  padding: 36px 30px 32px;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.10);
-  border: 1px solid rgba(255,255,255,0.8);
-}
-.logo-wrap {
-  text-align: center;
-  margin-bottom: 6px;
-}
-.logo-icon {
-  width: 64px; height: 64px;
-  background: linear-gradient(135deg, #3a6b1a, #059669);
-  border-radius: 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 6px 20px rgba(5,150,105,0.35);
-  margin-bottom: 14px;
-}
-.logo-icon svg { width: 32px; height: 32px; }
-.login-title {
-  font-size: 20px;
-  font-weight: 900;
-  color: var(--text);
-  text-align: center;
-  letter-spacing: -0.5px;
-  margin-bottom: 4px;
-}
-.login-sub {
-  font-size: 12px;
-  color: var(--muted);
-  font-weight: 500;
-  text-align: center;
-  margin-bottom: 28px;
-}
-.divider {
-  height: 1px;
-  background: var(--border);
-  margin-bottom: 24px;
-}
-.form-group { margin-bottom: 14px; }
-.form-label {
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  margin-bottom: 6px;
-  display: block;
-}
-.input-wrap { position: relative; }
-.input-icon {
-  position: absolute;
-  left: 12px; top: 50%;
-  transform: translateY(-50%);
-  width: 15px; height: 15px;
-  color: #cbd5e1;
-  pointer-events: none;
-}
-.form-input {
-  width: 100%;
-  padding: 11px 12px 11px 36px;
-  border-radius: 11px;
-  border: 2px solid var(--border);
-  font-size: 13px;
-  font-weight: 600;
-  font-family: inherit;
-  outline: none;
-  background: #f8fafc;
-  transition: 0.2s;
-  color: var(--text);
-}
-.form-input:focus {
-  border-color: var(--primary);
-  background: white;
-  box-shadow: 0 0 0 3px rgba(5,150,105,0.1);
-}
-.pw-toggle {
-  position: absolute;
-  right: 11px; top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--muted);
-  font-size: 14px;
-  padding: 2px;
-  display: flex; align-items: center;
-}
-.error-box {
-  background: #fee2e2;
-  border: 1px solid #fca5a5;
-  border-radius: 10px;
-  padding: 10px 13px;
-  font-size: 12px;
-  font-weight: 700;
-  color: #991b1b;
-  margin-bottom: 14px;
-  display: none;
-  align-items: center;
-  gap: 7px;
-  animation: shake 0.4s ease;
-}
-@keyframes shake {
-  0%,100%{transform:translateX(0)}
-  20%{transform:translateX(-5px)}
-  40%{transform:translateX(5px)}
-  60%{transform:translateX(-3px)}
-  80%{transform:translateX(3px)}
-}
-.btn-login {
-  width: 100%;
-  padding: 12px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--primary), #10b981);
-  color: white;
-  font-size: 13.5px;
-  font-weight: 800;
-  border: none;
-  cursor: pointer;
-  font-family: inherit;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  box-shadow: 0 4px 14px rgba(5,150,105,0.35);
-  margin-top: 4px;
-  letter-spacing: 0.3px;
-}
-.btn-login:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(5,150,105,0.45);
-}
-.btn-login:active { transform: translateY(0); }
-.btn-login:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-.spinner {
-  width: 16px; height: 16px;
-  border: 2.5px solid rgba(255,255,255,0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-  display: none;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.login-footer {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 10.5px;
-  color: var(--muted);
-  font-weight: 500;
-}
-.retry-info {
-  font-size: 10px;
-  color: var(--muted);
-  text-align: center;
-  margin-top: 8px;
-  display: none;
-}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --primary: #059669;
+    --accent: #10b981;
+    --bg: #f1f5f9;
+    --white: #ffffff;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --error: #ef4444;
+    --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .login-wrapper {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .login-card {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 40px 36px;
+    box-shadow: var(--shadow);
+  }
+
+  .logo-area {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .logo-area img {
+    height: 56px;
+    object-fit: contain;
+    margin-bottom: 12px;
+  }
+
+  .logo-area .logo-fallback {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: 16px;
+    margin-bottom: 12px;
+  }
+
+  .logo-area .logo-fallback span {
+    color: white;
+    font-size: 24px;
+    font-weight: 800;
+  }
+
+  .logo-area h1 {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .logo-area p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .input-wrap {
+    position: relative;
+  }
+
+  .input-wrap input {
+    width: 100%;
+    padding: 13px 16px;
+    padding-right: 44px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    color: var(--text);
+    background: var(--bg);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    -webkit-appearance: none;
+  }
+
+  .input-wrap input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(5,150,105,0.12);
+    background: white;
+  }
+
+  .input-wrap input.error {
+    border-color: var(--error);
+  }
+
+  .toggle-pw {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+  }
+
+  .error-msg {
+    display: none;
+    font-size: 12px;
+    color: var(--error);
+    margin-top: 5px;
+    font-weight: 500;
+  }
+
+  .error-msg.show { display: block; }
+
+  .alert-box {
+    display: none;
+    padding: 12px 14px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    font-size: 13px;
+    color: #b91c1c;
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+
+  .alert-box.show { display: block; }
+
+  .btn-login {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: opacity 0.2s, transform 0.1s;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-login:active { transform: scale(0.98); }
+  .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .spinner {
+    width: 18px;
+    height: 18px;
+    border: 2.5px solid rgba(255,255,255,0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+
+  .btn-login.loading .spinner { display: block; }
+  .btn-login.loading .btn-text { display: none; }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .footer-note {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* Change password modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .modal-overlay.show { display: flex; }
+
+  .modal-card {
+    background: white;
+    border-radius: 20px;
+    padding: 32px 28px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+
+  .modal-card h2 {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .modal-card p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+
+  .modal-card .badge-warn {
+    display: inline-block;
+    background: #fef3c7;
+    color: #92400e;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+  }
 </style>
 </head>
 <body>
 
-<div class="login-wrap">
+<div class="login-wrapper">
   <div class="login-card">
+    <div class="logo-area">
+      <img src="logo.png" alt="Sido Muncul" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='inline-flex'">
+      <div class="logo-fallback" id="logoFallback" style="display:none"><span>SM</span></div>
+      <h1>E-Attendance</h1>
+      <p>Sistem Absensi Digital Pelatihan</p>
+    </div>
 
-```
-<div class="logo-wrap">
-  <div class="logo-icon">
-    <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-      <path d="M12 2C8 2 4 5 4 9c0 5.25 8 13 8 13s8-7.75 8-13c0-4-4-7-8-7z"/>
-      <circle cx="12" cy="9" r="2.5"/>
-    </svg>
-  </div>
-  <div class="login-title">E-Attendance</div>
-  <div class="login-sub">Sido Muncul Training System</div>
-</div>
+    <div class="divider"></div>
 
-<div class="divider"></div>
+    <div class="alert-box" id="alertBox"></div>
 
-<div class="error-box" id="error-box">
-  ⚠️ <span id="error-msg">Username atau password salah.</span>
-</div>
+    <div class="form-group">
+      <label for="inputId">ID / Perner</label>
+      <div class="input-wrap">
+        <input type="text" id="inputId" placeholder="Masukkan ID atau Perner" inputmode="numeric" autocomplete="off">
+      </div>
+      <div class="error-msg" id="errId">ID tidak boleh kosong</div>
+    </div>
 
-<div class="form-group">
-  <label class="form-label">Username / ID Karyawan</label>
-  <div class="input-wrap">
-    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-      <circle cx="12" cy="7" r="4"/>
-    </svg>
-    <input type="text" class="form-input" id="username"
-      placeholder="Masukkan username"
-      autocomplete="username"
-      autofocus>
-  </div>
-</div>
+    <div class="form-group">
+      <label for="inputPw">Password</label>
+      <div class="input-wrap">
+        <input type="password" id="inputPw" placeholder="Masukkan password">
+        <button class="toggle-pw" id="togglePw" type="button" onclick="togglePassword()">
+          <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+      <div class="error-msg" id="errPw">Password tidak boleh kosong</div>
+    </div>
 
-<div class="form-group">
-  <label class="form-label">Password</label>
-  <div class="input-wrap">
-    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-      <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-    </svg>
-    <input type="password" class="form-input" id="password"
-      placeholder="Masukkan password"
-      autocomplete="current-password">
-    <button class="pw-toggle" onclick="togglePw()" type="button" id="pw-eye">👁</button>
+    <button class="btn-login" id="btnLogin" onclick="doLogin()">
+      <div class="spinner"></div>
+      <span class="btn-text">Masuk</span>
+    </button>
+
+    <div class="footer-note">PT Sido Muncul · Pelatihan & Pengembangan SDM</div>
   </div>
 </div>
 
-<button class="btn-login" id="btn-login" onclick="doLogin()">
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-    <polyline points="10 17 15 12 10 7"/>
-    <line x1="15" y1="12" x2="3" y2="12"/>
-  </svg>
-  <span id="btn-text">Masuk</span>
-  <div class="spinner" id="spinner"></div>
-</button>
+<!-- Modal Ganti Password -->
+<div class="modal-overlay" id="modalGantiPw">
+  <div class="modal-card">
+    <span class="badge-warn">⚠ Wajib Ganti Password</span>
+    <h2>Buat Password Baru</h2>
+    <p>Ini adalah login pertama Anda. Ganti password default dengan password baru yang lebih aman.</p>
 
-<div class="retry-info" id="retry-info">🔄 Mencoba ulang koneksi...</div>
+    <div class="form-group">
+      <label>Password Baru</label>
+      <div class="input-wrap">
+        <input type="password" id="newPw1" placeholder="Minimal 6 karakter">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Ulangi Password Baru</label>
+      <div class="input-wrap">
+        <input type="password" id="newPw2" placeholder="Ketik ulang password baru">
+      </div>
+      <div class="error-msg" id="errNewPw"></div>
+    </div>
 
-<div class="login-footer">
-  Absensi Pelatihan Digital
-</div>
-```
-
+    <button class="btn-login" id="btnGanti" onclick="gantiPassword()">
+      <div class="spinner"></div>
+      <span class="btn-text">Simpan Password Baru</span>
+    </button>
   </div>
 </div>
 
-<script>
-// ==================== KONFIGURASI ====================
-var GAS_URL = "https://script.google.com/macros/s/AKfycbzqbR0ySliaMyXuAEAiw6QnAHuIyBvaqT40mAWV1y2mV7_gdaKCDqACKF7Ct0EJcZtI/exec";
-var retryCount = 0;
-var MAX_RETRY  = 3;
+<!-- Firebase SDK v9 -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, signInWithEmailAndPassword, updatePassword } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-// ==================== CEK SESI AKTIF ====================
-(function() {
-  var sid  = localStorage.getItem('sm_sid');
-  var exp  = localStorage.getItem('sm_exp');
-  if (sid && exp && Date.now() < parseInt(exp)) {
+const firebaseConfig = {
+  apiKey: "AIzaSyDTVdA6QD_FsHeHVMm4l67NJP5_rpL_JmI",
+  authDomain: "absensipelatihan-844d8.firebaseapp.com",
+  projectId: "absensipelatihan-844d8",
+  storageBucket: "absensipelatihan-844d8.firebasestorage.app",
+  messagingSenderId: "518545818905",
+  appId: "1:518545818905:web:d56035cc0678c58328f188"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const SUPERADMIN_UID = 'F0oKsZI4qqMK9N3aVHuARUvFRYs1';
+
+// Expose ke window
+window._auth = auth;
+window._db = db;
+window._SUPERADMIN_UID = SUPERADMIN_UID;
+window._signIn = signInWithEmailAndPassword;
+window._updatePassword = updatePassword;
+window._doc = doc;
+window._getDoc = getDoc;
+window._setDoc = setDoc;
+window._updateDoc = updateDoc;
+window._serverTimestamp = serverTimestamp;
+
+// Auto-init superadmin di Firestore jika belum ada
+async function initSuperadmin() {
+  try {
+    const ref = doc(db, 'users', SUPERADMIN_UID);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) {
+      await setDoc(ref, {
+        user_id: SUPERADMIN_UID,
+        perner: '200596',
+        role: 'superadmin',
+        nama_lengkap: 'Super Admin',
+        unit: '',
+        jabatan: 'Superadmin',
+        status: 'aktif',
+        tgl_dibuat: serverTimestamp(),
+        dibuat_oleh: 'system',
+        tgl_ubah_password: null,
+        first_login: true
+      });
+    }
+  } catch(e) { /* silent */ }
+}
+initSuperadmin();
+
+window.doLogin = async function() {
+  const idVal = document.getElementById('inputId').value.trim();
+  const pwVal = document.getElementById('inputPw').value;
+  let valid = true;
+
+  document.getElementById('errId').classList.remove('show');
+  document.getElementById('errPw').classList.remove('show');
+  document.getElementById('alertBox').classList.remove('show');
+
+  if (!idVal) { document.getElementById('errId').classList.add('show'); valid = false; }
+  if (!pwVal) { document.getElementById('errPw').classList.add('show'); valid = false; }
+  if (!valid) return;
+
+  const btn = document.getElementById('btnLogin');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  try {
+    // Cari email berdasarkan perner/ID
+    let email = '';
+    if (idVal === '200596') {
+      email = 'superadmin@absensipelatihan.com';
+    } else {
+      // Cari di koleksi users berdasarkan perner
+      const { collection, query, where, getDocs } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+      const q = query(collection(db, 'users'), where('perner', '==', idVal));
+      const snap = await getDocs(q);
+      if (snap.empty) {
+        showAlert('ID / Perner tidak ditemukan. Hubungi Admin.');
+        return;
+      }
+      const userData = snap.docs[0].data();
+      if (userData.status === 'nonaktif') {
+        showAlert('Akun Anda tidak aktif. Hubungi Admin.');
+        return;
+      }
+      email = `${idVal}@absensipelatihan.com`;
+    }
+
+    const result = await signInWithEmailAndPassword(auth, email, pwVal);
+    const user = result.user;
+
+    // Cek data user di Firestore
+    const userSnap = await getDoc(doc(db, 'users', user.uid));
+    if (!userSnap.exists()) {
+      showAlert('Data pengguna tidak ditemukan. Hubungi Admin.');
+      await auth.signOut();
+      return;
+    }
+
+    const userData = userSnap.data();
+
+    // Simpan session info
+    sessionStorage.setItem('uid', user.uid);
+    sessionStorage.setItem('role', userData.role);
+    sessionStorage.setItem('nama', userData.nama_lengkap);
+    sessionStorage.setItem('unit', userData.unit || '');
+    sessionStorage.setItem('jabatan', userData.jabatan || '');
+    sessionStorage.setItem('perner', userData.perner);
+
+    // Cek apakah perlu ganti password (first login)
+    if (userData.first_login === true) {
+      window._currentUser = user;
+      document.getElementById('modalGantiPw').classList.add('show');
+      return;
+    }
+
+    // Redirect ke dashboard
     window.location.href = 'app.html';
+
+  } catch(e) {
+    console.error(e);
+    if (e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password') {
+      showAlert('Password salah. Coba lagi.');
+    } else if (e.code === 'auth/too-many-requests') {
+      showAlert('Terlalu banyak percobaan. Coba lagi nanti.');
+    } else {
+      showAlert('Gagal login. Periksa koneksi internet Anda.');
+    }
+  } finally {
+    btn.classList.remove('loading');
+    btn.disabled = false;
   }
-})();
+};
 
-// ==================== TOGGLE PASSWORD ====================
-function togglePw() {
-  var el  = document.getElementById('password');
-  var eye = document.getElementById('pw-eye');
-  if (el.type === 'password') { el.type = 'text';     eye.textContent = '🙈'; }
-  else                        { el.type = 'password'; eye.textContent = '👁'; }
-}
+window.gantiPassword = async function() {
+  const pw1 = document.getElementById('newPw1').value;
+  const pw2 = document.getElementById('newPw2').value;
+  const errEl = document.getElementById('errNewPw');
+  errEl.classList.remove('show');
 
-// ==================== ENTER KEY ====================
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') doLogin();
-});
-
-// ==================== SHOW ERROR ====================
-function showError(msg) {
-  var box = document.getElementById('error-box');
-  document.getElementById('error-msg').textContent = msg;
-  box.style.display = 'flex';
-  box.style.animation = 'none';
-  box.offsetHeight;
-  box.style.animation = 'shake 0.4s ease';
-}
-
-// ==================== LOADING ====================
-function setLoading(v) {
-  document.getElementById('btn-login').disabled       = v;
-  document.getElementById('btn-text').style.display   = v ? 'none' : 'inline';
-  document.getElementById('spinner').style.display    = v ? 'inline-block' : 'none';
-}
-
-// ==================== LOGIN ====================
-function doLogin() {
-  var u = document.getElementById('username').value.trim();
-  var p = document.getElementById('password').value;
-
-  document.getElementById('error-box').style.display = 'none';
-  document.getElementById('retry-info').style.display = 'none';
-
-  if (!u || !p) {
-    showError('Username dan password wajib diisi.');
+  if (pw1.length < 6) {
+    errEl.textContent = 'Password minimal 6 karakter';
+    errEl.classList.add('show');
+    return;
+  }
+  if (pw1 !== pw2) {
+    errEl.textContent = 'Password tidak sama';
+    errEl.classList.add('show');
     return;
   }
 
-  setLoading(true);
+  const btn = document.getElementById('btnGanti');
+  btn.classList.add('loading');
+  btn.disabled = true;
 
-  fetch(GAS_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify({ action: 'login', username: u, password: p })
-  })
-  .then(function(r) { return r.json(); })
-  .then(function(res) {
-    setLoading(false);
-    retryCount = 0;
-    document.getElementById('retry-info').style.display = 'none';
+  try {
+    await updatePassword(window._currentUser, pw1);
+    // Update flag first_login di Firestore
+    await updateDoc(doc(db, 'users', window._currentUser.uid), {
+      first_login: false,
+      tgl_ubah_password: serverTimestamp()
+    });
+    document.getElementById('modalGantiPw').classList.remove('show');
+    window.location.href = 'app.html';
+  } catch(e) {
+    errEl.textContent = 'Gagal menyimpan password. Coba lagi.';
+    errEl.classList.add('show');
+  } finally {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+};
 
-    if (res.success) {
-      // Simpan sesi di localStorage
-      localStorage.setItem('sm_sid',    res.data.sessionId);
-      localStorage.setItem('sm_role',   res.data.role);
-      localStorage.setItem('sm_nama',   res.data.nama);
-      localStorage.setItem('sm_userId', res.data.userId);
-      localStorage.setItem('sm_unit',   res.data.unitKerja || '');
-      // Expired 12 jam dari sekarang
-      localStorage.setItem('sm_exp', String(Date.now() + 12 * 60 * 60 * 1000));
-      // Redirect ke dashboard
-      window.location.href = 'app.html';
-    } else {
-      showError(res.message || 'Login gagal. Periksa username dan password.');
-    }
-  })
-  .catch(function() {
-    retryCount++;
-    if (retryCount <= MAX_RETRY) {
-      document.getElementById('retry-info').style.display = 'block';
-      setTimeout(doLogin, 1500 * retryCount);
-    } else {
-      setLoading(false);
-      retryCount = 0;
-      document.getElementById('retry-info').style.display = 'none';
-      showError('Koneksi gagal setelah ' + MAX_RETRY + ' percobaan. Cek koneksi internet Anda.');
-    }
-  });
+function showAlert(msg) {
+  const el = document.getElementById('alertBox');
+  el.textContent = msg;
+  el.classList.add('show');
 }
 </script>
 
+<script>
+function togglePassword() {
+  const input = document.getElementById('inputPw');
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+// Enter key support
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    const modal = document.getElementById('modalGantiPw');
+    if (modal.classList.contains('show')) {
+      window.gantiPassword && window.gantiPassword();
+    } else {
+      window.doLogin && window.doLogin();
+    }
+  }
+});
+</script>
 </body>
 </html>
