@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Absensi Kiosk — Sido Muncul</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #059669;
+  --primary-dark: #047857;
+  --primary-light: #d1fae5;
+  --bg: #f1f5f9;
+  --white: #fff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --red: #ef4444;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); min-height: 100vh; }
+
+/* HEADER */
+.header { background: white; border-bottom: 1px solid var(–border); padding: 11px 18px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; box-shadow: 0 1px 6px rgba(0,0,0,0.05); }
+.header-left { display: flex; align-items: center; gap: 11px; }
+.brand-icon { width: 36px; height: 36px; background: linear-gradient(135deg,#3a6b1a,#059669); border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.brand-icon svg { width: 19px; height: 19px; }
+.h-topik { font-size: 14px; font-weight: 900; color: var(–text); }
+.h-meta { font-size: 10px; color: var(–muted); font-weight: 500; margin-top: 1px; }
+.status-pill { display: flex; align-items: center; gap: 5px; background: var(–primary-light); border: 1px solid #6ee7b7; border-radius: 20px; padding: 5px 11px; font-size: 11px; font-weight: 800; color: #065f46; }
+.status-dot { width: 7px; height: 7px; background: var(–primary); border-radius: 50%; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+.live-clock { font-size: 12px; font-weight: 700; color: var(–muted); background: #f8fafc; border: 1px solid var(–border); border-radius: 7px; padding: 4px 10px; }
+
+/* LAYOUT */
+.layout { display: grid; grid-template-columns: 1fr 360px; gap: 14px; padding: 14px 18px 80px; max-width: 1060px; margin: 0 auto; }
+
+/* INFO CARD */
+.info-card { background: white; border-radius: 14px; padding: 16px; border: 1px solid var(–border); margin-bottom: 12px; }
+.ic-title { font-size: 10px; font-weight: 900; color: var(–muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+.info-row { display: grid; grid-template-columns: 90px 1fr; gap: 5px; align-items: flex-start; padding: 7px 0; border-bottom: 1px solid #f8fafc; }
+.info-row:last-child { border-bottom: none; }
+.ir-lbl { font-size: 9.5px; font-weight: 800; color: var(–muted); text-transform: uppercase; letter-spacing: 0.3px; padding-top: 1px; }
+.ir-val { font-size: 12px; font-weight: 700; color: var(–text); }
+.ir-val.hi { color: var(–primary); }
+
+/* COUNTER */
+.counter { background: linear-gradient(135deg, var(–primary), #10b981); border-radius: 14px; padding: 16px 18px; color: white; margin-bottom: 12px; position: relative; overflow: hidden; }
+.counter::before { content:’’; position:absolute; top:-20px; right:-20px; width:90px; height:90px; background:rgba(255,255,255,0.08); border-radius:50%; }
+.c-lbl { font-size: 9.5px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.8; margin-bottom: 3px; }
+.c-row { display: flex; align-items: flex-end; gap: 10px; }
+.c-num { font-size: 44px; font-weight: 900; line-height: 1; }
+.c-from { font-size: 13px; opacity: 0.7; font-weight: 700; padding-bottom: 7px; }
+.c-pct { font-size: 10px; opacity: 0.75; font-weight: 600; margin-top: 3px; }
+
+/* LOG */
+.log-card { background: white; border-radius: 14px; border: 1px solid var(–border); overflow: hidden; }
+.log-hdr { padding: 12px 14px; border-bottom: 1px solid var(–border); display: flex; align-items: center; justify-content: space-between; }
+.log-title { font-size: 12px; font-weight: 800; }
+.log-badge { font-size: 9.5px; font-weight: 800; background: var(–primary-light); color: var(–primary); padding: 2px 8px; border-radius: 20px; }
+.log-list { max-height: 320px; overflow-y: auto; }
+.log-item { display: flex; align-items: center; gap: 9px; padding: 9px 14px; border-bottom: 1px solid #f8fafc; animation: sIn 0.3s ease both; }
+.log-item:last-child { border-bottom: none; }
+@keyframes sIn { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
+.log-av { width: 32px; height: 32px; border-radius: 8px; background: var(–primary-light); color: var(–primary); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 12px; flex-shrink: 0; }
+.log-name { font-size: 11.5px; font-weight: 800; }
+.log-unit { font-size: 9.5px; color: var(–muted); font-weight: 600; margin-top: 1px; }
+.log-time { font-size: 10.5px; font-weight: 700; color: var(–primary); white-space: nowrap; margin-left: auto; }
+
+/* FORM */
+.form-card { background: white; border-radius: 16px; padding: 20px; border: 1px solid var(–border); box-shadow: 0 4px 18px rgba(0,0,0,0.06); position: sticky; top: 68px; }
+.fc-title { font-size: 15px; font-weight: 900; margin-bottom: 3px; }
+.fc-sub { font-size: 11px; color: var(–muted); font-weight: 600; margin-bottom: 18px; }
+.fg { margin-bottom: 13px; }
+.fl { font-size: 10px; font-weight: 800; color: var(–muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; display: block; }
+.nik-wrap { position: relative; }
+.nik-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: #cbd5e1; pointer-events: none; }
+.nik-input { width: 100%; padding: 11px 12px 11px 35px; border-radius: 10px; border: 2px solid var(–border); font-size: 15px; font-weight: 700; font-family: inherit; outline: none; background: #f8fafc; transition: 0.2s; letter-spacing: 1px; color: var(–text); }
+.nik-input:focus { border-color: var(–primary); background: white; box-shadow: 0 0 0 3px rgba(5,150,105,0.1); }
+.paraf-wrap { border: 2px solid var(–border); border-radius: 10px; overflow: hidden; background: #fafafa; transition: 0.15s; margin-bottom: 13px; }
+.paraf-wrap:hover { border-color: var(–primary); }
+.paraf-top { padding: 6px 11px; background: #f8fafc; border-bottom: 1px solid var(–border); display: flex; align-items: center; justify-content: space-between; }
+.paraf-lbl { font-size: 9.5px; font-weight: 800; color: var(–muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.btn-clear { padding: 3px 9px; border-radius: 5px; border: 1px solid var(–border); background: white; font-size: 10.5px; font-weight: 700; color: var(–muted); cursor: pointer; font-family: inherit; transition: 0.15s; }
+.btn-clear:hover { background: #fee2e2; color: var(–red); }
+#paraf-canvas { display: block; cursor: crosshair; touch-action: none; width: 100%; height: 110px; background: white; }
+.btn-submit { width: 100%; padding: 12px; border-radius: 11px; background: linear-gradient(135deg, var(–primary), #10b981); color: white; font-size: 13.5px; font-weight: 900; border: none; cursor: pointer; font-family: inherit; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(5,150,105,0.3); letter-spacing: 0.3px; }
+.btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(5,150,105,0.4); }
+.btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.spinner { width: 17px; height: 17px; border: 2.5px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ERROR */
+.err-box { background: #fee2e2; border: 1px solid #fca5a5; border-radius: 9px; padding: 10px 12px; font-size: 12px; font-weight: 700; color: #991b1b; display: none; align-items: center; gap: 6px; margin-bottom: 12px; animation: shake 0.4s ease; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-5px)} 40%{transform:translateX(5px)} 60%{transform:translateX(-3px)} 80%{transform:translateX(3px)} }
+
+/* SUCCESS */
+.success-area { display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px 16px; text-align: center; animation: bIn 0.3s ease; }
+@keyframes bIn { from{opacity:0;transform:scale(0.95)} to{opacity:1;transform:scale(1)} }
+.success-circle { width: 68px; height: 68px; background: var(–primary-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; margin-bottom: 12px; animation: bounce 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+@keyframes bounce { from{transform:scale(0.3)} to{transform:scale(1)} }
+.s-name { font-size: 19px; font-weight: 900; margin-bottom: 3px; }
+.s-nik  { font-size: 12px; color: var(–muted); font-weight: 600; margin-bottom: 7px; }
+.s-time { font-size: 13px; font-weight: 800; color: var(–primary); margin-bottom: 3px; }
+.s-unit { font-size: 11px; color: var(–muted); font-weight: 600; }
+.cdown-bar { width: 100%; height: 3px; background: #f1f5f9; border-radius: 20px; margin-top: 16px; overflow: hidden; }
+.cdown-fill { height: 100%; background: linear-gradient(90deg, var(–primary), #10b981); border-radius: 20px; animation: cdown 3s linear forwards; }
+@keyframes cdown { from{width:100%} to{width:0%} }
+
+/* EXIT */
+.exit-btn { position: fixed; bottom: 18px; right: 18px; background: #1e293b; color: white; border: none; border-radius: 11px; padding: 9px 14px; font-size: 11.5px; font-weight: 800; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(0,0,0,0.25); transition: 0.2s; z-index: 100; }
+.exit-btn:hover { background: #0f172a; transform: translateY(-1px); }
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); z-index: 500; align-items: center; justify-content: center; padding: 16px; }
+.overlay.show { display: flex; }
+.exit-modal { background: white; border-radius: 18px; padding: 26px; width: 100%; max-width: 340px; animation: mIn 0.25s ease; text-align: center; }
+@keyframes mIn { from{opacity:0;transform:scale(0.95) translateY(8px)} to{opacity:1;transform:scale(1) translateY(0)} }
+.em-icon { font-size: 34px; margin-bottom: 10px; }
+.em-title { font-size: 16px; font-weight: 900; margin-bottom: 6px; }
+.em-sub { font-size: 12px; color: var(–muted); margin-bottom: 18px; line-height: 1.6; }
+.em-pw { width: 100%; padding: 10px; border-radius: 10px; border: 2px solid var(–border); font-size: 15px; font-weight: 700; font-family: inherit; outline: none; text-align: center; letter-spacing: 4px; transition: 0.15s; margin-bottom: 8px; }
+.em-pw:focus { border-color: var(–red); }
+.em-err { font-size: 11px; color: var(–red); font-weight: 700; margin-bottom: 10px; display: none; }
+.em-btns { display: flex; gap: 8px; }
+.btn-em-cancel { flex: 1; padding: 10px; border-radius: 9px; background: #f1f5f9; border: 1px solid var(–border); font-size: 12px; font-weight: 700; cursor: pointer; color: var(–muted); font-family: inherit; }
+.btn-em-ok { flex: 1; padding: 10px; border-radius: 9px; background: var(–red); color: white; font-size: 12px; font-weight: 800; border: none; cursor: pointer; font-family: inherit; }
+
+/* RESPONSIVE */
+@media(max-width:700px){
+.layout{grid-template-columns:1fr;padding:12px 14px 80px;}
+.form-card{position:static;}
+.header{flex-wrap:wrap;gap:8px;}
+}
+</style>
+
+</head>
+<body>
+
+<!-- HEADER -->
+
+<div class="header">
+  <div class="header-left">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+    </div>
+    <div>
+      <div class="h-topik" id="h-topik">Memuat data pelatihan...</div>
+      <div class="h-meta" id="h-meta">HR-MI · Sido Muncul</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <div class="live-clock" id="clock">--:--:--</div>
+    <div class="status-pill"><div class="status-dot"></div>Kiosk Aktif</div>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+
+<div class="layout">
+
+  <!-- KIRI -->
+
+  <div>
+    <!-- Info Pelatihan -->
+    <div class="info-card" id="info-card" style="display:none">
+      <div class="ic-title">Informasi Pelatihan</div>
+      <div class="info-row"><div class="ir-lbl">Tanggal</div><div class="ir-val hi" id="i-tgl">-</div></div>
+      <div class="info-row"><div class="ir-lbl">Waktu</div><div class="ir-val" id="i-waktu">-</div></div>
+      <div class="info-row"><div class="ir-lbl">Lokasi</div><div class="ir-val" id="i-lokasi">-</div></div>
+      <div class="info-row"><div class="ir-lbl">Instruktur</div><div class="ir-val" id="i-instruktur">-</div></div>
+      <div class="info-row"><div class="ir-lbl">Penyelenggara</div><div class="ir-val" id="i-penyelenggara">-</div></div>
+    </div>
+
+```
+<!-- Counter -->
+<div class="counter">
+  <div class="c-lbl">Sudah Hadir</div>
+  <div class="c-row"><div class="c-num" id="c-num">0</div><div class="c-from" id="c-from">/ — peserta</div></div>
+  <div class="c-pct">Kehadiran: <b id="c-pct">0%</b></div>
+</div>
+
+<!-- Log -->
+<div class="log-card">
+  <div class="log-hdr">
+    <div class="log-title">✅ Daftar Hadir Real-time</div>
+    <span class="log-badge" id="log-badge">0 hadir</span>
+  </div>
+  <div class="log-list" id="log-list">
+    <div style="text-align:center;padding:24px;color:var(--muted);font-size:12px">Belum ada absensi.</div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- KANAN: FORM -->
+
+  <div>
+    <div class="form-card">
+      <div class="fc-title">Konfirmasi Kehadiran</div>
+      <div class="fc-sub">Masukkan NIK lalu buat tanda tangan</div>
+
+```
+  <!-- Form Area -->
+  <div id="form-area">
+    <div class="err-box" id="err-box">⚠️ <span id="err-msg"></span></div>
+
+    <div class="fg">
+      <label class="fl">NIK Karyawan</label>
+      <div class="nik-wrap">
+        <svg class="nik-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <input type="text" class="nik-input" id="nik-input" placeholder="Scan / ketik NIK..." inputmode="numeric" autocomplete="off">
+      </div>
+    </div>
+
+    <div>
+      <label class="fl">Tanda Tangan / Paraf</label>
+      <div class="paraf-wrap">
+        <div class="paraf-top">
+          <div class="paraf-lbl">✍️ Buat tanda tangan di bawah</div>
+          <button class="btn-clear" onclick="clearParaf()">Hapus</button>
+        </div>
+        <canvas id="paraf-canvas"></canvas>
+      </div>
+    </div>
+
+    <button class="btn-submit" id="btn-submit" onclick="submitAbsen()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      <span id="btn-txt">Konfirmasi Hadir</span>
+      <div class="spinner" id="spinner"></div>
+    </button>
+  </div>
+
+  <!-- Success -->
+  <div class="success-area" id="success-area">
+    <div class="success-circle">✅</div>
+    <div class="s-name" id="s-name">—</div>
+    <div class="s-nik"  id="s-nik">NIK: —</div>
+    <div class="s-time" id="s-time">Pukul —</div>
+    <div class="s-unit" id="s-unit">—</div>
+    <div class="cdown-bar"><div class="cdown-fill" id="cdown-fill"></div></div>
+    <div style="font-size:10px;color:var(--muted);margin-top:8px;font-weight:600">Reset otomatis dalam 3 detik...</div>
+  </div>
+</div>
+```
+
+  </div>
+
+</div>
+
+<!-- EXIT -->
+
+<button class="exit-btn" onclick="openExit()">🔒 Tutup Kiosk</button>
+
+<div class="overlay" id="ov-exit">
+  <div class="exit-modal">
+    <div class="em-icon">🔒</div>
+    <div class="em-title">Tutup Mode Kiosk</div>
+    <div class="em-sub">Masukkan password pembuat form untuk keluar dari mode kiosk.</div>
+    <input type="password" class="em-pw" id="exit-pw" placeholder="••••••••">
+    <div class="em-err" id="exit-err">Password salah. Coba lagi.</div>
+    <div class="em-btns">
+      <button class="btn-em-cancel" onclick="closeExit()">Batal</button>
+      <button class="btn-em-ok" onclick="confirmExit()">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== KONFIGURASI ====================
+var GAS_URL  = "https://script.google.com/macros/s/AKfycbzqbR0ySliaMyXuAEAiw6QnAHuIyBvaqT40mAWV1y2mV7_gdaKCDqACKF7Ct0EJcZtI/exec";
+var BASE_URL = window.location.href.replace('kiosk.html','');
+
+// Ambil ID pelatihan dari URL: kiosk.html?id=PLT-XXXXX
+var PEL_ID = new URLSearchParams(window.location.search).get('id') || '';
+var hadirList = [];
+var totalPeserta = 0;
+var retryLoad = 0, retryAbsen = 0, retryExit = 0;
+
+// ==================== CLOCK ====================
+setInterval(function() {
+  var n = new Date();
+  document.getElementById('clock').textContent =
+    ('0'+n.getHours()).slice(-2)+':'+('0'+n.getMinutes()).slice(-2)+':'+('0'+n.getSeconds()).slice(-2);
+}, 1000);
+
+// ==================== FORMAT TANGGAL ====================
+function fmtTgl(v) {
+  if (!v) return '-'; var d = new Date(v); if (isNaN(d)) return v;
+  var h = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][d.getDay()];
+  var b = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'][d.getMonth()];
+  return h + ' / ' + d.getDate() + ' ' + b + ' ' + d.getFullYear();
+}
+
+// ==================== LOAD DATA PELATIHAN ====================
+function loadPelatihan() {
+  if (!PEL_ID) { document.getElementById('h-topik').textContent = 'Link tidak valid.'; return; }
+  fetch(GAS_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'getPelatihanPublic', pelatihanId: PEL_ID })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(res) {
+    retryLoad = 0;
+    if (res.success) {
+      var d = res.data;
+      document.getElementById('h-topik').textContent = d.Topik || 'Pelatihan';
+      document.getElementById('h-meta').textContent  = (d.Penyelenggara||'HR-MI') + ' · ' + fmtTgl(d.TanggalPelatihan);
+      document.getElementById('i-tgl').textContent         = fmtTgl(d.TanggalPelatihan);
+      document.getElementById('i-waktu').textContent       = (d.WaktuMulai||'-') + ' – ' + (d.WaktuSelesai||'-');
+      document.getElementById('i-lokasi').textContent      = d.Lokasi || '-';
+      document.getElementById('i-instruktur').textContent  = d.Instruktur || '-';
+      document.getElementById('i-penyelenggara').textContent = d.Penyelenggara || 'HR-MI';
+      document.getElementById('info-card').style.display = 'block';
+    } else {
+      document.getElementById('h-topik').textContent = 'Pelatihan tidak ditemukan.';
+    }
+  })
+  .catch(function() {
+    retryLoad++;
+    if (retryLoad <= 3) setTimeout(loadPelatihan, 1500 * retryLoad);
+  });
+}
+loadPelatihan();
+
+// ==================== CANVAS PARAF ====================
+var canvas = document.getElementById('paraf-canvas');
+var ctx    = canvas.getContext('2d');
+var drawing = false, lx = 0, ly = 0;
+
+function resizeCanvas() { canvas.width = canvas.offsetWidth; canvas.height = 110; }
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+function pos(e) {
+  var r = canvas.getBoundingClientRect();
+  var s = e.touches ? e.touches[0] : e;
+  return { x: s.clientX - r.left, y: s.clientY - r.top };
+}
+canvas.addEventListener('mousedown',  function(e){ drawing=true; var p=pos(e); lx=p.x; ly=p.y; });
+canvas.addEventListener('mousemove',  function(e){ if(!drawing)return; var p=pos(e); ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(p.x,p.y); ctx.stroke(); lx=p.x; ly=p.y; });
+canvas.addEventListener('mouseup',    function(){ drawing=false; });
+canvas.addEventListener('mouseleave', function(){ drawing=false; });
+canvas.addEventListener('touchstart', function(e){ e.preventDefault(); drawing=true; var p=pos(e); lx=p.x; ly=p.y; });
+canvas.addEventListener('touchmove',  function(e){ e.preventDefault(); if(!drawing)return; var p=pos(e); ctx.beginPath(); ctx.moveTo(lx,ly); ctx.lineTo(p.x,p.y); ctx.stroke(); lx=p.x; ly=p.y; });
+canvas.addEventListener('touchend',   function(){ drawing=false; });
+function clearParaf() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+
+// ==================== RENDER LOG ====================
+function renderLog() {
+  var n = hadirList.length;
+  document.getElementById('c-num').textContent    = n;
+  document.getElementById('c-from').textContent   = '/ ' + (totalPeserta || '—') + ' peserta';
+  document.getElementById('c-pct').textContent    = totalPeserta ? (n/totalPeserta*100).toFixed(1)+'%' : '0%';
+  document.getElementById('log-badge').textContent = n + ' hadir';
+
+  if (!n) { document.getElementById('log-list').innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Belum ada absensi.</div>'; return; }
+  document.getElementById('log-list').innerHTML = [...hadirList].reverse().map(function(p) {
+    var init = (p.nama||'?').split(' ').map(function(w){return w[0]||'';}).join('').substring(0,2).toUpperCase();
+    return '<div class="log-item">' +
+      '<div class="log-av">'+init+'</div>' +
+      '<div style="flex:1;min-width:0"><div class="log-name">'+p.nama+'</div><div class="log-unit">'+p.unit+' · NIK: '+p.nik+'</div></div>' +
+      '<div class="log-time">'+p.jam+'</div></div>';
+  }).join('');
+}
+
+// ==================== SUBMIT ABSEN ====================
+function setLoading(v) {
+  document.getElementById('btn-submit').disabled      = v;
+  document.getElementById('btn-txt').style.display    = v ? 'none' : 'inline';
+  document.getElementById('spinner').style.display    = v ? 'inline-block' : 'none';
+}
+function showErr(msg) {
+  var b = document.getElementById('err-box');
+  document.getElementById('err-msg').textContent = msg;
+  b.style.display = 'flex'; b.style.animation = 'none';
+  b.offsetHeight; b.style.animation = 'shake 0.4s ease';
+}
+
+function submitAbsen() {
+  var nik = document.getElementById('nik-input').value.trim();
+  document.getElementById('err-box').style.display = 'none';
+  if (!nik) { showErr('NIK wajib diisi.'); return; }
+  var isEmpty = !ctx.getImageData(0,0,canvas.width,canvas.height).data.some(function(v){return v!==0;});
+  var paraf = isEmpty ? '' : canvas.toDataURL('image/png');
+  setLoading(true);
+
+  fetch(GAS_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      action: 'absenKiosk',
+      pelatihanId: PEL_ID,
+      nik: nik,
+      paraf: paraf,
+      deviceInfo: navigator.userAgent.substring(0, 100)
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(res) {
+    setLoading(false); retryAbsen = 0;
+    if (res.success) {
+      var d = res.data;
+      var now = new Date();
+      var jam = ('0'+now.getHours()).slice(-2)+':'+('0'+now.getMinutes()).slice(-2);
+      hadirList.push({ nik: nik, nama: d.nama||nik, unit: d.unit||'-', jam: jam });
+      renderLog();
+      // Tampilkan sukses
+      document.getElementById('s-name').textContent = d.nama || nik;
+      document.getElementById('s-nik').textContent  = 'NIK: ' + nik;
+      document.getElementById('s-time').textContent = '✅ Absensi tercatat pukul ' + (d.waktu||jam) + ' WIB';
+      document.getElementById('s-unit').textContent = d.unit || '-';
+      document.getElementById('form-area').style.display   = 'none';
+      document.getElementById('success-area').style.display = 'flex';
+      // Reset countdown
+      var fill = document.getElementById('cdown-fill');
+      fill.style.animation = 'none'; fill.offsetHeight;
+      fill.style.animation = 'cdown 3s linear forwards';
+      setTimeout(function() {
+        document.getElementById('success-area').style.display = 'none';
+        document.getElementById('form-area').style.display    = 'block';
+        document.getElementById('nik-input').value = '';
+        clearParaf();
+        document.getElementById('nik-input').focus();
+      }, 3000);
+    } else {
+      showErr(res.message || 'Absensi gagal.');
+    }
+  })
+  .catch(function() {
+    retryAbsen++;
+    if (retryAbsen <= 3) { setTimeout(submitAbsen, 1200 * retryAbsen); }
+    else { setLoading(false); retryAbsen = 0; showErr('Koneksi gagal. Coba lagi.'); }
+  });
+}
+
+document.getElementById('nik-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') submitAbsen();
+});
+
+// ==================== EXIT KIOSK ====================
+function openExit()  { document.getElementById('ov-exit').classList.add('show'); document.getElementById('exit-pw').focus(); }
+function closeExit() { document.getElementById('ov-exit').classList.remove('show'); document.getElementById('exit-pw').value=''; document.getElementById('exit-err').style.display='none'; }
+
+function confirmExit() {
+  var pw = document.getElementById('exit-pw').value;
+  if (!pw) { document.getElementById('exit-err').textContent='Password wajib diisi.'; document.getElementById('exit-err').style.display='block'; return; }
+  fetch(GAS_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'exitKiosk', pelatihanId: PEL_ID, password: pw })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(res) {
+    retryExit = 0;
+    if (res.success) { closeExit(); window.close(); setTimeout(function(){ window.location.href = BASE_URL + 'app.html'; }, 400); }
+    else { document.getElementById('exit-err').textContent = res.message || 'Password salah.'; document.getElementById('exit-err').style.display = 'block'; }
+  })
+  .catch(function() {
+    retryExit++;
+    if (retryExit <= 3) setTimeout(confirmExit, 1200 * retryExit);
+    else { retryExit=0; document.getElementById('exit-err').textContent='Koneksi gagal.'; document.getElementById('exit-err').style.display='block'; }
+  });
+}
+
+document.getElementById('exit-pw').addEventListener('keydown', function(e){ if(e.key==='Enter') confirmExit(); });
+document.getElementById('ov-exit').addEventListener('click', function(e){ if(e.target===this) closeExit(); });
+</script>
+
+</body>
+</html>
