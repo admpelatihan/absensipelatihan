@@ -280,7 +280,7 @@ body::after {
 <div class="retry-info" id="retry-info">🔄 Mencoba ulang koneksi...</div>
 
 <div class="login-footer">
-  PT Sido Muncul · HR-MI · Sistem Absensi Pelatihan
+  Absensi Pelatihan Digital
 </div>
 ```
 
@@ -349,7 +349,7 @@ function doLogin() {
 
   fetch(GAS_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify({ action: 'login', username: u, password: p })
   })
   .then(function(r) { return r.json(); })
