@@ -145,7 +145,7 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); min-
     </div>
     <div>
       <div class="h-topik" id="h-topik">Memuat data pelatihan...</div>
-      <div class="h-meta" id="h-meta">HR-MI · Sido Muncul</div>
+      <div class="h-meta" id="h-meta">PT. Industri Jamu dan Farmasi Sido Muncul Tbk.</div>
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
@@ -297,7 +297,7 @@ function loadPelatihan() {
   if (!PEL_ID) { document.getElementById('h-topik').textContent = 'Link tidak valid.'; return; }
   fetch(GAS_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify({ action: 'getPelatihanPublic', pelatihanId: PEL_ID })
   })
   .then(function(r) { return r.json(); })
@@ -390,7 +390,7 @@ function submitAbsen() {
 
   fetch(GAS_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify({
       action: 'absenKiosk',
       pelatihanId: PEL_ID,
@@ -450,7 +450,7 @@ function confirmExit() {
   if (!pw) { document.getElementById('exit-err').textContent='Password wajib diisi.'; document.getElementById('exit-err').style.display='block'; return; }
   fetch(GAS_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify({ action: 'exitKiosk', pelatihanId: PEL_ID, password: pw })
   })
   .then(function(r) { return r.json(); })
