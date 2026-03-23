@@ -1,287 +1,161 @@
 <!DOCTYPE html>
-
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SMART • Daftar Hadir Pelatihan</title>
-<link rel="icon" type="image/png" href="favicon.png">
+<title>Daftar Hadir Pelatihan — PT Sido Muncul</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root { --primary:#059669; --navy:#1a1a2e; --font:'Plus Jakarta Sans',Arial,sans-serif; }
+:root {
+  --primary: #059669;
+  --navy: #1a1a2e;
+  --font: 'Plus Jakarta Sans', Arial, sans-serif;
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--font);background:#f1f5f9;color:#0f172a;}
 
 /* ── SCREEN BAR ── */
 #screen-bar{
-position:fixed;top:0;left:0;right:0;z-index:100;
-background:#fff;border-bottom:1px solid #e2e8f0;
-padding:10px 20px;display:flex;align-items:center;gap:10px;
-box-shadow:0 1px 4px rgba(0,0,0,.06);
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:#fff;border-bottom:1px solid #e2e8f0;
+  padding:10px 20px;
+  display:flex;align-items:center;gap:10px;
+  box-shadow:0 1px 4px rgba(0,0,0,.06);
 }
-.sl{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;font-family:var(–font);}
+.sl{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;}
 .sl img{height:28px;}
-.lbx{width:28px;height:28px;background:linear-gradient(135deg,#059669,#10b981);border-radius:7px;
-display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:11px;display:none;}
-#scr-sub{flex:1;font-size:13px;font-weight:500;color:#64748b;font-family:var(–font);}
-.btn-p{display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(–primary);color:#fff;
-border:none;border-radius:8px;font-family:var(–font);font-size:13px;font-weight:700;cursor:pointer;min-height:36px;}
+.lbx{width:28px;height:28px;background:linear-gradient(135deg,#059669,#10b981);border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:11px;}
+#scr-sub{flex:1;font-size:13px;font-weight:500;color:#64748b;}
+.btn-p{display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;min-height:36px;}
 .btn-p:hover{background:#047857;}
-.btn-b{display:flex;align-items:center;gap:6px;padding:8px 13px;background:#fff;color:#64748b;
-border:1px solid #e2e8f0;border-radius:8px;font-family:var(–font);font-size:13px;font-weight:600;
-cursor:pointer;min-height:36px;}
+.btn-b{display:flex;align-items:center;gap:6px;padding:8px 13px;background:#fff;color:#64748b;border:1px solid #e2e8f0;border-radius:8px;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;min-height:36px;}
 .btn-b:hover{background:#f8fafc;}
 
 /* ── WRAPPERS ── */
 #pw{padding:70px 20px 40px;display:flex;justify-content:center;}
+
 #lw{text-align:center;padding:80px 20px;display:none;}
 #lw.show{display:block;}
-.sp{width:34px;height:34px;border:3px solid #e2e8f0;border-top-color:var(–primary);
-border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px;}
+.sp{width:34px;height:34px;border:3px solid #e2e8f0;border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px;}
 @keyframes spin{to{transform:rotate(360deg);}}
-.lt{font-size:14px;color:#64748b;font-weight:500;font-family:var(–font);}
+.lt{font-size:14px;color:#64748b;font-weight:500;}
+
 #ew{text-align:center;padding:80px 20px;display:none;}
 #ew.show{display:block;}
-.ei{width:54px;height:54px;background:#fee2e2;border-radius:50%;
-display:flex;align-items:center;justify-content:center;margin:0 auto 10px;}
-.em{font-size:13px;color:#64748b;margin-top:5px;font-family:var(–font);}
+.ei{width:54px;height:54px;background:#fee2e2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;}
+.em{font-size:13px;color:#64748b;margin-top:5px;}
 
 /* ══════════════════════════════════════
-DOKUMEN CETAK — F4 = 215mm x 330mm
+   DOKUMEN CETAK — F4 = 215mm x 330mm
 ══════════════════════════════════════ */
 #pd{
-width:215mm;
-background:#fff;
-padding:8mm;
-box-shadow:0 4px 20px rgba(0,0,0,.12);
-display:none;
-font-family:Arial,sans-serif;
-font-size:9pt;
-color:#000;
+  width:215mm;
+  min-height:310mm;
+  background:#fff;
+  padding:8mm;
+  box-shadow:0 4px 20px rgba(0,0,0,.12);
+  display:none;
+  font-family:Arial,sans-serif;
+  font-size:9pt;
+  color:#000;
 }
 #pd.show{display:block;}
 
-/* ── HEADER TABLE ── */
-.tbl-header{
-width:100%;
-border-collapse:collapse;
-table-layout:fixed;
-}
-.tbl-header td{
-border:1px solid #000;
-vertical-align:middle;
-}
+/* ── Header tabel ── */
+.dh{width:100%;border-collapse:collapse;table-layout:fixed;}
+.dh td{border:1px solid #000;padding:3px 5px;vertical-align:middle;}
+.hl{width:25%;text-align:center;}
+.hl img{height:40px;width:auto;object-fit:contain;display:block;margin:0 auto;}
+.hl-fb{font-weight:700;font-size:8pt;text-align:center;display:none;}
+.hm{width:50%;text-align:center;font-size:12pt;font-weight:700;line-height:1.4;}
+.hr{width:25%;text-align:right;font-size:8pt;line-height:1.5;}
+.hll{width:25%;font-size:8pt;}
+.hmm{width:50%;}
 
-/* Kolom logo */
-.col-logo{
-width:22%;
-text-align:center;
-padding:6px;
-}
-.col-logo img{
-height:44px;
-width:auto;
-object-fit:contain;
-display:block;
-margin:0 auto;
-}
-.col-logo-fb{
-font-weight:700;font-size:8pt;text-align:center;
-display:none;line-height:1.3;
-}
+/* ── Info pelatihan ── */
+.di{width:100%;border-collapse:collapse;table-layout:fixed;border-top:none;}
+.di td{border:1px solid #000;border-top:none;padding:0;vertical-align:top;}
+.di-inner{width:100%;border-collapse:collapse;}
+.di-inner td{border:none;padding:2px 4px;font-size:8.5pt;vertical-align:top;}
+.lbl{font-weight:700;white-space:nowrap;}
+.sep{width:10px;text-align:center;}
 
-/* Kolom judul tengah */
-.col-judul{
-width:56%;
-text-align:center;
-padding:6px 4px;
-line-height:1.35;
+/* ── Tabel peserta ── */
+.dp{width:100%;border-collapse:collapse;table-layout:fixed;border-top:none;}
+.dp thead th{
+  background:#1a1a2e !important;
+  -webkit-print-color-adjust:exact;
+  print-color-adjust:exact;
+  color:#fff !important;
+  font-size:8.5pt;font-weight:700;
+  text-align:center;padding:4px 3px;
+  border:1px solid #000;line-height:1.3;
 }
-.col-judul .judul-utama{
-font-size:13pt;
-font-weight:700;
-letter-spacing:0.3px;
+.dp tbody td{
+  border:1px solid #000;border-top:none;
+  padding:2px 3px;font-size:8pt;
+  vertical-align:middle;height:20px;
 }
-.col-judul .judul-sub{
-font-size:12pt;
-font-weight:700;
+.dp tbody tr.even td{
+  background:#f8fafc !important;
+  -webkit-print-color-adjust:exact;
+  print-color-adjust:exact;
 }
-
-/* Kolom kanan (nomor form, revisi) */
-.col-kanan{
-width:22%;
-padding:4px 6px;
-font-size:8pt;
-vertical-align:top;
-line-height:1.7;
-}
-
-/* Baris HR-MI */
-.col-hrmi{
-width:22%;
-padding:3px 6px;
-font-size:8.5pt;
-font-weight:700;
-vertical-align:middle;
-}
-.col-hrmi-mid{
-width:56%;
-padding:3px 6px;
-font-size:8.5pt;
-vertical-align:top;
-}
-.col-hrmi-mid .sub-label{
-font-weight:700;
-font-size:8pt;
-}
-
-/* Baris PELATIHAN label */
-.col-pel-label{
-width:22%;
-padding:3px 6px;
-font-size:8.5pt;
-font-weight:700;
-vertical-align:middle;
-border-top:none;
-}
-
-/* ── INFO PELATIHAN ── */
-.tbl-info{
-width:100%;
-border-collapse:collapse;
-table-layout:fixed;
-}
-.tbl-info td{
-border:1px solid #000;
-border-top:none;
-padding:0;
-vertical-align:top;
-}
-.info-cell{
-width:50%;
-padding:0;
-}
-.info-inner{
-width:100%;
-border-collapse:collapse;
-}
-.info-inner td{
-border:none;
-padding:2.5px 5px;
-font-size:8.5pt;
-vertical-align:top;
-}
-.info-lbl{
-width:88px;
-font-weight:700;
-white-space:nowrap;
-}
-.info-sep{
-width:8px;
-text-align:center;
-}
-.info-val{
-/* nilai bisa panjang */
-}
-
-/* ── TABEL PESERTA ── */
-.tbl-peserta{
-width:100%;
-border-collapse:collapse;
-table-layout:fixed;
-border-top:none;
-}
-.tbl-peserta thead th{
-background:#1a1a2e !important;
--webkit-print-color-adjust:exact;
-print-color-adjust:exact;
-color:#fff !important;
-font-size:8.5pt;
-font-weight:700;
-text-align:center;
-padding:4px 3px;
-border:1px solid #000;
-border-top:none;
-line-height:1.3;
-}
-.tbl-peserta tbody td{
-border:1px solid #000;
-border-top:none;
-padding:1.5px 3px;
-font-size:8pt;
-vertical-align:middle;
-height:19.5px;
-}
-.tbl-peserta tbody tr.even td{
-background:#f8fafc !important;
--webkit-print-color-adjust:exact;
-print-color-adjust:exact;
-}
-.tbl-peserta tbody tr.odd td{background:#fff !important;}
-
-/* Lebar kolom tabel peserta — total 100% */
-.col-no   {width:5%;  text-align:center;}
-.col-nama {width:30%;}
-.col-nik  {width:14%; text-align:center;}
-.col-unit {width:12%; text-align:center;}
-.col-jab  {width:15%;}
-.col-ttd  {width:24%; text-align:center;}
-
-.ttd-img{
-max-height:17px;
-max-width:100%;
-object-fit:contain;
-display:block;
-margin:0 auto;
-}
+.dp tbody tr.odd td{background:#fff !important;}
+.cn{width:4%;text-align:center;}
+.cna{width:28%;}
+.ci{width:14%;text-align:center;}
+.cu{width:13%;text-align:center;}
+.cj{width:16%;}
+.ct{width:25%;text-align:center;}
+.ttd-img{max-height:17px;max-width:100%;object-fit:contain;display:block;margin:0 auto;}
 
 /* ══════════════════════════════════════
-PRINT MEDIA
+   PRINT
 ══════════════════════════════════════ */
 @page{size:215mm 330mm;margin:8mm;}
 @media print{
-.no-print,#screen-bar{display:none !important;}
-body{background:#fff !important;}
-#pw{padding:0 !important;display:block !important;}
-#lw,#ew{display:none !important;}
-#pd{
-display:block !important;
-width:100% !important;
-min-height:auto !important;
-padding:0 !important;
-box-shadow:none !important;
-margin:0 !important;
-}
-.tbl-peserta thead th{
-background:#1a1a2e !important;
--webkit-print-color-adjust:exact !important;
-print-color-adjust:exact !important;
-color:#fff !important;
-}
-.tbl-peserta tbody tr.even td{
-background:#f8fafc !important;
--webkit-print-color-adjust:exact !important;
-print-color-adjust:exact !important;
-}
+  .no-print,#screen-bar{display:none !important;}
+  body{background:#fff !important;}
+  #pw{padding:0 !important;display:block !important;}
+  #lw,#ew{display:none !important;}
+  #pd{
+    display:block !important;
+    width:100% !important;
+    min-height:auto !important;
+    padding:0 !important;
+    box-shadow:none !important;
+    margin:0 !important;
+  }
+  .dp thead th{
+    background:#1a1a2e !important;
+    -webkit-print-color-adjust:exact !important;
+    print-color-adjust:exact !important;
+    color:#fff !important;
+  }
+  .dp tbody tr.even td{
+    background:#f8fafc !important;
+    -webkit-print-color-adjust:exact !important;
+    print-color-adjust:exact !important;
+  }
+  table{page-break-inside:avoid;}
 }
 </style>
-
 </head>
 <body>
 
 <!-- SCREEN BAR -->
-
 <div id="screen-bar" class="no-print">
   <div class="sl">
-    <img src="logo.png" alt="SM"
-      onerror="this.style.display='none';document.getElementById('lbx-bar').style.display='flex'">
-    <div id="lbx-bar" class="lbx">SM</div>
+    <img src="logo.png" alt="SM" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="lbx" style="display:none">SM</div>
     <span>Sido Muncul</span>
   </div>
   <div id="scr-sub">Daftar Hadir Pelatihan</div>
   <button class="btn-b" onclick="history.back()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
-      <polyline points="15 18 9 12 15 6"/>
-    </svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="15 18 9 12 15 6"/></svg>
     Kembali
   </button>
   <button class="btn-p" onclick="window.print()">
@@ -302,7 +176,6 @@ print-color-adjust:exact !important;
   </div>
 
   <!-- ERROR -->
-
   <div id="ew">
     <div class="ei">
       <svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" width="26" height="26">
@@ -310,83 +183,54 @@ print-color-adjust:exact !important;
         <line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
       </svg>
     </div>
-    <div style="font-size:15px;font-weight:700;font-family:var(--font)" id="et">Terjadi Kesalahan</div>
+    <div style="font-size:15px;font-weight:700" id="et">Terjadi Kesalahan</div>
     <div class="em" id="em">—</div>
-    <button class="btn-b no-print" style="margin:16px auto 0;width:fit-content" onclick="history.back()">← Kembali</button>
   </div>
 
-  <!-- PRINT DOCUMENT -->
-
+  <!-- PRINT DOC -->
   <div id="pd">
 
-```
-<!-- ═══ HEADER ═══ -->
-<table class="tbl-header">
-  <colgroup>
-    <col style="width:22%">
-    <col style="width:56%">
-    <col style="width:22%">
-  </colgroup>
-  <tbody>
-    <!-- Baris 1: Logo | DAFTAR HADIR PESERTA PELATIHAN | No. Form -->
-    <tr>
-      <td class="col-logo" rowspan="2">
-        <img src="logo.png" alt="Sido Muncul"
-          onerror="this.style.display='none';document.getElementById('logo-fb').style.display='block'">
-        <div id="logo-fb" class="col-logo-fb">PT SIDO MUNCUL</div>
-      </td>
-      <td class="col-judul" rowspan="2">
-        <div class="judul-utama">DAFTAR HADIR</div>
-        <div class="judul-sub">PESERTA PELATIHAN</div>
-      </td>
-      <td class="col-kanan">
-        No. Form&nbsp;: FM-082020-01-00-003
-      </td>
-    </tr>
-    <!-- Baris 2: — | — | Revisi & Tgl Berlaku -->
-    <tr>
-      <td class="col-kanan">
-        Revisi&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: 02<br>
-        Tgl. Berlaku : 25 Mei 2016
-      </td>
-    </tr>
-    <!-- Baris 3: HR-MI | (kosong) | (kosong) -->
-    <tr>
-      <td class="col-hrmi">HR-MI</td>
-      <td class="col-hrmi-mid"></td>
-      <td style="border:1px solid #000;padding:3px 6px;"></td>
-    </tr>
-    <!-- Baris 4: PELATIHAN label -->
-    <tr>
-      <td colspan="3" style="border:1px solid #000;border-top:none;padding:3px 6px;font-size:8.5pt;font-weight:700;">
-        PELATIHAN
-      </td>
-    </tr>
-  </tbody>
-</table>
+    <!-- HEADER BARIS 1 & 2 -->
+    <table class="dh">
+      <colgroup><col style="width:25%"><col style="width:50%"><col style="width:25%"></colgroup>
+      <tbody>
+        <tr>
+          <td class="hl" rowspan="2">
+            <img src="logo.png" alt="Sido Muncul"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+            <div class="hl-fb">PT SIDO MUNCUL</div>
+          </td>
+          <td class="hm" rowspan="2">DAFTAR HADIR PESERTA PELATIHAN</td>
+          <td class="hr">No. Form: FM-082020-01-00-003</td>
+        </tr>
+        <tr>
+          <td class="hr" style="font-size:7.5pt;line-height:1.6">Revisi: 02<br>Tgl Berlaku: 25 Mei 2016</td>
+        </tr>
+        <tr>
+          <td class="hll">HR-MI / PELATIHAN</td>
+          <td class="hmm"></td>
+          <td class="hr"></td>
+        </tr>
+      </tbody>
+    </table>
 
-<!-- ═══ INFO PELATIHAN ═══ -->
-<table class="tbl-info" id="tbl-info">
-  <!-- diisi oleh JS -->
-</table>
+    <!-- INFO PELATIHAN -->
+    <table class="di" id="tbl-info"></table>
 
-<!-- ═══ TABEL PESERTA ═══ -->
-<table class="tbl-peserta">
-  <thead>
-    <tr>
-      <th class="col-no">No.</th>
-      <th class="col-nama">Nama Lengkap</th>
-      <th class="col-nik">No. Induk<br>(Perner)</th>
-      <th class="col-unit">Unit</th>
-      <th class="col-jab">Jabatan</th>
-      <th class="col-ttd">Paraf</th>
-    </tr>
-  </thead>
-  <tbody id="tbl-body">
-    <!-- diisi oleh JS -->
-  </tbody>
-</table>
-```
+    <!-- TABEL PESERTA -->
+    <table class="dp">
+      <thead>
+        <tr>
+          <th class="cn">No.</th>
+          <th class="cna">Nama Lengkap</th>
+          <th class="ci">No. Induk<br>(Perner)</th>
+          <th class="cu">Unit</th>
+          <th class="cj">Jabatan</th>
+          <th class="ct">Paraf / TTD</th>
+        </tr>
+      </thead>
+      <tbody id="tbl-body"></tbody>
+    </table>
 
   </div><!-- /#pd -->
 </div><!-- /#pw -->
@@ -413,189 +257,155 @@ const auth = getAuth(app);
 const db   = getFirestore(app);
 const ROWS = 35;
 
-async function retry(fn, n=3, d=1200) {
-  for (let i=0; i<n; i++) {
-    try { return await fn(); }
-    catch(e) { if(i===n-1) throw e; await new Promise(r=>setTimeout(r,d)); }
-  }
+async function retry(fn,n=3,d=1200){
+  for(let i=0;i<n;i++){try{return await fn();}catch(e){if(i===n-1)throw e;await new Promise(r=>setTimeout(r,d));}}
 }
 
-function showLoading(v) {
-  document.getElementById('lw').style.display = v ? 'block' : 'none';
-  document.getElementById('pw').style.paddingTop = v ? '70px' : '70px';
-}
-function showErr(t, m) {
+function showLoading(v){document.getElementById('lw').classList.toggle('show',v);}
+function showErr(t,m){
   showLoading(false);
-  document.getElementById('et').textContent = t;
-  document.getElementById('em').textContent = m;
-  document.getElementById('ew').style.display = 'block';
+  document.getElementById('et').textContent=t;
+  document.getElementById('em').textContent=m;
+  document.getElementById('ew').classList.add('show');
 }
-function showDoc() {
-  showLoading(false);
-  document.getElementById('pd').classList.add('show');
+function showDoc(){showLoading(false);document.getElementById('pd').classList.add('show');}
+
+function hariIndo(ds){
+  if(!ds)return'';
+  return['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][new Date(ds).getDay()];
+}
+function fmtTgl(ds){
+  if(!ds)return'—';
+  const d=new Date(ds);
+  const m=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  return`${d.getDate()} ${m[d.getMonth()]} ${d.getFullYear()}`;
+}
+function esc(s){
+  if(!s)return'';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-function hariIndo(ds) {
-  if (!ds) return '';
-  const d = new Date(ds + 'T00:00:00');
-  return ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][d.getDay()];
-}
-function fmtTgl(ds) {
-  if (!ds) return '—';
-  const d = new Date(ds + 'T00:00:00');
-  const m = ['Januari','Februari','Maret','April','Mei','Juni',
-             'Juli','Agustus','September','Oktober','November','Desember'];
-  return `${d.getDate()} ${m[d.getMonth()]} ${d.getFullYear()}`;
-}
-function esc(s) {
-  if (!s) return '';
-  return String(s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-// Cek sesi login
-function checkSession() {
-  return new Promise(res => {
-    const uid = sessionStorage.getItem('uid');
-    if (uid) { res(uid); return; }
-    const unsub = onAuthStateChanged(auth, user => { unsub(); res(user ? user.uid : null); });
-    setTimeout(() => res(null), 5000);
+// Cek session
+function checkSession(){
+  return new Promise(res=>{
+    const uid=sessionStorage.getItem('uid');
+    if(uid){res(uid);return;}
+    const u=onAuthStateChanged(auth,user=>{u();res(user?user.uid:null);});
+    setTimeout(()=>res(null),5000);
   });
 }
 
-async function init() {
+async function init(){
   showLoading(true);
 
-  const params = new URLSearchParams(location.search);
-  const id = params.get('id');
-  if (!id) { showErr('ID Tidak Valid', 'Parameter ID pelatihan tidak ditemukan di URL.'); return; }
+  const params=new URLSearchParams(location.search);
+  const id=params.get('id');
+  if(!id){showErr('ID Tidak Valid','Parameter ID pelatihan tidak ditemukan di URL.');return;}
 
-  const uid = await checkSession();
-  if (!uid) {
-    showErr('Sesi Berakhir', 'Anda perlu login kembali untuk mencetak daftar hadir.');
-    setTimeout(() => { window.location.href = 'index.html'; }, 2500);
+  const uid=await checkSession();
+  if(!uid){
+    showErr('Sesi Berakhir','Anda perlu login kembali untuk mencetak daftar hadir.');
+    setTimeout(()=>{window.location.href='index.html';},2500);
     return;
   }
 
-  try {
+  try{
     // Load pelatihan
-    const ps = await retry(() => getDoc(doc(db, 'pelatihan', id)));
-    if (!ps.exists()) { showErr('Tidak Ditemukan', `Data pelatihan "${id}" tidak ada.`); return; }
-    const pel = { id, ...ps.data() };
+    const ps=await retry(()=>getDoc(doc(db,'pelatihan',id)));
+    if(!ps.exists()){showErr('Tidak Ditemukan',`Data pelatihan "${id}" tidak ada.`);return;}
+    const pel={id,...ps.data()};
 
-    // Load absensi yang sudah TTD
-    const as = await retry(() => getDocs(
-      query(collection(db, 'absensi'), where('id_pelatihan', '==', id))
-    ));
-    const absList = as.docs.map(d => d.data()).filter(a => a.ttd_base64);
-    if (!absList.length) {
-      showErr('Belum Ada Absensi', 'Belum ada peserta yang melakukan tanda tangan untuk pelatihan ini.');
-      return;
-    }
+    // Load absensi
+    const as=await retry(()=>getDocs(query(collection(db,'absensi'),where('id_pelatihan','==',id))));
+    const absList=as.docs.map(d=>d.data());
+    if(!absList.length){showErr('Belum Ada Absensi','Belum ada peserta yang melakukan absensi untuk pelatihan ini.');return;}
 
-    // Load data karyawan setiap peserta
-    const peserta = [];
-    for (const abs of absList) {
-      let k = { nama_lengkap: abs.perner, unit: '—', jabatan: '—' };
-      try {
-        const ks = await retry(() => getDoc(doc(db, 'karyawan', abs.perner)));
-        if (ks.exists()) k = ks.data();
-      } catch(e) {}
+    // Load karyawan
+    const peserta=[];
+    for(const abs of absList){
+      let k={nama_lengkap:abs.perner,unit:'—',jabatan:'—'};
+      try{
+        const ks=await retry(()=>getDoc(doc(db,'karyawan',abs.perner)));
+        if(ks.exists())k=ks.data();
+      }catch(e){}
       peserta.push({
-        perner:  abs.perner,
-        nama:    k.nama_lengkap || abs.perner,
-        unit:    k.unit    || '—',
-        jabatan: k.jabatan || '—',
-        ttd:     abs.ttd_base64 || '',
+        perner:abs.perner,
+        nama:k.nama_lengkap||abs.perner,
+        unit:k.unit||'—',
+        jabatan:k.jabatan||'—',
+        ttd:abs.ttd_base64||'',
       });
     }
-    peserta.sort((a,b) => a.nama.localeCompare(b.nama));
+    peserta.sort((a,b)=>a.nama.localeCompare(b.nama));
 
     renderInfo(pel);
     renderPeserta(peserta);
-    document.getElementById('scr-sub').textContent =
-      `${pel.topik || 'Pelatihan'} — ${hariIndo(pel.tanggal)}, ${fmtTgl(pel.tanggal)}`;
+    document.getElementById('scr-sub').textContent=`${pel.topik||'Pelatihan'} — ${pel.tanggal||''}`;
     showDoc();
 
-    // Auto print setelah render
-    setTimeout(() => window.print(), 900);
+    // Auto print setelah render selesai
+    setTimeout(()=>window.print(),900);
 
-  } catch(e) { showErr('Gagal Memuat', 'Error: ' + e.message); }
+  }catch(e){showErr('Gagal Memuat','Error: '+e.message);}
 }
 
-function renderInfo(p) {
-  const hari = p.hari || hariIndo(p.tanggal);
-  // 3 baris info sesuai format PDF asli
-  const rows = [
-    {
-      l1:'Hari / Tanggal', v1:`${hari} / ${fmtTgl(p.tanggal)}`,
-      l2:'Topik',          v2: p.topik || '—'
-    },
-    {
-      l1:'Waktu',          v1:`${p.waktu_mulai||'—'} - ${p.waktu_selesai||'—'}`,
-      l2:'Instruktur',     v2: p.instruktur || '—'
-    },
-    {
-      l1:'Tempat',         v1: p.lokasi || '—',
-      l2:'Penyelenggara',  v2: p.penyelenggara || '—'
-    },
+function renderInfo(p){
+  const hari=p.hari||hariIndo(p.tanggal);
+  const rows=[
+    {l1:'Hari/Tanggal',v1:`${hari}, ${fmtTgl(p.tanggal)}`, l2:'Topik',         v2:p.topik||'—'},
+    {l1:'Waktu',        v1:`${p.waktu_mulai||'—'} – ${p.waktu_selesai||'—'}`, l2:'Instruktur',    v2:p.instruktur||'—'},
+    {l1:'Tempat',       v1:p.lokasi||'—',                   l2:'Penyelenggara', v2:p.penyelenggara||'—'},
+    {l1:'',             v1:'',                               l2:'Batch',         v2:p.batch||'—'},
   ];
-
-  document.getElementById('tbl-info').innerHTML = rows.map(r => `
+  document.getElementById('tbl-info').innerHTML=rows.map(r=>`
     <tr>
-      <td class="info-cell" style="width:50%;border-left:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;">
-        <table class="info-inner">
+      <td style="width:50%;padding:0;border:1px solid #000;border-top:none">
+        <table class="di-inner" style="width:100%;border-collapse:collapse">
           <tr>
-            <td class="info-lbl">${esc(r.l1)}</td>
-            <td class="info-sep">:</td>
-            <td class="info-val">${esc(r.v1)}</td>
+            <td style="width:92px;border:none;padding:2px 5px;font-size:8.5pt;font-weight:700;white-space:nowrap">${esc(r.l1)}</td>
+            <td style="width:10px;border:none;padding:2px 0;font-size:8.5pt;text-align:center">${r.l1?':':''}</td>
+            <td style="border:none;padding:2px 4px;font-size:8.5pt">${esc(r.v1)}</td>
           </tr>
         </table>
       </td>
-      <td class="info-cell" style="width:50%;border-right:1px solid #000;border-bottom:1px solid #000;">
-        <table class="info-inner">
+      <td style="width:50%;padding:0;border:1px solid #000;border-top:none;border-left:none">
+        <table class="di-inner" style="width:100%;border-collapse:collapse">
           <tr>
-            <td class="info-lbl">${esc(r.l2)}</td>
-            <td class="info-sep">:</td>
-            <td class="info-val">${esc(r.v2)}</td>
+            <td style="width:92px;border:none;padding:2px 5px;font-size:8.5pt;font-weight:700;white-space:nowrap">${esc(r.l2)}</td>
+            <td style="width:10px;border:none;padding:2px 0;font-size:8.5pt;text-align:center">${r.l2?':':''}</td>
+            <td style="border:none;padding:2px 4px;font-size:8.5pt">${esc(r.v2)}</td>
           </tr>
         </table>
       </td>
-    </tr>
-  `).join('');
+    </tr>`).join('');
 }
 
-function renderPeserta(list) {
-  let html = '';
-  for (let i = 0; i < ROWS; i++) {
-    const p   = list[i] || null;
-    const cls = (i % 2 === 0) ? 'odd' : 'even';
-    if (p) {
-      html += `<tr class="${cls}">
-        <td class="col-no">${i+1}</td>
-        <td class="col-nama" style="font-weight:500">${esc(p.nama)}</td>
-        <td class="col-nik">${esc(p.perner)}</td>
-        <td class="col-unit">${esc(p.unit)}</td>
-        <td class="col-jab">${esc(p.jabatan)}</td>
-        <td class="col-ttd">${p.ttd ? `<img src="${p.ttd}" class="ttd-img" alt="TTD">` : ''}</td>
+function renderPeserta(list){
+  let html='';
+  for(let i=0;i<ROWS;i++){
+    const p=list[i]||null;
+    const cls=(i+1)%2===0?'even':'odd';
+    if(p){
+      html+=`<tr class="${cls}">
+        <td class="cn">${i+1}</td>
+        <td class="cna" style="font-weight:500">${esc(p.nama)}</td>
+        <td class="ci">${esc(p.perner)}</td>
+        <td class="cu">${esc(p.unit)}</td>
+        <td class="cj">${esc(p.jabatan)}</td>
+        <td class="ct">${p.ttd?`<img src="${p.ttd}" class="ttd-img" alt="TTD">`:''}</td>
       </tr>`;
-    } else {
-      html += `<tr class="${cls}" style="height:19.5px">
-        <td class="col-no" style="font-size:8pt">${i+1}</td>
-        <td class="col-nama"></td>
-        <td class="col-nik"></td>
-        <td class="col-unit"></td>
-        <td class="col-jab"></td>
-        <td class="col-ttd"></td>
+    }else{
+      html+=`<tr class="${cls}" style="height:20px">
+        <td class="cn" style="font-size:8pt">${i+1}</td>
+        <td class="cna"></td><td class="ci"></td>
+        <td class="cu"></td><td class="cj"></td><td class="ct"></td>
       </tr>`;
     }
   }
-  document.getElementById('tbl-body').innerHTML = html;
+  document.getElementById('tbl-body').innerHTML=html;
 }
 
 init();
 </script>
-
 </body>
 </html>
