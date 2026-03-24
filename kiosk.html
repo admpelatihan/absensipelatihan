@@ -6,33 +6,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>SMART • Absensi Kiosk — Sido Muncul</title>
+<title>Absensi Kiosk — PT Sido Muncul</title>
 <link rel="icon" type="image/png" href="favicon.png">
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --primary: #059669;
-  --primary-dark: #047857;
-  --accent: #10b981;
-  --accent-light: #d1fae5;
-  --bg: #f1f5f9;
-  --white: #ffffff;
-  --text: #0f172a;
-  --text-muted: #64748b;
-  --text-light: #94a3b8;
-  --border: #e2e8f0;
-  --danger: #ef4444;
-  --danger-light: #fee2e2;
-  --warn: #f59e0b;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
-  --shadow-md: 0 4px 16px rgba(0,0,0,.1);
-  --shadow-lg: 0 10px 40px rgba(0,0,0,.15);
-  --radius: 14px;
-  --radius-sm: 8px;
-  --font: 'Plus Jakarta Sans', sans-serif;
+  --primary: #059669; --primary-dark: #047857; --accent: #10b981;
+  --accent-light: #d1fae5; --bg: #f1f5f9; --white: #ffffff;
+  --text: #0f172a; --text-muted: #64748b; --text-light: #94a3b8;
+  --border: #e2e8f0; --danger: #ef4444; --danger-light: #fee2e2;
+  --warn: #f59e0b; --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.1); --shadow-lg: 0 10px 40px rgba(0,0,0,.15);
+  --radius: 14px; --radius-sm: 8px; --font: 'Plus Jakarta Sans', sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-tap-highlight-color:transparent;user-select:none;}
@@ -41,12 +28,7 @@ input{font-family:var(--font);outline:none;}
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:10px;}
 
-/* LOADING */
-#loading-screen{
-position:fixed;inset:0;z-index:1000;
-background:linear-gradient(135deg,#059669 0%,#047857 100%);
-display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
-}
+#loading-screen{position:fixed;inset:0;z-index:1000;background:linear-gradient(135deg,#059669 0%,#047857 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;}
 .ls-logo{width:72px;height:72px;background:rgba(255,255,255,.15);border-radius:18px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:24px;color:#fff;}
 .ls-logo img{width:56px;height:56px;object-fit:contain;}
 .ls-title{color:#fff;font-size:20px;font-weight:800;}
@@ -54,174 +36,134 @@ display:flex;flex-direction:column;align-items:center;justify-content:center;gap
 .ls-spinner{width:34px;height:34px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* ERROR */
-#error-screen{display:none;position:fixed;inset:0;z-index:900;background:var(-bg);align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center;padding:24px;}
+#error-screen{display:none;position:fixed;inset:0;z-index:900;background:var(–bg);align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center;padding:24px;}
 #error-screen.show{display:flex;}
-.err-icon{width:64px;height:64px;background:var(-danger-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto;}
-.err-icon svg{width:32px;height:32px;color:var(-danger);}
+.err-icon{width:64px;height:64px;background:var(–danger-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto;}
 .err-title{font-size:20px;font-weight:800;}
-.err-msg{font-size:14px;color:var(-text-muted);max-width:400px;line-height:1.6;}
+.err-msg{font-size:14px;color:var(–text-muted);max-width:400px;line-height:1.6;}
+.err-hint{font-size:12px;color:var(–text-muted);background:#f8fafc;border:1px solid var(–border);border-radius:8px;padding:10px 14px;max-width:400px;margin-top:8px;text-align:left;line-height:1.7;}
+.btn-retry{padding:10px 24px;background:var(–primary);color:#fff;border:none;border-radius:8px;font-family:var(–font);font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
 
-/* OFFLINE */
-#offline-banner{display:none;position:fixed;top:0;left:0;right:0;z-index:500;background:var(-warn);color:#fff;text-align:center;padding:10px 16px;font-size:13px;font-weight:600;}
+#offline-banner{display:none;position:fixed;top:0;left:0;right:0;z-index:500;background:var(–warn);color:#fff;text-align:center;padding:10px 16px;font-size:13px;font-weight:600;}
 #offline-banner.show{display:block;}
 
-/* SAVING */
-#saving-indicator{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:600;background:rgba(0,0,0,.72);color:#fff;padding:20px 32px;border-radius:var(-radius);text-align:center;backdrop-filter:blur(4px);}
+#saving-indicator{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:600;background:rgba(0,0,0,.72);color:#fff;padding:20px 32px;border-radius:var(–radius);text-align:center;backdrop-filter:blur(4px);}
 #saving-indicator.show{display:block;}
 .saving-spinner{width:30px;height:30px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px;}
 .saving-text{font-size:13px;font-weight:600;}
 
-/* KIOSK APP */
 #kiosk-app{display:none;min-height:100vh;flex-direction:column;}
 #kiosk-app.show{display:flex;}
 
-/* HEADER */
-#kiosk-header{
-background:linear-gradient(135deg,#059669 0%,#047857 100%);
-color:#fff;padding:14px 18px;flex-shrink:0;
-position:sticky;top:0;z-index:100;box-shadow:var(-shadow-md);
-}
+#kiosk-header{background:linear-gradient(135deg,#059669 0%,#047857 100%);color:#fff;padding:14px 18px;flex-shrink:0;position:sticky;top:0;z-index:100;box-shadow:var(–shadow-md);}
 .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;}
 .header-logo{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .header-logo img{height:38px;width:auto;object-fit:contain;filter:brightness(0) invert(1);}
 .logo-box{width:38px;height:38px;background:rgba(255,255,255,.2);border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:#fff;flex-shrink:0;}
 .header-title{font-size:18px;font-weight:800;flex:1;text-align:center;padding:0 10px;line-height:1.3;}
 .header-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
-.absen-counter{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.9);color:var(-primary);border-radius:20px;padding:5px 12px;font-size:13px;font-weight:700;white-space:nowrap;}
-.btn-exit-kiosk{display:flex;align-items:center;gap:5px;padding:7px 12px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:var(-radius-sm);color:#fff;font-size:12px;font-weight:600;min-height:38px;cursor:pointer;white-space:nowrap;}
+.absen-counter{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.9);color:var(–primary);border-radius:20px;padding:5px 12px;font-size:13px;font-weight:700;white-space:nowrap;}
+.btn-exit-kiosk{display:flex;align-items:center;gap:5px;padding:7px 12px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:var(–radius-sm);color:#fff;font-size:12px;font-weight:600;min-height:38px;cursor:pointer;white-space:nowrap;}
 .btn-exit-kiosk:hover{background:rgba(255,255,255,.25);}
 .header-info{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;}
 .info-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.15);border-radius:20px;padding:4px 11px;font-size:11px;font-weight:500;}
 .info-chip svg{width:11px;height:11px;opacity:.8;}
 
-/* BODY */
 #kiosk-body{flex:1;padding:18px;overflow-y:auto;}
 
-/* SELESAI */
-#selesai-banner{display:none;background:var(-accent-light);border:2px solid var(-primary);border-radius:var(-radius);padding:18px;text-align:center;margin-bottom:16px;}
+#selesai-banner{display:none;background:var(–accent-light);border:2px solid var(–primary);border-radius:var(–radius);padding:18px;text-align:center;margin-bottom:16px;}
 #selesai-banner.show{display:block;}
-.selesai-text{font-size:15px;font-weight:700;color:var(-primary);}
-.selesai-sub{font-size:12px;color:var(-text-muted);margin-top:4px;}
+.selesai-text{font-size:15px;font-weight:700;color:var(–primary);}
+.selesai-sub{font-size:12px;color:var(–text-muted);margin-top:4px;}
 
-/* PESERTA GRID */
 .peserta-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-bottom:18px;}
 
-/* PESERTA CARD */
-.peserta-card{
-background:var(-white);border:2px solid var(-border);border-radius:var(-radius);
-padding:14px;cursor:pointer;transition:all .2s;box-shadow:var(-shadow-sm);
-min-height:95px;display:flex;flex-direction:column;justify-content:space-between;
--webkit-tap-highlight-color:transparent;
-}
+.peserta-card{background:var(–white);border:2px solid var(–border);border-radius:var(–radius);padding:14px;cursor:pointer;transition:all .2s;box-shadow:var(–shadow-sm);min-height:95px;display:flex;flex-direction:column;justify-content:space-between;-webkit-tap-highlight-color:transparent;}
 .peserta-card:active{transform:scale(.97);}
-.peserta-card:hover:not(.done){border-color:var(-accent);box-shadow:var(-shadow-md);transform:translateY(-2px);}
-.peserta-card.done{border-color:var(-primary);background:var(-accent-light);cursor:default;}
+.peserta-card:hover:not(.done){border-color:var(–accent);box-shadow:var(–shadow-md);transform:translateY(-2px);}
+.peserta-card.done{border-color:var(–primary);background:var(–accent-light);cursor:default;}
 .peserta-card.done:hover{transform:none;}
-.card-nama{font-size:14px;font-weight:700;color:var(-text);line-height:1.3;margin-bottom:3px;word-break:break-word;}
-.card-perner{font-size:11px;color:var(-text-muted);margin-bottom:3px;}
-.card-unit{font-size:11px;color:var(-text-muted);}
+.card-nama{font-size:14px;font-weight:700;color:var(–text);line-height:1.3;margin-bottom:3px;word-break:break-word;}
+.card-perner{font-size:11px;color:var(–text-muted);margin-bottom:3px;}
+.card-unit{font-size:11px;color:var(–text-muted);}
 .card-status{display:flex;align-items:center;gap:5px;margin-top:9px;padding-top:9px;border-top:1px solid rgba(0,0,0,.06);}
 .status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.status-dot.done{background:var(-primary);}
-.status-dot.pending{background:var(-text-light);}
+.status-dot.done{background:var(–primary);}
+.status-dot.pending{background:var(–text-light);}
 .status-label{font-size:11px;font-weight:600;}
-.status-label.done{color:var(-primary);}
-.status-label.pending{color:var(-text-muted);}
-.status-time{font-size:10px;color:var(-text-muted);margin-left:auto;}
-.card-check{width:26px;height:26px;background:var(-primary);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-left:auto;flex-shrink:0;}
-.card-check svg{width:13px;height:13px;color:#fff;}
+.status-label.done{color:var(–primary);}
+.status-label.pending{color:var(–text-muted);}
+.status-time{font-size:10px;color:var(–text-muted);margin-left:auto;}
+.card-check{width:26px;height:26px;background:var(–primary);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-left:auto;flex-shrink:0;}
 
-/* SUSULAN BTN */
-.btn-susulan{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;background:var(-white);border:2px dashed var(-border);border-radius:var(-radius);color:var(-text-muted);font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;min-height:54px;margin-top:6px;}
-.btn-susulan:hover{border-color:var(-primary);color:var(-primary);background:var(-accent-light);}
+.btn-susulan{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;background:var(–white);border:2px dashed var(–border);border-radius:var(–radius);color:var(–text-muted);font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;min-height:54px;margin-top:6px;}
+.btn-susulan:hover{border-color:var(–primary);color:var(–primary);background:var(–accent-light);}
 
-/* TTD OVERLAY */
 #ttd-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:14px;}
 #ttd-overlay.open{display:flex;}
-#ttd-panel{background:var(-white);border-radius:20px;width:100%;max-width:520px;box-shadow:var(-shadow-lg);animation:panelIn .25s cubic-bezier(.34,1.56,.64,1);overflow:hidden;}
+#ttd-panel{background:var(–white);border-radius:20px;width:100%;max-width:520px;box-shadow:var(–shadow-lg);animation:panelIn .25s cubic-bezier(.34,1.56,.64,1);overflow:hidden;}
 @keyframes panelIn{from{opacity:0;transform:scale(.9) translateY(20px);}to{opacity:1;transform:scale(1) translateY(0);}}
 .ttd-header{background:linear-gradient(135deg,#059669,#047857);padding:16px 20px;color:#fff;}
 .ttd-header-label{font-size:10px;font-weight:600;opacity:.8;margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;}
 .ttd-peserta-nama{font-size:20px;font-weight:800;}
 .ttd-peserta-meta{font-size:12px;opacity:.75;margin-top:2px;}
 .ttd-body{padding:16px 18px 18px;}
-.canvas-label{font-size:12px;font-weight:600;color:var(-text-muted);margin-bottom:8px;}
-#ttd-canvas-wrap{position:relative;background:#fff;border:2px solid var(-border);border-radius:var(-radius-sm);overflow:hidden;touch-action:none;}
-#ttd-canvas-wrap.drawing{border-color:var(-primary);}
+.canvas-label{font-size:12px;font-weight:600;color:var(–text-muted);margin-bottom:8px;}
+#ttd-canvas-wrap{position:relative;background:#fff;border:2px solid var(–border);border-radius:var(–radius-sm);overflow:hidden;touch-action:none;}
+#ttd-canvas-wrap.drawing{border-color:var(–primary);}
 #ttd-canvas{display:block;width:100%;height:200px;cursor:crosshair;touch-action:none;}
 .canvas-hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;transition:opacity .2s;}
-.canvas-hint-inner{text-align:center;color:var(-text-light);font-size:12px;font-weight:500;padding:16px;}
+.canvas-hint-inner{text-align:center;color:var(–text-light);font-size:12px;font-weight:500;padding:16px;}
 .canvas-hint-inner svg{width:22px;height:22px;display:block;margin:0 auto 5px;opacity:.35;}
 .ttd-actions{display:flex;gap:9px;margin-top:13px;}
-.btn-ttd{display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 14px;border-radius:var(-radius-sm);font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;flex:1;min-height:48px;}
-.btn-ttd-clear{background:var(-bg);color:var(-text-muted);border:1px solid var(-border);}
+.btn-ttd{display:flex;align-items:center;justify-content:center;gap:6px;padding:11px 14px;border-radius:var(–radius-sm);font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;flex:1;min-height:48px;}
+.btn-ttd-clear{background:var(–bg);color:var(–text-muted);border:1px solid var(–border);}
 .btn-ttd-clear:hover{background:#e2e8f0;}
-.btn-ttd-cancel{background:var(-white);color:var(-danger);border:1px solid var(-danger);}
-.btn-ttd-cancel:hover{background:var(-danger-light);}
-.btn-ttd-save{background:var(-primary);color:#fff;border:none;flex:1.5;}
-.btn-ttd-save:hover{background:var(-primary-dark);}
+.btn-ttd-cancel{background:var(–white);color:var(–danger);border:1px solid var(–danger);}
+.btn-ttd-cancel:hover{background:var(–danger-light);}
+.btn-ttd-save{background:var(–primary);color:#fff;border:none;flex:1.5;}
+.btn-ttd-save:hover{background:var(–primary-dark);}
 
-/* SUSULAN OVERLAY */
 #susulan-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:14px;}
 #susulan-overlay.open{display:flex;}
-#susulan-panel{background:var(-white);border-radius:20px;width:100%;max-width:460px;box-shadow:var(-shadow-lg);animation:panelIn .25s ease;overflow:hidden;}
-.susulan-hdr{padding:16px 20px 13px;border-bottom:1px solid var(-border);display:flex;align-items:center;justify-content:space-between;}
+#susulan-panel{background:var(–white);border-radius:20px;width:100%;max-width:460px;box-shadow:var(–shadow-lg);animation:panelIn .25s ease;overflow:hidden;}
+.susulan-hdr{padding:16px 20px 13px;border-bottom:1px solid var(–border);display:flex;align-items:center;justify-content:space-between;}
 .susulan-title{font-size:16px;font-weight:800;}
-.btn-cls{width:32px;height:32px;border-radius:var(-radius-sm);background:var(-bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(-text-muted);}
-.btn-cls:hover{background:var(-danger-light);color:var(-danger);}
+.btn-cls{width:32px;height:32px;border-radius:var(–radius-sm);background:var(–bg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(–text-muted);}
+.btn-cls:hover{background:var(–danger-light);color:var(–danger);}
 .susulan-bdy{padding:14px 18px 18px;}
 .srch-wrap{position:relative;margin-bottom:10px;}
-.srch-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(-text-muted);pointer-events:none;}
-.srch-input{width:100%;padding:11px 11px 11px 36px;border:1.5px solid var(-border);border-radius:var(-radius-sm);font-size:14px;font-family:var(-font);min-height:46px;}
-.srch-input:focus{border-color:var(-primary);box-shadow:0 0 0 3px rgba(5,150,105,.1);}
-#susulan-results{max-height:260px;overflow-y:auto;border:1px solid var(-border);border-radius:var(-radius-sm);background:var(-white);}
+.srch-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(–text-muted);pointer-events:none;}
+.srch-input{width:100%;padding:11px 11px 11px 36px;border:1.5px solid var(–border);border-radius:var(–radius-sm);font-size:14px;font-family:var(–font);min-height:46px;}
+.srch-input:focus{border-color:var(–primary);box-shadow:0 0 0 3px rgba(5,150,105,.1);}
+#susulan-results{max-height:260px;overflow-y:auto;border:1px solid var(–border);border-radius:var(–radius-sm);background:var(–white);}
 .sus-item{padding:11px 13px;border-bottom:1px solid #f1f5f9;cursor:pointer;transition:background .1s;display:flex;align-items:center;justify-content:space-between;}
 .sus-item:last-child{border-bottom:none;}
-.sus-item:hover{background:var(-accent-light);}
+.sus-item:hover{background:var(–accent-light);}
 .sus-name{font-size:14px;font-weight:600;}
-.sus-meta{font-size:11px;color:var(-text-muted);margin-top:2px;}
-.sus-empty{padding:22px;text-align:center;color:var(-text-muted);font-size:13px;}
+.sus-meta{font-size:11px;color:var(–text-muted);margin-top:2px;}
+.sus-empty{padding:22px;text-align:center;color:var(–text-muted);font-size:13px;}
 
-/* EXIT OVERLAY */
 #exit-overlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:16px;}
 #exit-overlay.open{display:flex;}
-#exit-panel{background:var(-white);border-radius:20px;width:100%;max-width:360px;padding:26px;text-align:center;box-shadow:var(-shadow-lg);animation:panelIn .25s ease;}
+#exit-panel{background:var(–white);border-radius:20px;width:100%;max-width:360px;padding:26px;text-align:center;box-shadow:var(–shadow-lg);animation:panelIn .25s ease;}
 .exit-icon{width:54px;height:54px;background:#fef3c7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
-.exit-icon svg{width:26px;height:26px;color:#d97706;}
 .exit-title{font-size:17px;font-weight:800;margin-bottom:6px;}
-.exit-desc{font-size:12px;color:var(-text-muted);margin-bottom:18px;line-height:1.5;}
-.exit-input{width:100%;padding:11px 16px;border:1.5px solid var(-border);border-radius:var(-radius-sm);font-size:15px;font-family:var(-font);text-align:center;letter-spacing:2px;margin-bottom:6px;min-height:46px;}
-.exit-input:focus{border-color:var(-primary);box-shadow:0 0 0 3px rgba(5,150,105,.1);}
-.exit-error{font-size:12px;color:var(-danger);margin-bottom:12px;min-height:16px;}
+.exit-desc{font-size:12px;color:var(–text-muted);margin-bottom:18px;line-height:1.5;}
+.exit-input{width:100%;padding:11px 16px;border:1.5px solid var(–border);border-radius:var(–radius-sm);font-size:15px;font-family:var(–font);text-align:center;letter-spacing:2px;margin-bottom:6px;min-height:46px;}
+.exit-input:focus{border-color:var(–primary);box-shadow:0 0 0 3px rgba(5,150,105,.1);}
+.exit-error{font-size:12px;color:var(–danger);margin-bottom:12px;min-height:16px;}
 .exit-btns{display:flex;gap:9px;}
-.btn-exit-cancel{flex:1;padding:11px;background:var(-bg);border:1px solid var(-border);border-radius:var(-radius-sm);font-size:14px;font-weight:600;color:var(-text-muted);cursor:pointer;min-height:46px;}
-.btn-exit-ok{flex:1;padding:11px;background:var(-primary);border:none;border-radius:var(-radius-sm);font-size:14px;font-weight:700;color:#fff;cursor:pointer;min-height:46px;}
-.btn-exit-ok:hover{background:var(-primary-dark);}
+.btn-exit-cancel{flex:1;padding:11px;background:var(–bg);border:1px solid var(–border);border-radius:var(–radius-sm);font-size:14px;font-weight:600;color:var(–text-muted);cursor:pointer;min-height:46px;}
+.btn-exit-ok{flex:1;padding:11px;background:var(–primary);border:none;border-radius:var(–radius-sm);font-size:14px;font-weight:700;color:#fff;cursor:pointer;min-height:46px;}
+.btn-exit-ok:hover{background:var(–primary-dark);}
 
-/* MINI TOAST */
-#mini-toast{display:none;position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:400;background:var(-text);color:#fff;padding:11px 20px;border-radius:30px;font-size:13px;font-weight:600;white-space:nowrap;box-shadow:var(-shadow-lg);animation:toastUp .25s ease;}
+#mini-toast{display:none;position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:400;background:var(–text);color:#fff;padding:11px 20px;border-radius:30px;font-size:13px;font-weight:600;white-space:nowrap;box-shadow:var(–shadow-lg);animation:toastUp .25s ease;}
 @keyframes toastUp{from{opacity:0;transform:translateX(-50%) translateY(8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
 
-/* RESPONSIVE */
-@media(min-width:768px){
-.peserta-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
-#ttd-canvas{height:240px;}
-.header-title{font-size:19px;}
-}
-@media(max-width:480px){
-.peserta-grid{grid-template-columns:repeat(2,1fr);gap:9px;}
-.header-title{font-size:14px;}
-.info-chip{font-size:10px;padding:3px 8px;}
-#kiosk-body{padding:12px;}
-.peserta-card{padding:11px;}
-.card-nama{font-size:13px;}
-#ttd-canvas{height:180px;}
-}
-@media(max-width:360px){
-.card-nama{font-size:12px;}
-.header-title{font-size:13px;}
-}
+@media(min-width:768px){.peserta-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}#ttd-canvas{height:240px;}.header-title{font-size:19px;}}
+@media(max-width:480px){.peserta-grid{grid-template-columns:repeat(2,1fr);gap:9px;}.header-title{font-size:14px;}.info-chip{font-size:10px;padding:3px 8px;}#kiosk-body{padding:12px;}.peserta-card{padding:11px;}.card-nama{font-size:13px;}#ttd-canvas{height:180px;}}
+@media(max-width:360px){.card-nama{font-size:12px;}.header-title{font-size:13px;}}
 </style>
 
 </head>
@@ -245,6 +187,8 @@ min-height:95px;display:flex;flex-direction:column;justify-content:space-between
   </div>
   <div class="err-title" id="err-title">Terjadi Kesalahan</div>
   <div class="err-msg" id="err-msg">Halaman tidak dapat dimuat.</div>
+  <div class="err-hint" id="err-hint" style="display:none"></div>
+  <button class="btn-retry" onclick="location.reload()">Coba Lagi</button>
 </div>
 
 <div id="offline-banner">⚠️ Koneksi terputus — Pastikan terhubung ke internet</div>
@@ -380,14 +324,10 @@ min-height:95px;display:flex;flex-direction:column;justify-content:space-between
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import {
-  getAuth, onAuthStateChanged, signInWithEmailAndPassword
-} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-import {
-  getFirestore,
-  doc, getDoc, getDocs, addDoc, setDoc,
-  collection, query, where,
-  onSnapshot, serverTimestamp
+  getFirestore, doc, getDoc, getDocs, addDoc, setDoc,
+  collection, query, where, onSnapshot, serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const firebaseConfig = {
@@ -399,44 +339,38 @@ const firebaseConfig = {
   appId: "1:518545818905:web:d56035cc0678c58328f188"
 };
 
-// Ganti kode ini sesuai kebutuhan
-let KIOSK_EXIT_CODE = sessionStorage.getItem("exitCode") || sessionStorage.getItem("perner") || "SM2024";
+const KIOSK_EXIT_CODE = "SM2024";
+// Akun khusus kiosk — buat sekali di Firebase Console:
+// email: kiosk@absensipelatihan.com, password: KioskSM2024!
+// Atau gunakan akun superadmin sebagai fallback
+const KIOSK_EMAIL = "superadmin@absensipelatihan.com";
+const KIOSK_PASSWORD = "200596";
 
-const app  = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
-// STATE
-let pelatihanData = null;
-let pesertaList   = [];
-let absensiMap    = {};
-let currentPerner = null;
-let isDrawing = false;
-let hasDrawn  = false;
-let unsubFn   = null;
-let idPelatihan = null;
-let allKaryawanCache = null;
+let pelatihanData = null, pesertaList = [], absensiMap = {};
+let currentPerner = null, isDrawing = false, hasDrawn = false;
+let unsubFn = null, idPelatihan = null, allKaryawanCache = null;
 let canvas, ctx;
 
-// RETRY
 async function withRetry(fn, n=3, d=1200) {
-  for (let i=0;i<n;i++) {
-    try { return await fn(); }
-    catch(e) { if(i===n-1) throw e; await new Promise(r=>setTimeout(r,d)); }
-  }
+  for (let i=0;i<n;i++) { try { return await fn(); } catch(e) { if(i===n-1) throw e; await new Promise(r=>setTimeout(r,d)); } }
 }
 
-function showError(title, msg) {
+function showError(title, msg, hint='') {
   document.getElementById('loading-screen').style.display = 'none';
   document.getElementById('err-title').textContent = title;
-  document.getElementById('err-msg').textContent   = msg;
+  document.getElementById('err-msg').textContent = msg;
+  const hintEl = document.getElementById('err-hint');
+  if (hint) { hintEl.innerHTML = hint; hintEl.style.display = 'block'; }
   document.getElementById('error-screen').classList.add('show');
 }
 
 function showMiniToast(msg, ms=2800) {
   const t = document.getElementById('mini-toast');
-  t.textContent = msg;
-  t.style.display = 'block';
+  t.textContent = msg; t.style.display = 'block';
   clearTimeout(t._t);
   t._t = setTimeout(()=>{ t.style.display='none'; }, ms);
 }
@@ -447,43 +381,59 @@ function fmtTime(ts) {
   return d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
 }
 
-// OFFLINE
 window.addEventListener('online',  ()=>document.getElementById('offline-banner').classList.remove('show'));
 window.addEventListener('offline', ()=>document.getElementById('offline-banner').classList.add('show'));
 
-// NAV LOCK
 function lockNav() {
   history.pushState(null,'',location.href);
   window.onpopstate = ()=>history.pushState(null,'',location.href);
   window.onbeforeunload = e=>{ e.preventDefault(); e.returnValue='Kiosk aktif. Yakin keluar?'; return e.returnValue; };
 }
 
-// INIT
+async function doAuth() {
+  // Coba ambil kredensial dari sessionStorage (jika dibuka dari app.html)
+  try {
+    const ae = sessionStorage.getItem('__ae');
+    const ap = sessionStorage.getItem('__ap');
+    if (ae && ap) {
+      const email = atob(ae);
+      const pw = atob(ap);
+      await signInWithEmailAndPassword(auth, email, pw);
+      return true;
+    }
+  } catch(e) { /* fallthrough ke kiosk account */ }
+
+  // Fallback: login dengan akun kiosk khusus / superadmin
+  try {
+    await signInWithEmailAndPassword(auth, KIOSK_EMAIL, KIOSK_PASSWORD);
+    return true;
+  } catch(e) {
+    throw new Error(`Auth gagal: ${e.message}. Pastikan membuka kiosk dari aplikasi utama (app.html) atau hubungi admin.`);
+  }
+}
+
 async function init() {
   const params = new URLSearchParams(location.search);
   idPelatihan  = params.get('id');
-  if (!idPelatihan) { showError('ID Tidak Ditemukan','Parameter ID pelatihan tidak ada di URL. Hubungi admin.'); return; }
+  if (!idPelatihan) {
+    showError('ID Tidak Ditemukan', 'Parameter ID pelatihan tidak ada di URL.', 'Buka kiosk melalui tombol "Buka Kiosk" di halaman Pelatihan pada aplikasi utama.');
+    return;
+  }
 
-  // Verifikasi sesi — kiosk hanya bisa dibuka setelah login dari app.html
-  const sessionUid = sessionStorage.getItem('uid');
-  if (!sessionUid) {
-    const authUser = await new Promise(res => {
-      const unsub = onAuthStateChanged(auth, user => { unsub(); res(user); });
-      setTimeout(() => res(null), 5000);
-    });
-    if (!authUser) {
-      showError(
-        'Akses Ditolak',
-        'Halaman kiosk hanya bisa dibuka dari menu Pelatihan di aplikasi E-Attendance. Silakan login terlebih dahulu.'
-      );
-      setTimeout(() => { window.location.href = 'index.html'; }, 4000);
-      return;
-    }
+  try {
+    await doAuth();
+  } catch(e) {
+    showError(
+      'Gagal Masuk ke Sistem',
+      e.message,
+      '💡 <b>Cara memperbaiki:</b><br>1. Buka kiosk dari tombol "Buka Kiosk" di app.html (bukan langsung dari URL)<br>2. Atau aktifkan <b>Anonymous Authentication</b> di Firebase Console → Authentication → Sign-in method'
+    );
+    return;
   }
 
   try {
     const pelSnap = await withRetry(()=>getDoc(doc(db,'pelatihan',idPelatihan)));
-    if (!pelSnap.exists()) { showError('Pelatihan Tidak Ditemukan',`ID "${idPelatihan}" tidak ditemukan di sistem.`); return; }
+    if (!pelSnap.exists()) { showError('Pelatihan Tidak Ditemukan', `ID "${idPelatihan}" tidak ditemukan.`); return; }
     pelatihanData = { id: idPelatihan, ...pelSnap.data() };
 
     await loadPeserta();
@@ -502,13 +452,13 @@ async function init() {
       document.getElementById('btn-susulan').style.display = 'flex';
     }
   } catch(e) {
-    showError('Gagal Memuat Data','Error: '+e.message);
+    showError('Gagal Memuat Data', 'Error: ' + e.message);
   }
 }
 
 async function loadPeserta() {
   const ppSnap = await withRetry(()=>getDocs(query(collection(db,'peserta_pelatihan'),where('id_pelatihan','==',idPelatihan))));
-  const perners = ppSnap.docs.map(d=>d.data().perner);
+  const perners = [...new Set(ppSnap.docs.map(d=>d.data().perner))]; // deduplicate
   pesertaList = [];
   for (const perner of perners) {
     try {
@@ -528,8 +478,7 @@ function setupRealtime() {
     snap => {
       absensiMap = {};
       snap.forEach(d=>{ const x=d.data(); absensiMap[x.perner]=x; });
-      updateCards();
-      updateCounter();
+      updateCards(); updateCounter();
     }
   );
 }
@@ -539,7 +488,7 @@ function renderHeader() {
   document.getElementById('header-topik').textContent = p.topik||'—';
   const chips = [
     { ic:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/>', txt:`${p.hari||''}, ${p.tanggal||''}` },
-    { ic:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', txt:`${p.waktu_mulai||''}-${p.waktu_selesai||''}` },
+    { ic:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', txt:`${p.waktu_mulai||''}–${p.waktu_selesai||''}` },
     p.lokasi ? { ic:'<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>', txt:p.lokasi } : null,
     p.instruktur ? { ic:'<circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/>', txt:p.instruktur } : null,
     p.batch ? { ic:'<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>', txt:'Batch '+p.batch } : null,
@@ -551,10 +500,10 @@ function renderHeader() {
 
 function buildCard(k) {
   const abs = absensiMap[k.perner], done = !!abs;
-  const pE  = k.perner.replace(/'/g,"\\'");
-  const nE  = (k.nama_lengkap||'').replace(/'/g,"\\'");
-  const uE  = (k.unit||'').replace(/'/g,"\\'");
-  const jE  = (k.jabatan||'').replace(/'/g,"\\'");
+  const pE=(k.perner||'').replace(/'/g,"\\'");
+  const nE=(k.nama_lengkap||'').replace(/'/g,"\\'");
+  const uE=(k.unit||'').replace(/'/g,"\\'");
+  const jE=(k.jabatan||'').replace(/'/g,"\\'");
   return `<div class="peserta-card ${done?'done':''}" id="card-${k.perner}"
     onclick="tapCard('${pE}','${nE}','${uE}','${jE}',${done})">
     <div>
@@ -574,9 +523,7 @@ function buildCard(k) {
 function renderGrid() {
   const g = document.getElementById('peserta-grid');
   if (!pesertaList.length) {
-    g.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)">
-      <div style="font-size:15px;font-weight:700;margin-bottom:5px">Belum ada peserta</div>
-      <div style="font-size:12px">Tambah peserta melalui tombol di bawah</div></div>`;
+    g.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)"><div style="font-size:15px;font-weight:700;margin-bottom:5px">Belum ada peserta</div><div style="font-size:12px">Tambah peserta melalui tombol di bawah</div></div>`;
     return;
   }
   g.innerHTML = pesertaList.map(buildCard).join('');
@@ -595,14 +542,12 @@ function updateCounter() {
   document.getElementById('absen-counter').textContent = `${sudah} / ${total} absen`;
 }
 
-// TAP CARD
 window.tapCard = function(perner, nama, unit, jabatan, done) {
   if (done) { showMiniToast(`✓ ${nama} sudah melakukan absensi`); return; }
   if (pelatihanData.status==='selesai') { showMiniToast('Pelatihan sudah selesai, absensi ditutup'); return; }
   openTTD(perner, nama, unit, jabatan);
 };
 
-// CANVAS
 function initCanvas() {
   canvas = document.getElementById('ttd-canvas');
   ctx    = canvas.getContext('2d');
@@ -694,7 +639,6 @@ window.simpanAbsen = async function(){
   }
 };
 
-// SUSULAN
 window.openSusulan = function(){
   document.getElementById('susulan-search').value='';
   document.getElementById('susulan-results').innerHTML='<div class="sus-empty">Ketik nama atau perner untuk mencari</div>';
@@ -733,9 +677,7 @@ window.searchSusulan = async function(){
         <div class="sus-name">${k.nama_lengkap||k.perner}</div>
         <div class="sus-meta">${k.perner} · ${k.unit}${k.bagian?' · '+k.bagian:''}</div>
       </div>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="color:var(--primary);flex-shrink:0">
-        <path d="M12 5v14M5 12h14"/>
-      </svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="color:var(--primary);flex-shrink:0"><path d="M12 5v14M5 12h14"/></svg>
     </div>`;
   }).join('');
 };
@@ -749,9 +691,11 @@ window.tambahSusulan = async function(perner,nama,unit,bagian,jabatan){
       ditambahkan_oleh:'kiosk-susulan',
       tgl_ditambahkan:serverTimestamp()
     }));
-    pesertaList.push({perner,nama_lengkap:nama,unit,bagian,jabatan});
-    pesertaList.sort((a,b)=>(a.nama_lengkap||'').localeCompare(b.nama_lengkap||''));
-    renderGrid(); updateCounter();
+    if (!pesertaList.find(p=>p.perner===perner)) {
+      pesertaList.push({perner,nama_lengkap:nama,unit,bagian,jabatan});
+      pesertaList.sort((a,b)=>(a.nama_lengkap||'').localeCompare(b.nama_lengkap||''));
+      renderGrid(); updateCounter();
+    }
     showMiniToast(`✓ ${nama} ditambahkan sebagai peserta susulan`);
   }catch(e){
     showMiniToast('❌ Gagal: '+e.message);
@@ -760,7 +704,6 @@ window.tambahSusulan = async function(perner,nama,unit,bagian,jabatan){
   }
 };
 
-// EXIT
 window.openExitOverlay = function(){
   document.getElementById('exit-password').value='';
   document.getElementById('exit-error').textContent='';
@@ -775,13 +718,11 @@ window.doExit = async function(){
   errEl.textContent='';
   if(!pwd){errEl.textContent='Masukkan kode keluar';return;}
 
-  // Cek kode statik
   if(pwd===KIOSK_EXIT_CODE){
     window.onbeforeunload=null; window.onpopstate=null;
     window.location.href='app.html'; return;
   }
 
-  // Coba auth Firebase dengan password pembuat form
   try{
     const pelSnap=await getDoc(doc(db,'pelatihan',idPelatihan));
     if(pelSnap.exists()){
@@ -794,20 +735,18 @@ window.doExit = async function(){
             await signInWithEmailAndPassword(auth,`${perner}@absensipelatihan.com`,pwd);
             window.onbeforeunload=null; window.onpopstate=null;
             window.location.href='app.html'; return;
-          }catch(ae){ /* wrong password */ }
+          }catch(ae){}
         }
       }
     }
-  }catch(e){ /* fallthrough */ }
+  }catch(e){}
 
   errEl.textContent='Kode keluar salah. Coba lagi.';
   document.getElementById('exit-password').value='';
   document.getElementById('exit-password').focus();
 };
 
-// CLEANUP
 window.addEventListener('pagehide',()=>{ if(unsubFn) unsubFn(); });
-
 init();
 </script>
 
