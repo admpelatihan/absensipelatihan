@@ -1,212 +1,272 @@
 <!DOCTYPE html>
+
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SMART · Sido Muncul</title>
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #059669;
-            --primary-dark: #047857;
-            --accent: #10b981;
-            --bg: #f0fdf9;
-            --text: #0f172a;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* Background Animasi */
-        .bg-blobs {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: linear-gradient(45deg, #f0fdf4, #ecfdf5, #f0fdf9);
-            background-size: 400% 400%;
-            animation: gradientBG 14s ease infinite;
-        }
-
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(60px);
-            z-index: -1;
-            opacity: 0.5;
-        }
-
-        /* Container Login */
-        .login-card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            width: 90%;
-            max-width: 400px;
-            padding: 2.5rem 2rem;
-            border-radius: 24px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            text-align: center;
-            animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(20px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .logo { width: 80px; margin-bottom: 1.5rem; }
-
-        h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
-        h1 span { color: var(--primary); }
-        p.subtitle { font-size: 0.85rem; color: #64748b; margin-bottom: 2rem; line-height: 1.4; }
-
-        .form-group { text-align: left; margin-bottom: 1.25rem; }
-        label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: #475569; }
-        
-        input {
-            width: 100%;
-            padding: 12px 16px;
-            border-radius: 12px;
-            border: 1.5px solid #e2e8f0;
-            background: white;
-            font-family: inherit;
-            font-size: 1rem;
-            transition: all 0.2s;
-            outline: none;
-        }
-
-        input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.1); }
-
-        .btn-login {
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            border: none;
-            background: var(--primary);
-            color: white;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            margin-top: 1rem;
-        }
-
-        .btn-login:active { transform: scale(0.96); background: var(--primary-dark); }
-
-        footer { margin-top: 2rem; font-size: 0.75rem; color: #94a3b8; }
-
-        /* Toast Notification */
-        #toast {
-            position: fixed;
-            top: 20px;
-            right: -300px;
-            background: #ef4444;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 1000;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-Attendance — PT Sido Muncul</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --primary: #059669; --accent: #10b981; --bg: #f1f5f9;
+    --white: #ffffff; --text: #0f172a; --text-muted: #64748b;
+    --border: #e2e8f0; --error: #ef4444; --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .login-wrapper { width: 100%; max-width: 420px; }
+  .login-card { background: var(--white); border-radius: 20px; padding: 40px 36px; box-shadow: var(--shadow); }
+  .logo-area { text-align: center; margin-bottom: 28px; }
+  .logo-area img { height: 56px; object-fit: contain; margin-bottom: 12px; }
+  .logo-area .logo-fallback { display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 16px; margin-bottom: 12px; }
+  .logo-area .logo-fallback span { color: white; font-size: 24px; font-weight: 800; }
+  .logo-area h1 { font-size: 20px; font-weight: 800; color: var(--text); line-height: 1.2; }
+  .logo-area p { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+  .divider { height: 1px; background: var(--border); margin: 24px 0; }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .input-wrap { position: relative; }
+  .input-wrap input { width: 100%; padding: 13px 16px; padding-right: 44px; border: 1.5px solid var(--border); border-radius: 12px; font-family: inherit; font-size: 15px; color: var(--text); background: var(--bg); transition: border-color 0.2s, box-shadow 0.2s; outline: none; -webkit-appearance: none; }
+  .input-wrap input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(5,150,105,0.12); background: white; }
+  .input-wrap input.error { border-color: var(--error); }
+  .toggle-pw { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 4px; display: flex; align-items: center; }
+  .error-msg { display: none; font-size: 12px; color: var(--error); margin-top: 5px; font-weight: 500; }
+  .error-msg.show { display: block; }
+  .alert-box { display: none; padding: 12px 14px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 10px; font-size: 13px; color: #b91c1c; margin-bottom: 16px; font-weight: 500; }
+  .alert-box.show { display: block; }
+  .btn-login { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; border: none; border-radius: 12px; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 8px; transition: opacity 0.2s, transform 0.1s; min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-login:active { transform: scale(0.98); }
+  .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
+  .spinner { width: 18px; height: 18px; border: 2.5px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+  .btn-login.loading .spinner { display: block; }
+  .btn-login.loading .btn-text { display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .footer-note { text-align: center; margin-top: 20px; font-size: 12px; color: var(--text-muted); }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; padding: 16px; }
+  .modal-overlay.show { display: flex; }
+  .modal-card { background: white; border-radius: 20px; padding: 32px 28px; width: 100%; max-width: 400px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+  .modal-card h2 { font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+  .modal-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
+  .modal-card .badge-warn { display: inline-block; background: #fef3c7; color: #92400e; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; margin-bottom: 16px; }
+</style>
 </head>
 <body>
-    <div class="bg-blobs"></div>
-    <div class="blob" style="width: 300px; height: 300px; background: var(--primary); left: -100px; bottom: -100px;"></div>
-    <div class="blob" style="width: 250px; height: 250px; background: var(--accent); right: -50px; top: -50px;"></div>
-
-    <div class="login-card">
-        <img src="logo.png" alt="Logo" class="logo">
-        <h1>SMART <span>·</span> Sido Muncul</h1>
-        <p class="subtitle">Sistem Manajemen Absensi<br>dan Rekap Training</p>
-
-        <div class="form-group">
-            <label>ID Karyawan / Perner</label>
-            <input type="text" id="perner" placeholder="Contoh: 90004827" inputmode="numeric">
-        </div>
-
-        <div class="form-group">
-            <label>Password</label>
-            <input type="password" id="password" placeholder="••••••••">
-        </div>
-
-        <button class="btn-login" id="btnLogin">Masuk</button>
-
-        <footer>PT Sido Muncul · HR-MI · 2026</footer>
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="logo-area">
+      <img src="logo.png" alt="Sido Muncul" onerror="this.style.display='none';document.getElementById('logoFallback').style.display='inline-flex'">
+      <div class="logo-fallback" id="logoFallback" style="display:none"><span>SM</span></div>
+      <h1>E-Attendance</h1>
+      <p>Sistem Absensi Digital Pelatihan</p>
     </div>
+    <div class="divider"></div>
+    <div class="alert-box" id="alertBox"></div>
+    <div class="form-group">
+      <label for="inputId">ID / Perner</label>
+      <div class="input-wrap">
+        <input type="text" id="inputId" placeholder="Masukkan ID atau Perner" inputmode="numeric" autocomplete="off">
+      </div>
+      <div class="error-msg" id="errId">ID tidak boleh kosong</div>
+    </div>
+    <div class="form-group">
+      <label for="inputPw">Password</label>
+      <div class="input-wrap">
+        <input type="password" id="inputPw" placeholder="Masukkan password">
+        <button class="toggle-pw" id="togglePw" type="button" onclick="togglePassword()">
+          <svg id="eyeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+      <div class="error-msg" id="errPw">Password tidak boleh kosong</div>
+    </div>
+    <button class="btn-login" id="btnLogin" onclick="doLogin()">
+      <div class="spinner"></div>
+      <span class="btn-text">Masuk</span>
+    </button>
+    <div class="footer-note">PT Sido Muncul · Pelatihan & Pengembangan SDM</div>
+  </div>
+</div>
 
-    <div id="toast">Gagal Login!</div>
+<!-- Modal Ganti Password -->
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+<div class="modal-overlay" id="modalGantiPw">
+  <div class="modal-card">
+    <span class="badge-warn">⚠ Wajib Ganti Password</span>
+    <h2>Buat Password Baru</h2>
+    <p>Ini adalah login pertama Anda. Ganti password default dengan password baru yang lebih aman.</p>
+    <div class="form-group">
+      <label>Password Baru</label>
+      <div class="input-wrap">
+        <input type="password" id="newPw1" placeholder="Minimal 6 karakter">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Ulangi Password Baru</label>
+      <div class="input-wrap">
+        <input type="password" id="newPw2" placeholder="Ketik ulang password baru">
+      </div>
+      <div class="error-msg" id="errNewPw"></div>
+    </div>
+    <button class="btn-login" id="btnGanti" onclick="gantiPassword()">
+      <div class="spinner"></div>
+      <span class="btn-text">Simpan Password Baru</span>
+    </button>
+  </div>
+</div>
 
-        // TEMPEL CONFIG FIREBASE ANDA DI SINI
-        const firebaseConfig = {
-            apiKey: "ISI_API_KEY",
-            authDomain: "ISI_AUTH_DOMAIN",
-            projectId: "ISI_PROJECT_ID",
-            storageBucket: "ISI_STORAGE_BUCKET",
-            messagingSenderId: "ISI_MESSAGING_ID",
-            appId: "ISI_APP_ID"
-        };
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, signInWithEmailAndPassword, updatePassword } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+const firebaseConfig = {
+  apiKey: "AIzaSyDTVdA6QD_FsHeHVMm4l67NJP5_rpL_JmI",
+  authDomain: "absensipelatihan-844d8.firebaseapp.com",
+  projectId: "absensipelatihan-844d8",
+  storageBucket: "absensipelatihan-844d8.firebasestorage.app",
+  messagingSenderId: "518545818905",
+  appId: "1:518545818905:web:d56035cc0678c58328f188"
+};
 
-        const btn = document.getElementById('btnLogin');
-        const toast = document.getElementById('toast');
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const SUPERADMIN_UID = 'F0oKsZI4qqMK9N3aVHuARUvFRYs1';
 
-        function showToast(msg, color = "#ef4444") {
-            toast.innerText = msg;
-            toast.style.background = color;
-            toast.style.right = "20px";
-            setTimeout(() => { toast.style.right = "-300px"; }, 3000);
-        }
+async function initSuperadmin() {
+  try {
+    const ref = doc(db, 'users', SUPERADMIN_UID);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) {
+      await setDoc(ref, {
+        user_id: SUPERADMIN_UID, perner: '200596', role: 'superadmin',
+        nama_lengkap: 'Super Admin', unit: '', jabatan: 'Superadmin',
+        status: 'aktif', tgl_dibuat: serverTimestamp(),
+        dibuat_oleh: 'system', tgl_ubah_password: null, first_login: true
+      });
+    }
+  } catch(e) {}
+}
+initSuperadmin();
 
-        btn.addEventListener('click', async () => {
-            const perner = document.getElementById('perner').value;
-            const pass = document.getElementById('password').value;
+window.doLogin = async function() {
+  const idVal = document.getElementById('inputId').value.trim();
+  const pwVal = document.getElementById('inputPw').value;
+  let valid = true;
 
-            if(!perner || !pass) return showToast("Harap isi semua bidang!");
-            
-            btn.innerText = "Memproses...";
-            btn.disabled = true;
+  document.getElementById('errId').classList.remove('show');
+  document.getElementById('errPw').classList.remove('show');
+  document.getElementById('alertBox').classList.remove('show');
 
-            // Di Firebase, kita pakai email format: perner@sidomuncul.com
-            const email = `${perner}@sidomuncul.com`;
+  if (!idVal) { document.getElementById('errId').classList.add('show'); valid = false; }
+  if (!pwVal) { document.getElementById('errPw').classList.add('show'); valid = false; }
+  if (!valid) return;
 
-            try {
-                await signInWithEmailAndPassword(auth, email, pass);
-                showToast("Berhasil! Mengalihkan...", "#059669");
-                setTimeout(() => { window.location.href = "app.html"; }, 1000);
-            } catch (error) {
-                console.error(error);
-                showToast("ID atau Password salah!");
-                btn.innerText = "Masuk";
-                btn.disabled = false;
-            }
-        });
-    </script>
+  const btn = document.getElementById('btnLogin');
+  btn.classList.add('loading'); btn.disabled = true;
+
+  try {
+    let email = '';
+    if (idVal === '200596') {
+      email = 'superadmin@absensipelatihan.com';
+    } else {
+      const q = query(collection(db, 'users'), where('perner', '==', idVal));
+      const snap = await getDocs(q);
+      if (snap.empty) { showAlert('ID / Perner tidak ditemukan. Hubungi Admin.'); return; }
+      const userData = snap.docs[0].data();
+      if (userData.status === 'nonaktif') { showAlert('Akun Anda tidak aktif. Hubungi Admin.'); return; }
+      email = `${idVal}@absensipelatihan.com`;
+    }
+
+    const result = await signInWithEmailAndPassword(auth, email, pwVal);
+    const user = result.user;
+
+    const userSnap = await getDoc(doc(db, 'users', user.uid));
+    if (!userSnap.exists()) { showAlert('Data pengguna tidak ditemukan. Hubungi Admin.'); await auth.signOut(); return; }
+
+    const userData = userSnap.data();
+
+    // Simpan ke session — termasuk password (terenkripsi di memory, bukan persistent)
+    sessionStorage.setItem('uid', user.uid);
+    sessionStorage.setItem('role', userData.role);
+    sessionStorage.setItem('nama', userData.nama_lengkap);
+    sessionStorage.setItem('unit', userData.unit || '');
+    sessionStorage.setItem('jabatan', userData.jabatan || '');
+    sessionStorage.setItem('perner', userData.perner);
+    // Simpan untuk keperluan re-login saat buat user baru (hanya di memory tab ini)
+    window.__adminEmail = email;
+    window.__adminPw = pwVal;
+    sessionStorage.setItem('__ae', btoa(email));
+    sessionStorage.setItem('__ap', btoa(pwVal));
+
+    if (userData.first_login === true) {
+      window._currentUser = user;
+      document.getElementById('modalGantiPw').classList.add('show');
+      return;
+    }
+    window.location.href = 'app.html';
+  } catch(e) {
+    console.error('Login error:', e.code, e.message);
+    if (e.code === 'auth/invalid-credential' || e.code === 'auth/wrong-password' || e.code === 'auth/invalid-email') {
+      showAlert('Password salah. Silakan coba lagi.');
+    } else if (e.code === 'auth/user-not-found') {
+      showAlert('Akun tidak ditemukan. Hubungi Admin untuk membuat akun.');
+    } else if (e.code === 'auth/too-many-requests') {
+      showAlert('Terlalu banyak percobaan login. Coba lagi beberapa menit lagi.');
+    } else if (e.code === 'auth/network-request-failed') {
+      showAlert('Koneksi internet bermasalah. Periksa koneksi Anda.');
+    } else {
+      showAlert(`Gagal login: ${e.message}`);
+    }
+  } finally {
+    btn.classList.remove('loading'); btn.disabled = false;
+  }
+};
+
+window.gantiPassword = async function() {
+  const pw1 = document.getElementById('newPw1').value;
+  const pw2 = document.getElementById('newPw2').value;
+  const errEl = document.getElementById('errNewPw');
+  errEl.classList.remove('show');
+  if (pw1.length < 6) { errEl.textContent = 'Password minimal 6 karakter'; errEl.classList.add('show'); return; }
+  if (pw1 !== pw2) { errEl.textContent = 'Password tidak sama'; errEl.classList.add('show'); return; }
+
+  const btn = document.getElementById('btnGanti');
+  btn.classList.add('loading'); btn.disabled = true;
+  try {
+    await updatePassword(window._currentUser, pw1);
+    await updateDoc(doc(db, 'users', window._currentUser.uid), { first_login: false, tgl_ubah_password: serverTimestamp() });
+    // Update stored password
+    sessionStorage.setItem('__ap', btoa(pw1));
+    document.getElementById('modalGantiPw').classList.remove('show');
+    window.location.href = 'app.html';
+  } catch(e) {
+    errEl.textContent = 'Gagal menyimpan password: ' + e.message;
+    errEl.classList.add('show');
+  } finally {
+    btn.classList.remove('loading'); btn.disabled = false;
+  }
+};
+
+function showAlert(msg) {
+  const el = document.getElementById('alertBox');
+  el.textContent = msg; el.classList.add('show');
+}
+</script>
+
+<script>
+function togglePassword() {
+  const input = document.getElementById('inputPw');
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    const modal = document.getElementById('modalGantiPw');
+    if (modal.classList.contains('show')) { window.gantiPassword && window.gantiPassword(); }
+    else { window.doLogin && window.doLogin(); }
+  }
+});
+</script>
+
 </body>
 </html>
