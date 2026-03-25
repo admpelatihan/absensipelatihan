@@ -344,10 +344,10 @@
         const data=snap.data();
         if(data.status==='nonaktif'){await auth.signOut();showMsg('Akun Anda telah dinonaktifkan. Hubungi administrator.');return;}
 
-        sessionStorage.setItem('uid',uid); sessionStorage.setItem('role',data.role);
-        sessionStorage.setItem('nama',data.nama_lengkap); sessionStorage.setItem('unit',data.unit||'');
-        sessionStorage.setItem('jabatan',data.jabatan||''); sessionStorage.setItem('perner',perner);
-        sessionStorage.setItem('__ae',btoa(email)); sessionStorage.setItem('__ap',btoa(pw));
+        localStorage.setItem('uid',uid); localStorage.setItem('role',data.role);
+        localStorage.setItem('nama',data.nama_lengkap); localStorage.setItem('unit',data.unit||'');
+        localStorage.setItem('jabatan',data.jabatan||''); localStorage.setItem('perner',perner);
+        localStorage.setItem('__ae',btoa(email)); localStorage.setItem('__ap',btoa(pw));
 
         await addDoc(collection(db,'log_aktivitas'),{aksi:'login_berhasil',user_id:uid,role:data.role,timestamp:serverTimestamp(),detail_sesudah:JSON.stringify({perner,nama:data.nama_lengkap})});
 
@@ -407,9 +407,9 @@
       document.getElementById('btnSaveNewPw').disabled=true;
       try{
         await updatePassword(auth.currentUser,pw);
-        const uid=sessionStorage.getItem('uid');
+        const uid=localStorage.getItem('uid');
         await updateDoc(doc(db,'users',uid),{first_login:false});
-        sessionStorage.setItem('__ap',btoa(pw));
+        localStorage.setItem('__ap',btoa(pw));
         await addDoc(collection(db,'log_aktivitas'),{aksi:'ganti_password_pertama',user_id:uid,timestamp:serverTimestamp(),detail_sesudah:'Password berhasil diganti'});
         toast('Password berhasil diperbarui!');
         document.getElementById('modalChangePw').classList.remove('open');
@@ -422,8 +422,8 @@
       }
     });
 
-    window.onerror=(msg,src,line,col,err)=>{addDoc(collection(db,'log_aktivitas'),{aksi:'system_error',timestamp:serverTimestamp(),user_id:sessionStorage.getItem('uid')||'unknown',detail_sesudah:JSON.stringify({message:msg,source:src,line,col,stack:err?.stack})}).catch(()=>{});};
-    window.onunhandledrejection=(e)=>{addDoc(collection(db,'log_aktivitas'),{aksi:'system_error',timestamp:serverTimestamp(),user_id:sessionStorage.getItem('uid')||'unknown',detail_sesudah:JSON.stringify({message:e.reason?.message,stack:e.reason?.stack})}).catch(()=>{});};
+    window.onerror=(msg,src,line,col,err)=>{addDoc(collection(db,'log_aktivitas'),{aksi:'system_error',timestamp:serverTimestamp(),user_id:localStorage.getItem('uid')||'unknown',detail_sesudah:JSON.stringify({message:msg,source:src,line,col,stack:err?.stack})}).catch(()=>{});};
+    window.onunhandledrejection=(e)=>{addDoc(collection(db,'log_aktivitas'),{aksi:'system_error',timestamp:serverTimestamp(),user_id:localStorage.getItem('uid')||'unknown',detail_sesudah:JSON.stringify({message:e.reason?.message,stack:e.reason?.stack})}).catch(()=>{});};
   </script>
 
 </body>
