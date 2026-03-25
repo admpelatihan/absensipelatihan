@@ -193,8 +193,9 @@ function fmtTgl(ds){
   return`${HARI[d.getDay()]} / ${String(d.getDate()).padStart(2,'0')} ${BULAN[d.getMonth()]} ${d.getFullYear()}`;
 }
 
-/* Re-auth without signing out — preserves existing session */
+/* Re-auth — skip if already authenticated to prevent session interference */
 async function doAuth(){
+  if(auth.currentUser) return;
   const ae=localStorage.getItem('__ae');
   const ap=localStorage.getItem('__ap');
   if(ae&&ap){
@@ -207,11 +208,12 @@ async function init(){
     document.getElementById('formPaper').innerHTML='<p style="padding:40px;color:#e11d48;text-align:center;font-size:12px;font-weight:800;text-transform:uppercase">ID Pelatihan tidak ditemukan.</p>';
     return;
   }
-  /* Try to use existing auth state first, only re-auth if needed */
+  /* Wait for Firebase to restore persisted session first */
   await new Promise(resolve=>{
     const unsub=onAuthStateChanged(auth,user=>{unsub();resolve(user);});
-    setTimeout(resolve,3000);
+    setTimeout(()=>resolve(null),3000);
   });
+  /* Only re-auth if not already signed in */
   if(!auth.currentUser) await doAuth();
 
   try{
