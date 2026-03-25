@@ -12,7 +12,7 @@
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <style>
-    :root{--green:#064e3b;--green2:#059669;--green3:#d1fae5;--sw:260px;}
+    :root{--green:#064e3b;--green2:#059669;--green3:#d1fae5;--sw:230px;}
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Plus Jakarta Sans',sans-serif;background:#f8fafc;color:#1e293b;-webkit-font-smoothing:antialiased;}
     .app{display:flex;min-height:100vh;}
@@ -1025,7 +1025,24 @@ function updateGreeting(){
 
 /* ─── Auth guard ─── */
 onAuthStateChanged(auth,async user=>{
-  if(!user||!LS.get('uid')){LS.clear();window.location.href='index.html';return;}
+  if(!user){
+    /* Give Firebase 1.5s to restore persisted session before redirecting.
+       This prevents false-logout when returning from kiosk/print tab. */
+    setTimeout(()=>{
+      if(!auth.currentUser&&!LS.get('uid')){LS.clear();window.location.href='index.html';}
+    },1500);
+    return;
+  }
+  /* User authenticated but localStorage missing — restore from Firestore */
+  if(!LS.get('uid')){
+    try{
+      const snap=await getDoc(doc(db,'users',user.uid));
+      if(!snap.exists()){await signOut(auth);window.location.href='index.html';return;}
+      const d=snap.data();
+      LS.set('uid',user.uid);LS.set('role',d.role);
+      LS.set('nama',d.nama_lengkap);LS.set('unit',d.unit||'');LS.set('perner',d.perner||'');
+    }catch(_){window.location.href='index.html';return;}
+  }
   await initApp();
 });
 
