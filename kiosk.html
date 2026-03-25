@@ -163,7 +163,8 @@ function resetInactivity(){
   clearTimeout(inactivityTimer);
   inactivityTimer=setTimeout(async()=>{
     const{signOut}=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
-    localStorage.clear();
+    /* Only clear session-specific keys, preserve credentials (__ae, __ap) */
+    ['uid','role','nama','unit','perner'].forEach(k=>localStorage.removeItem(k));
     await signOut(auth);
     window.removeEventListener('beforeunload',beforeUnloadHandler);
     window.location.href='index.html';
@@ -189,15 +190,19 @@ history.pushState(null,'',location.href);
 window.addEventListener('popstate',()=>history.pushState(null,'',location.href));
 
 async function doAuth(){
-  /* Re-use stored credentials from localStorage — NO signOut, session preserved */
+  /* If already authenticated (e.g. opened from app.html), do nothing.
+     This prevents cross-tab session interference. */
+  if(auth.currentUser){
+    creatorPw=localStorage.getItem('__ap')?atob(localStorage.getItem('__ap')):'';
+    return;
+  }
   const ae=localStorage.getItem('__ae');
   const ap=localStorage.getItem('__ap');
   if(ae&&ap){
     try{await signInWithEmailAndPassword(auth,atob(ae),atob(ap));creatorPw=atob(ap);return;}
     catch(_){}
   }
-  /* Already authenticated — just get password for exit verification */
-  creatorPw=localStorage.getItem('__ap')?atob(localStorage.getItem('__ap')):'';
+  creatorPw=ap?atob(ap):'';
 }
 
 async function init(){
