@@ -2,228 +2,166 @@
 
 <html lang="id">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Daftar Hadir — E-Attendance Sido Muncul</title>
-  <link rel="icon" href="favicon.png" type="image/png"/>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
-  <style>
-    body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: #f8fafc;
-      -webkit-font-smoothing: antialiased;
-    }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Daftar Hadir — E-Attendance Sido Muncul</title>
+<link rel="icon" href="favicon.png" type="image/png"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;background:#f8fafc;-webkit-font-smoothing:antialiased;}
 
-```
-/* ══ SCREEN UI ══ */
-.screen-bar {
-  position: sticky; top: 0; z-index: 50;
-  background: white; border-bottom: 1px solid #f1f5f9;
-  padding: 14px 32px;
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+/* ── SCREEN TOOLBAR ── */
+.toolbar{
+position:sticky;top:0;z-index:50;
+background:#fff;border-bottom:1px solid #e2e8f0;
+padding:11px 22px;
+display:flex;align-items:center;justify-content:space-between;gap:12px;
+box-shadow:0 1px 4px rgba(0,0,0,.05);
+font-family:‘Plus Jakarta Sans’,Arial,sans-serif;
 }
-.screen-brand {
-  display: flex; align-items: center; gap: 10px;
-}
-.screen-brand-icon {
-  width: 36px; height: 36px; border-radius: 10px;
-  background: #064e3b; color: white;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px;
-}
-.screen-brand-text {
-  font-size: 14px; font-weight: 900; color: #0f172a;
-  text-transform: uppercase; letter-spacing: -0.3px;
-}
-.screen-info {
-  font-size: 11px; font-weight: 700; color: #94a3b8;
-  text-transform: uppercase; letter-spacing: 1px;
-  flex: 1; text-align: center;
-}
-.btn-action-bar {
-  display: flex; gap: 8px;
-}
-.btn-back {
-  padding: 8px 16px; border-radius: 12px;
-  border: 1.5px solid #e2e8f0; background: white;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 10px; font-weight: 900; text-transform: uppercase;
-  letter-spacing: 0.5px; color: #64748b; cursor: pointer;
-  transition: all .2s; display: flex; align-items: center; gap: 6px;
-}
-.btn-back:hover { background: #f8fafc; border-color: #94a3b8; }
-.btn-print {
-  padding: 8px 18px; border-radius: 12px; border: none;
-  background: #064e3b; color: white;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 10px; font-weight: 900; text-transform: uppercase;
-  letter-spacing: 0.5px; cursor: pointer;
-  transition: all .2s; display: flex; align-items: center; gap: 6px;
-  box-shadow: 0 4px 12px rgba(6,78,59,.2);
-}
-.btn-print:hover { background: #059669; transform: translateY(-1px); }
+.brand{display:flex;align-items:center;gap:9px;}
+.brand-icon{width:30px;height:30px;border-radius:8px;background:#064e3b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.brand-name{font-size:13px;font-weight:900;color:#0f172a;text-transform:uppercase;letter-spacing:-.2px;}
+.screen-info{font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;flex:1;text-align:center;}
+.btn-back{padding:7px 13px;border-radius:9px;border:1.5px solid #e2e8f0;background:#fff;font-family:inherit;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;color:#64748b;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s;}
+.btn-back:hover{background:#f8fafc;}
+.btn-print{padding:7px 16px;border-radius:9px;border:none;background:#064e3b;color:#fff;font-family:inherit;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s;}
+.btn-print:hover{background:#059669;}
 
-.paper-wrapper {
-  display: flex; justify-content: center;
-  padding: 28px 16px 48px;
-  min-height: calc(100vh - 65px);
-}
+.paper-wrap{display:flex;justify-content:center;padding:22px 14px 44px;}
 
-/* Loading state */
-.loading-screen {
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 80px 20px; gap: 16px;
+/* ── LOADING ── */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;gap:14px;}
+.spin{width:36px;height:36px;border:3px solid #d1fae5;border-top-color:#059669;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading p{font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;}
+
+/* ════════════════════
+FORM PAPER — F4
+════════════════════ */
+.paper{
+background:#fff;
+width:215mm;
+min-height:330mm;
+padding:8mm 10mm;
+box-shadow:0 6px 28px rgba(0,0,0,.12);
+font-family:Arial,sans-serif;
 }
-.spin {
-  width: 40px; height: 40px;
-  border: 3px solid #d1fae5; border-top-color: #059669;
-  border-radius: 50%; animation: spin .7s linear infinite;
+.outer{border:1.5px solid #000;width:100%;}
+
+/* HEADER TABLE */
+.ht{width:100%;border-collapse:collapse;}
+
+.c-logo{
+width:22%;border-right:1.5px solid #000;
+vertical-align:top;padding:0;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
-.loading-screen p {
-  font-size: 10px; font-weight: 900; color: #94a3b8;
-  text-transform: uppercase; letter-spacing: 2px;
+.logo-zone{
+padding:6px 6px 5px;text-align:center;
+border-bottom:1.5px solid #000;
+}
+.logo-img{height:40px;display:block;margin:0 auto;object-fit:contain;}
+.logo-fb{font-size:9pt;font-weight:900;color:#064e3b;line-height:1.2;}
+.hrmi-zone{
+padding:4px 6px;font-size:8.5pt;font-weight:900;
+text-align:center;border-bottom:1.5px solid #000;
+}
+.plt-zone{
+padding:4px 6px;font-size:8.5pt;font-weight:900;
+text-align:center;border-bottom:1.5px solid #000;
 }
 
-/* ══ FORM PAPER (A4) ══ */
-.form-paper {
-  background: white;
-  width: 210mm;
-  min-height: 297mm;
-  padding: 10mm 12mm;
-  box-shadow: 0 8px 32px rgba(0,0,0,.10);
+.c-title{
+width:46%;text-align:center;vertical-align:middle;
+border-right:1.5px solid #000;border-bottom:1.5px solid #000;
+padding:10px 8px;
 }
+.t1{font-size:14pt;font-weight:900;display:block;letter-spacing:.3px;}
+.t2{font-size:11pt;font-weight:700;display:block;margin-top:5px;}
 
-/* Header table — 3 columns exactly as FM-082020-01-00-003 */
-.tbl-header { width: 100%; border-collapse: collapse; }
-.tbl-header td { border: 1px solid #000; vertical-align: middle; padding: 4px 7px; }
-
-.cell-brand { width: 24%; text-align: center; padding: 8px !important; }
-.cell-brand img { height: 54px; display: block; margin: 0 auto 4px; object-fit: contain; }
-.cell-brand .lbl-hr   { font-size: 9pt; font-weight: 800; display: block; margin-top: 5px; }
-.cell-brand .lbl-plt  { font-size: 9pt; font-weight: 800; display: block; margin-top: 2px; }
-
-.cell-title { width: 38%; text-align: center; padding: 12px 8px !important; }
-.cell-title .t1 { font-size: 15pt; font-weight: 900; display: block; letter-spacing: .5px; line-height: 1.2; }
-.cell-title .t2 { font-size: 12pt; font-weight: 800; display: block; margin-top: 6px; line-height: 1.2; }
-
-.cell-forminfo { width: 22%; vertical-align: top; padding: 6px 8px !important; font-size: 8pt; }
-.fi-row { display: flex; gap: 4px; margin-bottom: 4px; font-size: 8pt; }
-.fi-lbl { font-weight: 800; white-space: nowrap; min-width: 60px; }
-
-/* Info table */
-.tbl-info { width: 100%; border-collapse: collapse; }
-.tbl-info td { border: 1px solid #000; padding: 5px 8px; font-size: 9pt; vertical-align: middle; }
-.info-lbl  { font-weight: 800; white-space: nowrap; width: 80px; }
-.info-sep  { width: 10px; text-align: center; font-weight: 800; }
-.info-val  { min-width: 110px; }
-.info-gap  {
-  width: 14px;
-  border-top: 1px solid #000 !important;
-  border-bottom: 1px solid #000 !important;
-  border-left: none !important;
-  border-right: none !important;
-  padding: 0 !important;
+.c-fi{
+width:32%;vertical-align:middle;
+padding:6px 8px;border-bottom:1.5px solid #000;
 }
+.fi-line{display:flex;gap:4px;align-items:baseline;font-size:8.5pt;line-height:1.85;}
+.fi-lbl{font-weight:700;min-width:68px;white-space:nowrap;}
 
-/* Peserta table */
-.tbl-peserta { width: 100%; border-collapse: collapse; }
-.tbl-peserta th {
-  background: #1e2a4a !important;
-  color: white !important;
-  font-size: 9pt; font-weight: 800;
-  padding: 8px 6px; border: 1px solid #000;
-  text-align: center;
-  -webkit-print-color-adjust: exact;
-  print-color-adjust: exact;
+/* INFO PELATIHAN */
+.it{width:100%;border-collapse:collapse;}
+.it td{padding:4px 8px;font-size:9pt;vertical-align:middle;border-bottom:1px solid #000;}
+.il{font-weight:700;white-space:nowrap;width:80px;}
+.is{width:8px;font-weight:700;text-align:center;}
+.iv{color:#1a4fa8;font-weight:600;}
+.ig{width:10px;padding:0!important;border-right:1.5px solid #000!important;border-left:none!important;}
+.imb{border-left:1.5px solid #000;}
+
+/* PESERTA TABLE */
+.pt{width:100%;border-collapse:collapse;}
+.pt th{
+background:#1e2a4a;color:#fff;
+font-size:9pt;font-weight:800;
+padding:6px 4px;text-align:center;
+border-right:1px solid #3a4a6a;
+-webkit-print-color-adjust:exact;print-color-adjust:exact;
 }
-.col-no      { width: 4%; }
-.col-nama    { width: 30%; text-align: left !important; }
-.col-induk   { width: 14%; }
-.col-unit    { width: 12%; }
-.col-jabatan { width: 18%; }
-.col-paraf   { width: 22%; }
+.pt th:last-child{border-right:none;}
+.cn {width:5%;}
+.cna{width:26%;text-align:left!important;}
+.ci {width:13%;}
+.cu {width:10%;}
+.cj {width:14%;}
+.cp {width:32%;}
 
-.tbl-peserta td {
-  border: 1px solid #000;
-  padding: 3px 6px;
-  font-size: 8.5pt;
-  height: 21px;
-  vertical-align: middle;
+.pt tbody tr{border-bottom:1px solid #b8c0cc;}
+.pt tbody tr:last-child{border-bottom:none;}
+.pt td{padding:0 4px;font-size:8.5pt;vertical-align:middle;height:26px;}
+.dn {text-align:center;font-weight:700;color:#000;}
+.dna{color:#1a4fa8;font-weight:600;padding-left:5px;}
+.di {text-align:center;color:#1a4fa8;font-weight:600;}
+.du {text-align:center;color:#1a4fa8;font-weight:600;}
+.dj {text-align:center;color:#1a4fa8;font-weight:600;}
+.dp {padding:1px 3px;vertical-align:middle;}
+
+/* Zigzag signatures */
+.so{display:flex;align-items:center;gap:4px;padding-left:4px;}
+.se{display:flex;align-items:center;gap:4px;padding-left:35%;}
+.sn{font-size:8pt;font-weight:700;color:#000;min-width:14px;flex-shrink:0;}
+.sig-img{max-height:26px;max-width:84px;object-fit:contain;}
+
+.re td{background:#eef0f5!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+.fn{font-size:7pt;font-style:italic;color:#64748b;margin-top:8px;}
+
+/* PRINT */
+@media print{
+@page{size:215mm 330mm;margin:8mm 10mm;}
+body{background:#fff!important;}
+.toolbar{display:none!important;}
+.paper-wrap{padding:0!important;background:#fff!important;display:block;}
+.paper{box-shadow:none!important;width:100%!important;padding:0!important;min-height:unset;}
+.loading{display:none!important;}
+.pt th{background:#1e2a4a!important;color:#fff!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+.re td{background:#eef0f5!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
 }
-.td-no    { text-align: center; }
-.td-paraf { text-align: center; padding: 2px 3px; }
-.td-paraf img { max-height: 15px; max-width: 90%; object-fit: contain; }
+</style>
 
-.row-even td {
-  background: #f0f4f8 !important;
-  -webkit-print-color-adjust: exact !important;
-  print-color-adjust: exact !important;
-}
-
-/* ══ PRINT STYLES ══ */
-@media print {
-  @page { size: A4; margin: 10mm 12mm; }
-  body { background: white !important; }
-  .screen-bar    { display: none !important; }
-  .paper-wrapper {
-    padding: 0 !important;
-    background: white !important;
-    min-height: unset;
-    display: block;
-  }
-  .form-paper {
-    box-shadow: none !important;
-    width: 100% !important;
-    padding: 0 !important;
-    min-height: unset;
-  }
-  .loading-screen { display: none !important; }
-  .tbl-peserta th {
-    background: #1e2a4a !important;
-    color: white !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-  .row-even td {
-    background: #f0f4f8 !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-}
-```
-
-  </style>
 </head>
 <body>
 
-<!-- Screen bar (hidden on print) -->
-
-<div class="screen-bar">
-  <div class="screen-brand">
-    <div class="screen-brand-icon"><i class="fas fa-leaf"></i></div>
-    <div class="screen-brand-text">E-Attendance</div>
+<div class="toolbar">
+  <div class="brand">
+    <div class="brand-icon">🌿</div>
+    <div class="brand-name">E-Attendance</div>
   </div>
   <div class="screen-info" id="screenInfo">Memuat daftar hadir…</div>
-  <div class="btn-action-bar">
-    <button class="btn-back" onclick="window.close()">
-      <i class="fas fa-arrow-left"></i> Tutup
-    </button>
-    <button class="btn-print" onclick="window.print()">
-      <i class="fas fa-print"></i> Cetak / Simpan PDF
-    </button>
+  <div style="display:flex;gap:8px;">
+    <button class="btn-back" onclick="window.close()">← Kembali</button>
+    <button class="btn-print" onclick="window.print()">🖨 Cetak / PDF</button>
   </div>
 </div>
 
-<!-- Paper wrapper -->
-
-<div class="paper-wrapper">
-  <div class="form-paper" id="formPaper">
-    <div class="loading-screen" id="loadingScreen">
+<div class="paper-wrap">
+  <div class="paper" id="formPaper">
+    <div class="loading" id="loadScreen">
       <div class="spin"></div>
       <p>Memuat Data Daftar Hadir…</p>
     </div>
@@ -232,222 +170,171 @@
 
 <script type="module">
 import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword }
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged }
                            from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
   getFirestore, doc, getDoc, getDocs, collection, query, where
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey:"AIzaSyDTVdA6QD_FsHeHVMm4l67NJP5_rpL_JmI",
-  authDomain:"absensipelatihan-844d8.firebaseapp.com",
-  projectId:"absensipelatihan-844d8",
-  storageBucket:"absensipelatihan-844d8.firebasestorage.app",
-  messagingSenderId:"518545818905",
-  appId:"1:518545818905:web:d56035cc0678c58328f188"
-};
-const app  = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app);
+const FB={apiKey:"AIzaSyDTVdA6QD_FsHeHVMm4l67NJP5_rpL_JmI",authDomain:"absensipelatihan-844d8.firebaseapp.com",projectId:"absensipelatihan-844d8",storageBucket:"absensipelatihan-844d8.firebasestorage.app",messagingSenderId:"518545818905",appId:"1:518545818905:web:d56035cc0678c58328f188"};
+const app=initializeApp(FB);
+const auth=getAuth(app);
+const db=getFirestore(app);
 
-const params = new URLSearchParams(location.search);
-const pltId  = params.get('id') || '';
+const params=new URLSearchParams(location.search);
+const pltId=params.get('id')||'';
 
-const HARI  = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-const BULAN = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const HARI=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+const BULAN=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
 
-function fmtTgl(ds) {
-  if (!ds) return '–';
-  const d = new Date(ds + 'T00:00:00');
-  return `${HARI[d.getDay()]} / ${String(d.getDate()).padStart(2,'0')} ${BULAN[d.getMonth()]} ${d.getFullYear()}`;
+function fmtTgl(ds){
+  if(!ds)return'–';
+  const d=new Date(ds+'T00:00:00');
+  return`${HARI[d.getDay()]} / ${String(d.getDate()).padStart(2,'0')} ${BULAN[d.getMonth()]} ${d.getFullYear()}`;
 }
 
-async function doAuth() {
-  const ae = sessionStorage.getItem('__ae');
-  const ap = sessionStorage.getItem('__ap');
-  if (ae && ap) {
-    try { await signInWithEmailAndPassword(auth, atob(ae), atob(ap)); } catch(_) {}
+/* Re-auth without signing out — preserves existing session */
+async function doAuth(){
+  const ae=localStorage.getItem('__ae');
+  const ap=localStorage.getItem('__ap');
+  if(ae&&ap){
+    try{await signInWithEmailAndPassword(auth,atob(ae),atob(ap));return;}catch(_){}
   }
 }
 
-async function init() {
-  if (!pltId) {
-    document.getElementById('formPaper').innerHTML =
-      '<p style="padding:48px;color:#e11d48;text-align:center;font-size:12px;font-weight:800;text-transform:uppercase">ID Pelatihan tidak ditemukan.</p>';
+async function init(){
+  if(!pltId){
+    document.getElementById('formPaper').innerHTML='<p style="padding:40px;color:#e11d48;text-align:center;font-size:12px;font-weight:800;text-transform:uppercase">ID Pelatihan tidak ditemukan.</p>';
     return;
   }
-  await doAuth();
+  /* Try to use existing auth state first, only re-auth if needed */
+  await new Promise(resolve=>{
+    const unsub=onAuthStateChanged(auth,user=>{unsub();resolve(user);});
+    setTimeout(resolve,3000);
+  });
+  if(!auth.currentUser) await doAuth();
 
-  try {
-    const pltSnap = await getDoc(doc(db, 'pelatihan', pltId));
-    if (!pltSnap.exists()) {
-      document.getElementById('formPaper').innerHTML =
-        '<p style="padding:48px;color:#e11d48;text-align:center;font-size:12px;font-weight:800;text-transform:uppercase">Pelatihan tidak ditemukan.</p>';
+  try{
+    const pltSnap=await getDoc(doc(db,'pelatihan',pltId));
+    if(!pltSnap.exists()){
+      document.getElementById('formPaper').innerHTML='<p style="padding:40px;color:#e11d48;text-align:center;font-size:12px;font-weight:800;text-transform:uppercase">Pelatihan tidak ditemukan.</p>';
       return;
     }
-    const plt = { id: pltSnap.id, ...pltSnap.data() };
+    const plt={id:pltSnap.id,...pltSnap.data()};
 
-    // Load peserta (deduplicated)
-    const ppSnap = await getDocs(
-      query(collection(db,'peserta_pelatihan'), where('id_pelatihan','==',pltId))
-    );
-    const perners = [...new Set(ppSnap.docs.map(d => d.data().perner))];
+    const ppSnap=await getDocs(query(collection(db,'peserta_pelatihan'),where('id_pelatihan','==',pltId)));
+    const perners=[...new Set(ppSnap.docs.map(d=>d.data().perner))];
 
-    // Load karyawan map
-    const kSnap = await getDocs(collection(db,'karyawan'));
-    const karyMap = {};
-    kSnap.docs.forEach(d => { karyMap[d.id] = d.data(); });
+    const kSnap=await getDocs(collection(db,'karyawan'));
+    const kMap={};kSnap.docs.forEach(d=>{kMap[d.id]=d.data();});
 
-    // Load TTD map
-    const abSnap = await getDocs(
-      query(collection(db,'absensi'), where('id_pelatihan','==',pltId))
-    );
-    const abMap = {};
-    abSnap.docs.forEach(d => { const x = d.data(); abMap[x.perner] = x.ttd_base64; });
+    const abSnap=await getDocs(query(collection(db,'absensi'),where('id_pelatihan','==',pltId)));
+    const abMap={};abSnap.docs.forEach(d=>{const x=d.data();abMap[x.perner]=x.ttd_base64;});
 
-    const peserta = perners.map(p => ({
-      perner : p,
-      kary   : karyMap[p] || { nama_lengkap: p, unit: '–', jabatan: '–' }
-    }));
+    const peserta=perners.map(p=>({perner:p,kary:kMap[p]||{nama_lengkap:p,unit:'–',jabatan:'–'}}));
 
-    // Update screen info
-    document.getElementById('screenInfo').textContent =
-      `${plt.topik} — ${peserta.length} Peserta`;
-    document.title = `Daftar Hadir – ${plt.topik}`;
+    document.getElementById('screenInfo').textContent=`${plt.topik} — ${peserta.length} Peserta`;
+    document.title=`Daftar Hadir – ${plt.topik}`;
 
-    renderForm(plt, peserta, abMap);
-    setTimeout(() => window.print(), 900);
+    renderForm(plt,peserta,abMap);
+    setTimeout(()=>window.print(),900);
 
-  } catch(e) {
-    document.getElementById('formPaper').innerHTML =
-      `<p style="padding:48px;color:#e11d48;text-align:center;font-size:12px;font-weight:800;text-transform:uppercase">Gagal memuat: ${e.message}</p>`;
+  }catch(e){
+    document.getElementById('formPaper').innerHTML=`<p style="padding:40px;color:#e11d48;text-align:center;font-size:12px;font-weight:800;text-transform:uppercase">Gagal memuat: ${e.message}</p>`;
   }
 }
 
-function renderForm(plt, pesertaList, abMap) {
-  const TOTAL_ROWS = 35;
+function renderForm(plt,pesertaList,abMap){
+  const TOTAL=35;
+  const waktu=`${plt.waktu_mulai||'–'} - ${plt.waktu_selesai||'–'}`;
 
-  // Always render exactly 35 rows as per original form FM-082020-01-00-003
-  const rows = Array.from({ length: TOTAL_ROWS }, (_, i) => {
-    const pe      = pesertaList[i];
-    const isEven  = i % 2 === 1;
-    const no      = pe ? String(i + 1) : '';
-    const nama    = pe?.kary?.nama_lengkap || '';
-    const perner  = pe?.perner || '';
-    const unit    = pe?.kary?.unit || '';
-    const jabatan = pe?.kary?.jabatan || '';
-    const ttd     = pe ? (abMap[perner] || '') : '';
+  let rows='';
+  for(let i=0;i<TOTAL;i++){
+    const pe=pesertaList[i];
+    const even=i%2===1;
+    const n=i+1;
+    const nama=pe?.kary?.nama_lengkap||'';
+    const perner=pe?.perner||'';
+    const unit=pe?.kary?.unit||'';
+    const jabatan=pe?.kary?.jabatan||'';
+    const ttd=pe?(abMap[perner]||''):'';  
 
-    return `
-      <tr${isEven ? ' class="row-even"' : ''}>
-        <td class="td-no">${no}</td>
-        <td>${nama}</td>
-        <td style="text-align:center">${perner}</td>
-        <td style="text-align:center">${unit}</td>
-        <td style="text-align:center">${jabatan}</td>
-        <td class="td-paraf">${ttd ? `<img src="${ttd}" alt="TTD"/>` : '&nbsp;'}</td>
-      </tr>`;
-  }).join('');
+    let parafCell='';
+    const imgTag=ttd?`<img class="sig-img" src="${ttd}" alt="TTD"/>`:'';
+    if(!even){
+      parafCell=`<div class="so"><span class="sn">${n}.</span>${imgTag}</div>`;
+    }else{
+      parafCell=`<div class="se"><span class="sn">${n}.</span>${imgTag}</div>`;
+    }
 
-  const waktu = `${plt.waktu_mulai || '–'} - ${plt.waktu_selesai || '–'}`;
+    rows+=`<tr${even?' class="re"':''}>
+      <td class="dn">${n}</td>
+      <td class="dna">${nama}</td>
+      <td class="di">${perner}</td>
+      <td class="du">${unit}</td>
+      <td class="dj">${jabatan}</td>
+      <td class="dp">${parafCell}</td>
+    </tr>`;
+  }
 
-  document.getElementById('formPaper').innerHTML = `
+  document.getElementById('formPaper').innerHTML=`
+  <div class="outer">
 
-    <!-- ═══ HEADER TABLE ═══ -->
-    <table class="tbl-header">
+    <table class="ht">
       <tr>
-        <!-- Col 1: Logo + HR-MI + PELATIHAN (rowspan 2) -->
-        <td class="cell-brand" rowspan="2">
-          <img src="logo.png" alt="Sido Muncul"
-            onerror="this.outerHTML='<div style=\\'font-size:9pt;font-weight:900;margin-bottom:4px;text-transform:uppercase\\'>SIDO MUNCUL</div>'"
-          />
-          <span class="lbl-hr">HR-MI</span>
-          <span class="lbl-plt">PELATIHAN</span>
+        <td class="c-logo">
+          <div class="logo-zone">
+            <img class="logo-img" src="logo.png" alt=""
+              onerror="this.style.display='none';this.nextElementSibling.style.display='block'"/>
+            <div style="display:none;" class="logo-fb">SIDO<br>MUNCUL</div>
+          </div>
+          <div class="hrmi-zone">HR-MI</div>
+          <div class="plt-zone">PELATIHAN</div>
         </td>
-
-        <!-- Col 2: Judul (rowspan 2) -->
-        <td class="cell-title" rowspan="2">
+        <td class="c-title">
           <span class="t1">DAFTAR HADIR</span>
           <span class="t2">PESERTA PELATIHAN</span>
         </td>
-
-        <!-- Col 3 row 1: No.Form + Revisi -->
-        <td class="cell-forminfo">
-          <div class="fi-row">
-            <span class="fi-lbl">No. Form</span>
-            <span>:</span>
-            <span style="font-weight:700"><strong>FM-082020-01-00-003</strong></span>
-          </div>
-          <div class="fi-row">
-            <span class="fi-lbl">Revisi</span>
-            <span>:</span>
-            <span>02</span>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <!-- Col 3 row 2: Tgl Berlaku -->
-        <td class="cell-forminfo">
-          <div class="fi-row">
-            <span class="fi-lbl">Tgl. Berlaku</span>
-            <span>:</span>
-            <span>25 Mei 2016</span>
-          </div>
+        <td class="c-fi">
+          <div class="fi-line"><span class="fi-lbl">No. Form</span><span>:</span><span style="font-weight:700;">FM-082020-01-00-003</span></div>
+          <div class="fi-line"><span class="fi-lbl">Revisi</span><span>:</span><span>02</span></div>
+          <div class="fi-line"><span class="fi-lbl">Tgl. Berlaku</span><span>:</span><span>25 Mei 2016</span></div>
         </td>
       </tr>
     </table>
 
-    <!-- ═══ INFO PELATIHAN ═══ -->
-    <table class="tbl-info">
+    <table class="it">
       <tr>
-        <td class="info-lbl">Hari / Tanggal</td>
-        <td class="info-sep">:</td>
-        <td class="info-val">${fmtTgl(plt.tanggal)}</td>
-        <td class="info-gap"></td>
-        <td class="info-lbl">Topik</td>
-        <td class="info-sep">:</td>
-        <td class="info-val">${plt.topik || '–'}</td>
+        <td class="il">Hari / Tanggal</td><td class="is">:</td><td class="iv">${fmtTgl(plt.tanggal)}</td>
+        <td class="ig" rowspan="3"></td>
+        <td class="il imb">Topik</td><td class="is">:</td><td class="iv">${plt.topik||'–'}</td>
       </tr>
       <tr>
-        <td class="info-lbl">Waktu</td>
-        <td class="info-sep">:</td>
-        <td class="info-val">${waktu}</td>
-        <td class="info-gap"></td>
-        <td class="info-lbl">Instruktur</td>
-        <td class="info-sep">:</td>
-        <td class="info-val">${plt.instruktur || '–'}</td>
+        <td class="il">Waktu</td><td class="is">:</td><td class="iv">${waktu}</td>
+        <td class="il imb">Instruktur</td><td class="is">:</td><td class="iv">${plt.instruktur||'–'}</td>
       </tr>
       <tr>
-        <td class="info-lbl">Tempat</td>
-        <td class="info-sep">:</td>
-        <td class="info-val">${plt.lokasi || '–'}</td>
-        <td class="info-gap"></td>
-        <td class="info-lbl">Penyelenggara</td>
-        <td class="info-sep">:</td>
-        <td class="info-val">${plt.penyelenggara || plt.unit_pembuat || '–'}</td>
+        <td class="il">Tempat</td><td class="is">:</td><td class="iv">${plt.lokasi||'–'}</td>
+        <td class="il imb">Penyelenggara</td><td class="is">:</td><td class="iv">${plt.penyelenggara||plt.unit_pembuat||'–'}</td>
       </tr>
     </table>
 
-    <!-- ═══ TABEL PESERTA (35 baris tetap) ═══ -->
-    <table class="tbl-peserta">
+    <table class="pt">
       <thead>
         <tr>
-          <th class="col-no">No.</th>
-          <th class="col-nama" style="text-align:left;padding-left:7px">Nama Lengkap</th>
-          <th class="col-induk">No. Induk</th>
-          <th class="col-unit">Unit</th>
-          <th class="col-jabatan">Jabatan</th>
-          <th class="col-paraf">Paraf</th>
+          <th class="cn">No.</th>
+          <th class="cna" style="text-align:left;padding-left:6px;">Nama Lengkap</th>
+          <th class="ci">No. Induk</th>
+          <th class="cu">Unit</th>
+          <th class="cj">Jabatan</th>
+          <th class="cp">Paraf</th>
         </tr>
       </thead>
       <tbody>${rows}</tbody>
     </table>
 
-    <div style="margin-top:14px;font-size:7.5pt;font-style:italic;color:#64748b">
-      * Dokumen ini dicetak melalui E-Attendance System PT Sido Muncul pada
-      <span>${new Date().toLocaleString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'})}</span>.
-      Format: FM-082020-01-00-003 Rev.02
-    </div>
+  </div>
+  <div class="fn">* Dicetak melalui E-Attendance System PT Sido Muncul pada ${new Date().toLocaleString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
   `;
 }
 
