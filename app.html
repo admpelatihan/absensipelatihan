@@ -28,7 +28,7 @@
 .sb-logo-sub{font-size:9px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;margin-top:2px;}
 
 /* Greeting card */
-.sb-greet{margin:10px 12px 0;padding:13px;background:#f0fdf4;border-radius:14px;border:1px solid #a7f3d0;cursor:pointer;transition:background .15s;}
+.sb-greet{margin:10px 12px 0;padding:13px;background:#f0fdf4;border-radius:14px;border:1px solid #a7f3d0;cursor:pointer;transition:background .15s;user-select:none;-webkit-tap-highlight-color:transparent;}
 .sb-greet:hover{background:#dcfce7;}
 .sb-greet-avatar{width:34px;height:34px;border-radius:10px;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0;}
 .sb-greet-text{min-width:0;flex:1;}
@@ -70,13 +70,93 @@
 .bn-item i{font-size:18px;}
 .bn-item.active{color:var(--green);}
 
-/* ═══ RESPONSIVE ═══ */
+/* ═══ RESPONSIVE — MOBILE ═══ */
 @media(max-width:768px){
-  .sidebar{display:none;}
-  .main{margin-left:0;}
-  .content{padding:14px;padding-bottom:72px;}
-  .topbar{padding:10px 14px;}
-  .bottom-nav{display:block;}
+  /* Remove sidebar space completely */
+  .sidebar{display:none !important;}
+  .main{margin-left:0 !important;max-width:100vw !important;width:100vw !important;}
+  .app{overflow-x:hidden !important;}
+
+  /* Content full width */
+  .content{padding:12px !important;padding-bottom:78px !important;width:100% !important;overflow-x:hidden !important;}
+  .topbar{padding:10px 14px !important;}
+  .bottom-nav{display:block !important;}
+
+  /* Topbar clock sizing */
+  .topbar-date{font-size:10px !important;}
+  .topbar-time{font-size:14px !important;}
+
+  /* Stat cards — smaller padding */
+  .stat-card{padding:12px !important;}
+  .stat-val{font-size:20px !important;}
+  .stat-icon{width:30px !important;height:30px !important;font-size:13px !important;margin-bottom:8px !important;}
+
+  /* Dashboard shortcuts */
+  .dash-shortcuts{grid-template-columns:1fr 1fr !important;gap:8px !important;}
+  .shortcut-btn{padding:11px 12px !important;}
+  .shortcut-lbl{font-size:10px !important;}
+
+  /* Matrix 2 columns */
+  #matrixGrid{grid-template-columns:repeat(2,1fr) !important;gap:7px !important;}
+
+  /* Filters — full width stacked */
+  .filters{flex-direction:column !important;align-items:stretch !important;gap:8px !important;}
+  .fl-group{width:100% !important;}
+  .fl-group select,
+  .fl-group input[type=search],
+  .fl-group input[type=date]{width:100% !important;min-width:unset !important;}
+  .sw{width:100% !important;}
+  .sw input[type=search]{width:100% !important;}
+
+  /* Card and table — full width, horizontal scroll inside */
+  .card{padding:10px !important;overflow:hidden !important;}
+  .tw{overflow-x:auto !important;-webkit-overflow-scrolling:touch !important;width:100% !important;}
+
+  /* Plt grid single column */
+  .plt-grid{grid-template-columns:1fr !important;}
+
+  /* Form rows single column */
+  .fr{grid-template-columns:1fr !important;}
+
+  /* Page titles */
+  .pg-title{font-size:17px !important;}
+  .pg-sub{margin-bottom:10px !important;}
+
+  /* Modals slide up from bottom */
+  .mo{padding:0 !important;align-items:flex-end !important;}
+  .mo-box,.mo-box.lg,.mo-box.xl,.mo-box.sm{
+    border-radius:22px 22px 0 0 !important;
+    max-width:100% !important;
+    max-height:90vh !important;
+    overflow-y:auto !important;
+  }
+  .mo-body{padding:14px 15px !important;}
+  .mo-head{padding:14px 15px 11px !important;}
+  .mo-foot{padding:10px 15px 22px !important;}
+
+  /* Float bar above bottom nav */
+  .float-bar{bottom:76px !important;}
+
+  /* Log terminal */
+  #logTerm{max-height:52vh !important;}
+  .log-ln{flex-wrap:wrap !important;gap:2px !important;}
+  .log-ts,.log-usr{width:auto !important;font-size:9px !important;}
+
+  /* Riwayat stats */
+  .rwy-stat{padding:10px !important;}
+  .rwy-stat-val{font-size:18px !important;}
+
+  /* Section label */
+  .sec-label{font-size:8px !important;}
+
+  /* Inline dashboard filter bar */
+  #pageDashboard > div:first-of-type{flex-wrap:wrap !important;width:100% !important;}
+}
+
+@media(max-width:380px){
+  .dash-shortcuts{grid-template-columns:1fr !important;}
+  #matrixGrid{grid-template-columns:1fr !important;}
+  .stat-val{font-size:17px !important;}
 }
 
 /* ═══ TYPOGRAPHY ═══ */
@@ -333,21 +413,23 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
   <div class="pg-sub" id="dashSub">Ringkasan Data Pelatihan</div>
 
   <!-- Filter bar -->
-  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;background:#fff;padding:7px 13px;border-radius:13px;border:1.5px solid #e2e8f0;margin-bottom:14px;width:fit-content;">
-    <span style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">Unit</span>
-    <select id="dashUnit" style="border:none;outline:none;font-size:12px;font-weight:700;color:#475569;height:auto;padding:0;background:transparent;"></select>
-    <div style="width:1px;height:16px;background:#e2e8f0;"></div>
-    <span style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">Bulan</span>
-    <select id="dashBulan" style="border:none;outline:none;font-size:12px;font-weight:700;color:#475569;height:auto;padding:0;background:transparent;">
-      <option value="">Semua</option>
-      <option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option>
-      <option value="4">Apr</option><option value="5">Mei</option><option value="6">Jun</option>
-      <option value="7">Jul</option><option value="8">Agu</option><option value="9">Sep</option>
-      <option value="10">Okt</option><option value="11">Nov</option><option value="12">Des</option>
-    </select>
-    <div style="width:1px;height:16px;background:#e2e8f0;"></div>
-    <span style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">Tahun</span>
-    <select id="dashTahun" style="border:none;outline:none;font-size:12px;font-weight:700;color:#475569;height:auto;padding:0;background:transparent;"></select>
+  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;background:#fff;padding:7px 13px;border-radius:13px;border:1.5px solid #e2e8f0;margin-bottom:14px;width:100%;">
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+      <span style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">Unit</span>
+      <select id="dashUnit" style="border:none;outline:none;font-size:12px;font-weight:700;color:#475569;height:auto;padding:0;background:transparent;"></select>
+      <div style="width:1px;height:16px;background:#e2e8f0;"></div>
+      <span style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">Bulan</span>
+      <select id="dashBulan" style="border:none;outline:none;font-size:12px;font-weight:700;color:#475569;height:auto;padding:0;background:transparent;">
+        <option value="">Semua</option>
+        <option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option>
+        <option value="4">Apr</option><option value="5">Mei</option><option value="6">Jun</option>
+        <option value="7">Jul</option><option value="8">Agu</option><option value="9">Sep</option>
+        <option value="10">Okt</option><option value="11">Nov</option><option value="12">Des</option>
+      </select>
+      <div style="width:1px;height:16px;background:#e2e8f0;"></div>
+      <span style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">Tahun</span>
+      <select id="dashTahun" style="border:none;outline:none;font-size:12px;font-weight:700;color:#475569;height:auto;padding:0;background:transparent;"></select>
+    </div>
     <button class="btn btn-p btn-sm" id="btnApplyDash"><i class="fas fa-filter"></i> Terapkan</button>
   </div>
 
@@ -551,6 +633,10 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
             <button class="btn btn-p btn-sm" id="btnSimpanNama"><i class="fas fa-check"></i></button>
           </div>
         </div>
+        <!-- Logout button — always visible, especially for mobile users -->
+        <button id="btnLogoutProfile" style="width:100%;margin-top:4px;padding:13px;border-radius:13px;background:#fff1f2;border:1.5px solid #fecaca;color:#e11d48;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;">
+          <i class="fas fa-right-from-bracket"></i> Keluar dari Sistem
+        </button>
       </div>
     </div>
     <div class="mo-foot">
@@ -816,6 +902,39 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
   </div>
 </div>
 
+<!-- Log Detail -->
+
+<div class="mo" id="moLogDetail">
+  <div class="mo-box">
+    <div class="mo-head"><div class="mo-title" id="logDetailTitle">Detail Log</div><button class="mo-close" onclick="closeModal('moLogDetail')">✕</button></div>
+    <div class="mo-body" style="max-height:65vh;overflow-y:auto;">
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="background:#f8fafc;border-radius:11px;padding:13px;border:1px solid #f1f5f9;">
+          <div style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">Waktu</div>
+          <div style="font-size:13px;font-weight:700;" id="ldTime">–</div>
+        </div>
+        <div style="background:#f8fafc;border-radius:11px;padding:13px;border:1px solid #f1f5f9;">
+          <div style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">Pengguna</div>
+          <div style="font-size:13px;font-weight:700;" id="ldUser">–</div>
+        </div>
+        <div style="background:#f8fafc;border-radius:11px;padding:13px;border:1px solid #f1f5f9;">
+          <div style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">Aksi</div>
+          <div style="font-size:13px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:.5px;" id="ldAksi">–</div>
+        </div>
+        <div style="background:#f8fafc;border-radius:11px;padding:13px;border:1px solid #f1f5f9;">
+          <div style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">Detail Sebelum</div>
+          <pre style="font-size:11px;font-weight:600;color:#334155;white-space:pre-wrap;word-break:break-all;line-height:1.6;font-family:monospace;" id="ldBefore">–</pre>
+        </div>
+        <div style="background:#f8fafc;border-radius:11px;padding:13px;border:1px solid #f1f5f9;">
+          <div style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">Detail Sesudah</div>
+          <pre style="font-size:11px;font-weight:600;color:#334155;white-space:pre-wrap;word-break:break-all;line-height:1.6;font-family:monospace;" id="ldAfter">–</pre>
+        </div>
+      </div>
+    </div>
+    <div class="mo-foot"><button class="btn btn-o" onclick="closeModal('moLogDetail')">Tutup</button></div>
+  </div>
+</div>
+
 <!-- Loading -->
 
 <div id="loadOv"><div class="spin-lg"></div><p class="load-lbl" id="loadTxt">Memuat…</p></div>
@@ -924,6 +1043,13 @@ async function initApp(){
   $('profileUnit').textContent=s.unit||'–';
   $('profilePerner').textContent='Perner: '+(s.perner||'–');
   $('profileNamaBaru').value=s.nama||'';
+
+  /* Fix profile click — bind after DOM is ready */
+  const sbGreetEl=$('sbGreet');
+  if(sbGreetEl){
+    sbGreetEl.onclick=null;
+    sbGreetEl.addEventListener('click',function(e){e.stopPropagation();openModal('moProfile');});
+  }
 }
 
 /* ─── Nav ─── */
@@ -947,11 +1073,17 @@ function buildNav(){
   });
   sbNav.querySelector('.nav-item')?.classList.add('active');
   const bnInner=$('bnInner'); bnInner.innerHTML='';
-  allowed.slice(0,5).forEach(it=>{
+  /* Mobile bottom nav: show up to 4 page items + 1 profile/logout item */
+  const bnItems=allowed.slice(0,4);
+  bnItems.forEach(it=>{
     const btn=document.createElement('button');btn.className='bn-item';btn.dataset.page=it.id;
     btn.innerHTML=`<i class="fas ${it.icon}"></i><span>${it.lbl.split(' ')[0]}</span>`;
     btn.addEventListener('click',()=>showPage(it.id)); bnInner.appendChild(btn);
   });
+  /* Always add profile/logout button at end of bottom nav */
+  const profileBtn=document.createElement('button');profileBtn.className='bn-item';profileBtn.dataset.page='__profile';
+  profileBtn.innerHTML=`<i class="fas fa-circle-user"></i><span>Profil</span>`;
+  profileBtn.addEventListener('click',()=>openModal('moProfile')); bnInner.appendChild(profileBtn);
   bnInner.querySelector('.bn-item')?.classList.add('active');
 }
 
@@ -1071,11 +1203,23 @@ $('btnShortRiwayat')?.addEventListener('click',()=>{
 });
 window.renderRiwayatSaya=()=>{
   const s=S(); const bulan=$('rwyBulan').value; const tahun=$('rwyTahun').value;
-  const plts=getPelatihanByPerner(s.perner,bulan,tahun);
-  $('rwyTotalPlt').textContent=plts.length;
-  $('rwyTotalJam').textContent=calcJam(plts)+'h';
-  $('rwyTotalCore').textContent=plts.filter(p=>p.is_core).length;
-  $('rwyBody').innerHTML=renderRwyTable(plts);
+  /* All pelatihan ever (for core section - no filter) */
+  const allPlts=getPelatihanByPerner(s.perner,'','');
+  const corePlts=allPlts.filter(p=>p.is_core);
+  /* Count unique core topics attended (each topic counts once regardless of refresh) */
+  const uniqueCore=new Set(corePlts.map(p=>p.topik)).size;
+
+  /* Non-core filtered by bulan/tahun */
+  const filteredNonCore=getPelatihanByPerner(s.perner,bulan,tahun).filter(p=>!p.is_core);
+
+  $('rwyTotalPlt').textContent=filteredNonCore.length;
+  $('rwyTotalJam').textContent=calcJam(filteredNonCore)+'h';
+  $('rwyTotalCore').textContent=uniqueCore;
+
+  /* Table: non-core filtered + all core always shown */
+  const tableData=[...filteredNonCore,...corePlts];
+  tableData.sort((a,b)=>(b.tanggal||'').localeCompare(a.tanggal||''));
+  $('rwyBody').innerHTML=renderRwyTable(tableData,bulan,tahun);
 };
 
 /* ═══ PELATIHAN ═══ */
@@ -1171,11 +1315,16 @@ window.showRiwayatKary=p=>{
 };
 function renderRiwayatKary(){
   const bulan=$('rwyKaryBulan').value,tahun=$('rwyKaryTahun').value;
-  const plts=getPelatihanByPerner(rwyKaryPerner,bulan,tahun);
-  $('rwyKaryTotalPlt').textContent=plts.length;
-  $('rwyKaryTotalJam').textContent=calcJam(plts)+'h';
-  $('rwyKaryTotalCore').textContent=plts.filter(p=>p.is_core).length;
-  $('rwyKaryBody').innerHTML=renderRwyTable(plts);
+  const allPlts=getPelatihanByPerner(rwyKaryPerner,'','');
+  const corePlts=allPlts.filter(p=>p.is_core);
+  const uniqueCore=new Set(corePlts.map(p=>p.topik)).size;
+  const filteredNonCore=getPelatihanByPerner(rwyKaryPerner,bulan,tahun).filter(p=>!p.is_core);
+  $('rwyKaryTotalPlt').textContent=filteredNonCore.length;
+  $('rwyKaryTotalJam').textContent=calcJam(filteredNonCore)+'h';
+  $('rwyKaryTotalCore').textContent=uniqueCore;
+  const tableData=[...filteredNonCore,...corePlts];
+  tableData.sort((a,b)=>(b.tanggal||'').localeCompare(a.tanggal||''));
+  $('rwyKaryBody').innerHTML=renderRwyTable(tableData,bulan,tahun);
 }
 $('btnRwyKaryFilter')?.addEventListener('click',renderRiwayatKary);
 
@@ -1221,7 +1370,23 @@ function renderRekap(){
   const cores=core?masterCore.filter(c=>(c.nama_pelatihan||c.id)===core):masterCore;
   let kf=allKaryawan.filter(k=>k.status==='aktif');if(unit)kf=kf.filter(k=>k.unit===unit);if(bagian)kf=kf.filter(k=>k.bagian===bagian);if(q)kf=kf.filter(k=>(k.nama_lengkap||'').toLowerCase().includes(q)||(k.perner||'').includes(q));
   rekapData=[];
-  kf.forEach(k=>{cores.forEach(c=>{const topik=c.nama_pelatihan||c.id;const hT=abMap[k.perner]?.has(`${topik}|${tahun}`),hL=abMap[k.perner]?.has(`${topik}|${tahun-1}`);let st=hT?'lunas':hL?'refresh':'belum';if(status&&st!==status)return;let ld=null;allPelatihan.filter(p=>p.is_core&&p.topik===topik).forEach(p=>{if((allPesertaMap[p.id]||[]).some(pe=>pe.perner===k.perner)&&(!ld||p.tanggal>ld))ld=p.tanggal;});rekapData.push({k,topik,status:st,lastDate:ld});});});
+  const todayMs=Date.now();
+  const MS12=365*24*60*60*1000; /* 12 months in ms */
+  kf.forEach(k=>{cores.forEach(c=>{const topik=c.nama_pelatihan||c.id;
+    /* Find all dates this karyawan attended this core topic */
+    let allDates=[];
+    allPelatihan.filter(p=>p.is_core&&p.topik===topik).forEach(p=>{
+      if((allPesertaMap[p.id]||[]).some(pe=>pe.perner===k.perner)&&p.tanggal)allDates.push(p.tanggal);
+    });
+    if(!allDates.length){if(status&&status!=='belum')return;rekapData.push({k,topik,status:'belum',lastDate:null});return;}
+    allDates.sort((a,b)=>b.localeCompare(a));
+    const lastDate=allDates[0];
+    const lastMs=new Date(lastDate+'T00:00:00').getTime();
+    const diffMs=todayMs-lastMs;
+    let st=diffMs<MS12?'lunas':'refresh';
+    if(status&&st!==status)return;
+    rekapData.push({k,topik,status:st,lastDate});
+  });});
   const total=rekapData.length,start=(rekapPage-1)*PAGE,paged=rekapData.slice(start,start+PAGE);
   $('rekapSelCnt').textContent=selRekapIdx.size;
   const tbody=$('rekapBody');
@@ -1320,7 +1485,7 @@ async function renderLog(){
   let data=allLogs;if(aksi)data=data.filter(l=>l.aksi===aksi);if(q)data=data.filter(l=>(l.aksi||'').includes(q)||(l.user_id||'').includes(q));if(tgl)data=data.filter(l=>{const d=l.timestamp?.toDate?.()?.toISOString?.()?.slice(0,10)||'';return d===tgl;});
   const total=data.length,start=(logPage-1)*PAGE,paged=data.slice(start,start+PAGE);
   const lc=a=>{if(a?.includes('buat')||a?.includes('tambah')||a?.includes('import'))return'lc';if(a?.includes('edit')||a?.includes('update')||a?.includes('ganti'))return'lu';if(a?.includes('hapus'))return'ld';return'ls';};
-  $('logContent').innerHTML=paged.map(l=>`<div class="log-ln ${lc(l.aksi)}"><span class="log-ts">${fmtDT(l.timestamp)}</span><span class="log-usr">[${allUsers.find(u=>u.id===l.user_id)?.nama_lengkap||l.user_id||'–'}]</span><span class="log-ak">${l.aksi||'–'}</span><span style="color:rgba(255,255,255,.18);font-size:10px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${l.detail_sesudah||''}</span></div>`).join('');
+  $('logContent').innerHTML=paged.map(l=>`<div class="log-ln ${lc(l.aksi)}" style="cursor:pointer;" onclick='showLogDetail(${JSON.stringify(l).replace(/'/g,"&#39;")})' title="Klik untuk detail"><span class="log-ts">${fmtDT(l.timestamp)}</span><span class="log-usr">[${allUsers.find(u=>u.id===l.user_id)?.nama_lengkap||l.user_id||'–'}]</span><span class="log-ak">${l.aksi||'–'}</span><span style="color:rgba(255,255,255,.18);font-size:10px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${l.detail_sesudah||''}</span></div>`).join('');
   /* Dark pagination */
   const pagEl=$('logPag');if(!pagEl)return;const pages=Math.ceil(total/PAGE);pagEl.innerHTML='';
   if(pages>1){const mk=(lbl,pg,active,dis)=>{const b=document.createElement('button');b.className=`pb${active?' active':''}`;b.style.cssText='background:rgba(255,255,255,.08);color:white;border-color:rgba(255,255,255,.1);';if(active)b.style.background='var(--green2)';b.textContent=lbl;b.disabled=dis;if(!dis)b.addEventListener('click',()=>{logPage=pg;allLogs=[];renderLog();});return b;};pagEl.appendChild(mk('‹',logPage-1,false,logPage===1));for(let p=1;p<=pages;p++){if(p===1||p===pages||Math.abs(p-logPage)<=1)pagEl.appendChild(mk(p,p,p===logPage,false));else if(Math.abs(p-logPage)===2){const sp=document.createElement('span');sp.textContent='…';sp.style.color='rgba(255,255,255,.2)';sp.style.padding='0 3px';pagEl.appendChild(sp);}}pagEl.appendChild(mk('›',logPage+1,false,logPage===pages));}
@@ -1340,12 +1505,44 @@ function renderPag(cid,total,cur,onPg){
 function setupListeners(){
   const logout=async()=>{await logAct('logout','','');await signOut(auth);LS.clear();window.location.href='index.html';};
   $('btnLogoutSide').addEventListener('click',logout);
+  $('btnLogoutProfile')?.addEventListener('click',logout);
   refreshPesertaBagian();
 }
 
-/* ─── Global errors ─── */
+/* ── Global errors ── */
 window.onerror=(msg,src,line,col,err)=>{addDoc(collection(db,'log_aktivitas'),{aksi:'system_error',timestamp:serverTimestamp(),user_id:LS.get('uid')||'unknown',detail_sesudah:JSON.stringify({message:msg,source:src,line,col,stack:err?.stack})}).catch(()=>{});};
 window.onunhandledrejection=(e)=>{addDoc(collection(db,'log_aktivitas'),{aksi:'system_error',timestamp:serverTimestamp(),user_id:LS.get('uid')||'unknown',detail_sesudah:JSON.stringify({message:e.reason?.message,stack:e.reason?.stack})}).catch(()=>{});};
+
+/* ── Auto-logout after 30 min inactivity ── */
+let _inactTimer=null;
+function resetInactivity(){
+  clearTimeout(_inactTimer);
+  _inactTimer=setTimeout(async()=>{
+    await logAct('auto_logout_inaktif','','30 menit tidak aktif');
+    await signOut(auth); LS.clear(); window.location.href='index.html';
+  },30*60*1000);
+}
+['mousedown','mousemove','keydown','touchstart','scroll','click'].forEach(ev=>
+  document.addEventListener(ev,resetInactivity,{passive:true})
+);
+resetInactivity();
+
+/* ── Log detail click ── */
+window.showLogDetail=l=>{
+  const uName=allUsers.find(u=>u.id===l.user_id)?.nama_lengkap||l.user_id||'–';
+  $('logDetailTitle').textContent='Detail Log — '+l.aksi;
+  $('ldTime').textContent=fmtDT(l.timestamp);
+  $('ldUser').textContent=uName+' ('+l.role+')';
+  $('ldAksi').textContent=l.aksi||'–';
+  let before=l.detail_sebelum||'–';
+  let after=l.detail_sesudah||'–';
+  /* Try pretty-print JSON */
+  try{before=JSON.stringify(JSON.parse(before),null,2);}catch(_){}
+  try{after=JSON.stringify(JSON.parse(after),null,2);}catch(_){}
+  $('ldBefore').textContent=before;
+  $('ldAfter').textContent=after;
+  openModal('moLogDetail');
+};
 </script>
 
 </body>
