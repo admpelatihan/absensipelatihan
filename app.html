@@ -506,6 +506,8 @@
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:2px;">
         <div class="pg-title">Rekap Core</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;" id="rekapActWrap">
+          <button class="btn btn-o" id="btnImportCore"><i class="fas fa-file-import"></i> Import Core</button>
+          <button class="btn btn-o" id="btnTplCore"><i class="fas fa-file-csv"></i> Template</button>
           <button class="btn btn-o" id="btnUpdateCoreExt"><i class="fas fa-rotate"></i> Update Eksternal</button>
           <button class="btn btn-p" id="btnExportRekap"><i class="fas fa-file-excel"></i> Export XLSX</button>
         </div>
@@ -842,18 +844,87 @@
   </div>
 </div>
 
+<!-- Import Core Eksternal -->
+<div class="mo" id="moImportCore">
+  <div class="mo-box xl">
+    <div class="mo-head">
+      <div class="mo-title">Import Rekap Core Eksternal</div>
+      <button class="mo-close" onclick="closeModal('moImportCore')">✕</button>
+    </div>
+    <div class="mo-body" style="max-height:75vh;overflow-y:auto;">
+      <!-- Info format -->
+      <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:11px;padding:11px 14px;margin-bottom:13px;">
+        <div style="font-size:10px;font-weight:900;color:#1d4ed8;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">📋 Format File</div>
+        <div style="font-size:11px;font-weight:600;color:#334155;line-height:1.7;">
+          Kolom wajib: <strong>Perner</strong> · <strong>Topik</strong> · <strong>Tanggal</strong> (format: YYYY-MM-DD)<br/>
+          Kolom opsional: <strong>Keterangan</strong><br/>
+          Format file: .xlsx atau .csv · Gunakan tombol Template untuk contoh
+        </div>
+      </div>
+
+      <!-- Drop zone -->
+      <div id="dropZoneCore" onclick="document.getElementById('importCoreFile').click()"
+        style="border:2px dashed #e2e8f0;border-radius:14px;padding:26px;text-align:center;cursor:pointer;transition:border-color .2s;margin-bottom:13px;"
+        onmouseenter="this.style.borderColor='#059669'" onmouseleave="this.style.borderColor='#e2e8f0'">
+        <div style="font-size:26px;margin-bottom:7px;">📁</div>
+        <p style="font-weight:800;color:#0f172a;font-size:13px;">Klik untuk pilih file</p>
+        <p style="font-size:11px;color:#94a3b8;margin-top:3px;font-weight:600;">Format: .xlsx atau .csv</p>
+        <input type="file" id="importCoreFile" accept=".xlsx,.csv" style="display:none;"/>
+      </div>
+
+      <!-- Preview -->
+      <div id="importCorePreview" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;flex-wrap:wrap;gap:7px;">
+          <strong id="importCoreInfo" style="font-size:12px;font-weight:800;">–</strong>
+          <div id="importCoreStats" style="display:flex;gap:8px;flex-wrap:wrap;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;"></div>
+        </div>
+        <div class="tw" style="max-height:250px;overflow-y:auto;">
+          <table><thead id="impCoreHead"></thead><tbody id="impCoreBody"></tbody></table>
+        </div>
+        <div class="pw" id="impCorePW" style="display:none;"><div class="pf" id="impCorePF"></div></div>
+        <p id="impCoreResult" style="font-size:11px;color:#64748b;margin-top:7px;font-weight:700;"></p>
+      </div>
+    </div>
+    <div class="mo-foot">
+      <button class="btn btn-o" onclick="closeModal('moImportCore')">Tutup</button>
+      <button class="btn btn-p" id="btnDoImportCore" style="display:none;"><i class="fas fa-file-import"></i> Import Sekarang</button>
+    </div>
+  </div>
+</div>
+
 <!-- Update Core Eksternal (multi-perner) -->
 <div class="mo" id="moUpdateCore">
   <div class="mo-box">
     <div class="mo-head"><div class="mo-title">Update Core Eksternal</div><button class="mo-close" onclick="closeModal('moUpdateCore')">✕</button></div>
-    <div class="mo-body">
-      <p style="font-size:11px;color:#64748b;margin-bottom:13px;line-height:1.6;font-weight:700;text-transform:uppercase;letter-spacing:.3px;">Catat pelatihan core dari luar sistem. Satu topik bisa untuk beberapa karyawan.</p>
+    <div class="mo-body" style="max-height:78vh;overflow-y:auto;">
+      <p style="font-size:11px;color:#64748b;margin-bottom:13px;line-height:1.6;font-weight:700;text-transform:uppercase;letter-spacing:.3px;">Catat pelatihan core dari luar sistem. Satu topik untuk banyak karyawan sekaligus.</p>
       <div class="fr"><div class="fg"><div class="fl">Topik Core</div><select id="ucCore"></select></div><div class="fg"><div class="fl">Tanggal</div><input type="date" id="ucTgl"/></div></div>
-      <div class="fr fr-full" style="margin-bottom:10px;"><div class="fg"><div class="fl">Keterangan</div><input type="text" id="ucKet" placeholder="Misal: pelatihan eksternal"/></div></div>
-      <!-- Multi perner rows -->
-      <div class="fl" style="margin-bottom:7px;">Perner Karyawan</div>
-      <div id="ucPernerList"></div>
-      <button class="btn btn-o btn-sm" id="btnAddUcPerner" style="margin-top:6px;"><i class="fas fa-plus"></i> Tambah Karyawan</button>
+      <div class="fr fr-full" style="margin-bottom:12px;"><div class="fg"><div class="fl">Keterangan / Instruktur</div><input type="text" id="ucKet" placeholder="Misal: pelatihan eksternal, nama instruktur"/></div></div>
+
+      <!-- Tab: input cara -->
+      <div class="tab-bar" style="margin-bottom:10px;">
+        <button class="tab-btn active" id="tabUcSatu" onclick="switchUcTab('satu')">Input Satu-satu</button>
+        <button class="tab-btn" id="tabUcBulk" onclick="switchUcTab('bulk')">Paste Massal</button>
+      </div>
+
+      <!-- Tab: Satu-satu -->
+      <div id="ucTabSatu">
+        <div class="fl" style="margin-bottom:7px;">Perner Karyawan</div>
+        <div id="ucPernerList"></div>
+        <button class="btn btn-o btn-sm" id="btnAddUcPerner" style="margin-top:6px;"><i class="fas fa-plus"></i> Tambah Baris</button>
+      </div>
+
+      <!-- Tab: Paste Massal -->
+      <div id="ucTabBulk" style="display:none;">
+        <div style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px;">Paste Banyak Perner Sekaligus</div>
+        <textarea id="ucBulkInput" style="width:100%;min-height:140px;border:1.5px solid #e2e8f0;border-radius:11px;padding:10px 12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:#1e293b;outline:none;resize:vertical;line-height:1.8;" placeholder="90001234&#10;90002345&#10;90003456&#10;&#10;Pisahkan dengan Enter, koma, atau titik koma.&#10;Bisa juga copy-paste langsung dari Excel."></textarea>
+        <div style="font-size:10px;color:#94a3b8;font-weight:600;margin-top:5px;">💡 Tip: Copy kolom perner dari Excel lalu paste di sini langsung</div>
+      </div>
+
+      <!-- Preview jumlah -->
+      <div id="ucPreview" style="display:none;margin-top:12px;padding:10px 13px;background:#f0fdf4;border-radius:10px;border:1px solid #a7f3d0;">
+        <span style="font-size:11px;font-weight:800;color:#064e3b;" id="ucPreviewTxt">0 perner siap disimpan</span>
+      </div>
     </div>
     <div class="mo-foot">
       <button class="btn btn-o" onclick="closeModal('moUpdateCore')">Batal</button>
@@ -922,7 +993,7 @@ import { getAuth, signOut, onAuthStateChanged, setPersistence, browserLocalPersi
 import {
   getFirestore, collection, doc,
   getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
-  query, where, orderBy, limit, writeBatch, serverTimestamp
+  query, where, orderBy, limit, writeBatch, serverTimestamp, onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getFunctions, httpsCallable }
                              from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
@@ -936,7 +1007,7 @@ const LS={get:k=>localStorage.getItem(k),set:(k,v)=>localStorage.setItem(k,v),cl
 const S=()=>({uid:LS.get('uid'),role:LS.get('role'),nama:LS.get('nama'),unit:LS.get('unit'),perner:LS.get('perner')});
 
 /* State */
-let allKaryawan=[],allPelatihan=[],allPesertaMap={},allUsers=[],allLogs=[];
+let allKaryawan=[],allPelatihan=[],allPesertaMap={},allUsers=[],allLogs=[],allCoreEksternal={};
 let masterCore=[],jabatanOpts=[];
 let selectedPeserta=new Map();
 let editPltId=null,editKaryId=null,editUserId=null;
@@ -1093,11 +1164,23 @@ window.showPage=showPage;
 
 function buildYears(){
   const cur=new Date().getFullYear();
-  ['dashTahun','filterPltTahun','filterRekapTahun','rwyTahun','rwyKaryTahun'].forEach(id=>{
+  ['dashTahun','filterPltTahun','rwyTahun','rwyKaryTahun'].forEach(id=>{
     const el=$(id); if(!el)return;
     el.innerHTML='<option value="">Semua</option>';
     for(let y=cur+1;y>=cur-5;y--) el.innerHTML+=`<option value="${y}" ${y===cur?'selected':''}>${y}</option>`;
   });
+  /* Rekap Core: default Semua (kosong) agar semua data tampil */
+  const rekapEl=$('filterRekapTahun');
+  if(rekapEl){
+    rekapEl.innerHTML='<option value="" selected>Semua</option>';
+    for(let y=cur+1;y>=cur-5;y--) rekapEl.innerHTML+=`<option value="${y}">${y}</option>`;
+  }
+  /* Tahun filter untuk Pelatihan: default tahun ini */
+  const pltEl=$('filterPltTahun');
+  if(pltEl){
+    pltEl.innerHTML='<option value="">Semua</option>';
+    for(let y=cur+1;y>=cur-5;y--) pltEl.innerHTML+=`<option value="${y}" ${y===cur?'selected':''}>${y}</option>`;
+  }
 }
 function buildUnitDrops(){
   const s=S();
@@ -1146,15 +1229,17 @@ async function loadAllData(){
 
   try{
     /* Use simplest possible queries — no orderBy, no index required */
-    const[ks,ps,pps]=await Promise.all([
+    const[ks,ps,pps,ces]=await Promise.all([
       getDocs(collection(db,'karyawan')),
       getDocs(collection(db,'pelatihan')),
-      getDocs(collection(db,'peserta_pelatihan'))
+      getDocs(collection(db,'peserta_pelatihan')),
+      getDocs(collection(db,'core_eksternal'))
     ]);
 
     allKaryawan=ks.docs.map(d=>({id:d.id,...d.data()}))
       .sort((a,b)=>(a.nama_lengkap||'').localeCompare(b.nama_lengkap||'','id'));
 
+    /* Include ALL pelatihan including EXT- (core eksternal) */
     allPelatihan=ps.docs.map(d=>({id:d.id,...d.data()}))
       .sort((a,b)=>{
         const ta=a.tgl_dibuat?.toDate?.()?.getTime()||new Date((a.tanggal||'2000-01-01')+'T00:00:00').getTime();
@@ -1167,6 +1252,15 @@ async function loadAllData(){
       const x=d.data();
       if(!allPesertaMap[x.id_pelatihan])allPesertaMap[x.id_pelatihan]=[];
       allPesertaMap[x.id_pelatihan].push({id:d.id,...x});
+    });
+
+    /* core_eksternal: perner -> [{topik, tanggal}] */
+    allCoreEksternal={};
+    ces.docs.forEach(d=>{
+      const x=d.data();
+      if(!x.perner||!x.topik||!x.tanggal)return;
+      if(!allCoreEksternal[x.perner])allCoreEksternal[x.perner]=[];
+      allCoreEksternal[x.perner].push({topik:x.topik,tanggal:x.tanggal});
     });
 
   }catch(e){
@@ -1191,6 +1285,12 @@ async function loadAllData(){
   else if(ap==='pageKaryawan')renderKaryawan();
   else if(ap==='pageRekapCore')renderRekap();
   else renderDashboard();
+
+  /* Aktifkan realtime listener setelah data pertama berhasil dimuat */
+  if(!_realtimeReady){
+    _realtimeReady=true;
+    startRealtimeListeners();
+  }
 }
 
 /* ═══ HELPERS: get pelatihan by perner ═══ */
@@ -1517,30 +1617,75 @@ $('btnTplKary')?.addEventListener('click',()=>{const csv='\uFEFFNama Lengkap,Per
 
 /* ═══ REKAP CORE ═══ */
 function renderRekap(){
-  const s=S();const q=$('searchRekap')?.value.toLowerCase()||'',unit=$('filterRekapUnit')?.value||(s.role==='unit'?s.unit:''),bagian=$('filterRekapBagian')?.value||'',core=$('filterRekapCore')?.value||'',status=$('filterRekapStatus')?.value||'',tahun=parseInt($('filterRekapTahun')?.value)||new Date().getFullYear();
+  const s=S();
+  const q=($('searchRekap')?.value||'').toLowerCase();
+  const unit=$('filterRekapUnit')?.value||(s.role==='unit'?s.unit:'');
+  const bagian=$('filterRekapBagian')?.value||'';
+  const core=$('filterRekapCore')?.value||'';
+  const status=$('filterRekapStatus')?.value||'';
+  const tahun=parseInt($('filterRekapTahun')?.value)||0; /* 0 = semua tahun */
+
   $('rekapChkTh').style.display=s.role==='unit'?'none':'';
-  const bEl=$('filterRekapBagian');if(bEl){const cur=bEl.value;const bs=[...new Set(allKaryawan.map(k=>k.bagian).filter(Boolean))].sort();bEl.innerHTML=`<option value="">Semua Bagian</option>`+bs.map(b=>`<option value="${b}">${b}</option>`).join('');bEl.value=cur;}
-  const abMap={};allPelatihan.forEach(p=>{if(!p.is_core)return;const tp=p.tanggal?new Date(p.tanggal+'T00:00:00').getFullYear():null;(allPesertaMap[p.id]||[]).forEach(pe=>{if(!abMap[pe.perner])abMap[pe.perner]=new Set();abMap[pe.perner].add(`${p.topik}|${tp}`);});});
+  const bEl=$('filterRekapBagian');
+  if(bEl){
+    const cur=bEl.value;
+    const bs=[...new Set(allKaryawan.map(k=>k.bagian).filter(Boolean))].sort();
+    bEl.innerHTML='<option value="">Semua Bagian</option>'+bs.map(b=>`<option value="${b}">${b}</option>`).join('');
+    bEl.value=cur;
+  }
+
   const cores=core?masterCore.filter(c=>(c.nama_pelatihan||c.id)===core):masterCore;
-  let kf=allKaryawan.filter(k=>k.status==='aktif');if(unit)kf=kf.filter(k=>k.unit===unit);if(bagian)kf=kf.filter(k=>k.bagian===bagian);if(q)kf=kf.filter(k=>(k.nama_lengkap||'').toLowerCase().includes(q)||(k.perner||'').includes(q));
+  let kf=allKaryawan.filter(k=>k.status==='aktif');
+  if(unit)kf=kf.filter(k=>k.unit===unit);
+  if(bagian)kf=kf.filter(k=>k.bagian===bagian);
+  if(q)kf=kf.filter(k=>(k.nama_lengkap||'').toLowerCase().includes(q)||(k.perner||'').includes(q));
+
   rekapData=[];
   const todayMs=Date.now();
-  const MS12=365*24*60*60*1000; /* 12 months in ms */
-  kf.forEach(k=>{cores.forEach(c=>{const topik=c.nama_pelatihan||c.id;
-    /* Find all dates this karyawan attended this core topic */
-    let allDates=[];
-    allPelatihan.filter(p=>p.is_core&&p.topik===topik).forEach(p=>{
-      if((allPesertaMap[p.id]||[]).some(pe=>pe.perner===k.perner)&&p.tanggal)allDates.push(p.tanggal);
+  const MS12=365*24*60*60*1000;
+
+  kf.forEach(k=>{
+    cores.forEach(c=>{
+      const topik=c.nama_pelatihan||c.id;
+
+      /* Kumpulkan semua tanggal kehadiran dari allPelatihan (termasuk EXT-) */
+      let allDates=[];
+      allPelatihan.filter(p=>p.is_core&&(p.topik===topik||p.topik?.toLowerCase()===topik.toLowerCase())).forEach(p=>{
+        if((allPesertaMap[p.id]||[]).some(pe=>pe.perner===k.perner)&&p.tanggal){
+          /* Filter tahun jika dipilih */
+          if(tahun){
+            const y=new Date(p.tanggal+'T00:00:00').getFullYear();
+            if(y!==tahun)return;
+          }
+          allDates.push(p.tanggal);
+        }
+      });
+
+      /* Tambahkan juga dari core_eksternal (data lama) */
+      (allCoreEksternal[k.perner]||[]).forEach(ce=>{
+        if(ce.topik===topik||ce.topik?.toLowerCase()===topik.toLowerCase()){
+          if(tahun){
+            const y=new Date(ce.tanggal+'T00:00:00').getFullYear();
+            if(y!==tahun)return;
+          }
+          allDates.push(ce.tanggal);
+        }
+      });
+
+      if(!allDates.length){
+        if(status&&status!=='belum')return;
+        rekapData.push({k,topik,status:'belum',lastDate:null});
+        return;
+      }
+
+      allDates.sort((a,b)=>b.localeCompare(a));
+      const lastDate=allDates[0];
+      const diffMs=todayMs-new Date(lastDate+'T00:00:00').getTime();
+      let st=diffMs<MS12?'lunas':'refresh';
+      if(status&&st!==status)return;
+      rekapData.push({k,topik,status:st,lastDate});
     });
-    if(!allDates.length){if(status&&status!=='belum')return;rekapData.push({k,topik,status:'belum',lastDate:null});return;}
-    allDates.sort((a,b)=>b.localeCompare(a));
-    const lastDate=allDates[0];
-    const lastMs=new Date(lastDate+'T00:00:00').getTime();
-    const diffMs=todayMs-lastMs;
-    let st=diffMs<MS12?'lunas':'refresh';
-    if(status&&st!==status)return;
-    rekapData.push({k,topik,status:st,lastDate});
-  });});
+  });
   const total=rekapData.length,start=(rekapPage-1)*PAGE,paged=rekapData.slice(start,start+PAGE);
   $('rekapSelCnt').textContent=selRekapIdx.size;
   const tbody=$('rekapBody');
@@ -1564,7 +1709,28 @@ $('btnUpdateCoreExt')?.addEventListener('click',()=>{setupUcPernerRows();openMod
 function setupUcPernerRows(){
   const list=$('ucPernerList');if(!list)return;
   list.innerHTML=`<div class="mperner-row"><input class="mperner-input uc-perner-inp" type="text" placeholder="Nomor perner"/><button onclick="removeUcPerner(this)" class="btn btn-sm btn-r"><i class="fas fa-times"></i></button></div>`;
+  /* Reset bulk */
+  const bulk=$('ucBulkInput');if(bulk)bulk.value='';
+  $('ucPreview').style.display='none';
+  switchUcTab('satu');
 }
+window.switchUcTab=function(tab){
+  $('ucTabSatu').style.display=tab==='satu'?'block':'none';
+  $('ucTabBulk').style.display=tab==='bulk'?'block':'none';
+  $('tabUcSatu').classList.toggle('active',tab==='satu');
+  $('tabUcBulk').classList.toggle('active',tab==='bulk');
+};
+/* Live preview count */
+document.addEventListener('input',e=>{
+  if(e.target.classList.contains('uc-perner-inp')||e.target.id==='ucBulkInput'){
+    const fromRows=[...document.querySelectorAll('.uc-perner-inp')].map(el=>el.value.trim()).filter(Boolean);
+    const fromBulk=($('ucBulkInput')?.value||'').split(/[\n,;]+/).map(s=>s.trim()).filter(Boolean);
+    const total=new Set([...fromRows,...fromBulk]).size;
+    const prev=$('ucPreview');const txt=$('ucPreviewTxt');
+    if(total>0&&prev&&txt){prev.style.display='block';txt.textContent=`${total} perner akan disimpan`;}
+    else if(prev)prev.style.display='none';
+  }
+});
 $('btnAddUcPerner')?.addEventListener('click',()=>{
   const list=$('ucPernerList');const row=document.createElement('div');row.className='mperner-row';row.innerHTML=`<input class="mperner-input uc-perner-inp" type="text" placeholder="Nomor perner"/><button onclick="removeUcPerner(this)" class="btn btn-sm btn-r"><i class="fas fa-times"></i></button>`;list.appendChild(row);
 });
@@ -1572,24 +1738,276 @@ window.removeUcPerner=btn=>{const rows=document.querySelectorAll('.mperner-row')
 $('btnSimpanUC')?.addEventListener('click',async()=>{
   const s=S(),core=$('ucCore').value,tgl=$('ucTgl').value;
   if(!core||!tgl){toast('Topik Core dan Tanggal wajib diisi','error');return;}
-  const perners=[...document.querySelectorAll('.uc-perner-inp')].map(el=>el.value.trim()).filter(Boolean);
-  if(!perners.length){toast('Masukkan minimal satu nomor perner','error');return;}
+
+  /* Kumpulkan semua perner dari input rows DAN textarea bulk */
+  const fromRows=[...document.querySelectorAll('.uc-perner-inp')].map(el=>el.value.trim()).filter(Boolean);
+  const fromBulk=($('ucBulkInput')?.value||'').split(/[\n,;]+/).map(s=>s.trim()).filter(Boolean);
+  const allPerners=[...new Set([...fromRows,...fromBulk])];
+
+  if(!allPerners.length){toast('Masukkan minimal satu nomor perner','error');return;}
   showLoad('Menyimpan update core…');
   try{
-    let ok=0,skip=0;
-    for(const perner of perners){
-      const k=allKaryawan.find(k=>k.perner===perner);if(!k){skip++;continue;}
-      const ds=tgl.replace(/-/g,'');const pltId=`EXT-${ds}-${perner}`;
-      await setDoc(doc(db,'pelatihan',pltId),{topik:core,unit_pembuat:k.unit||'',tanggal:tgl,hari:hariIndo(tgl),waktu_mulai:'00:00',waktu_selesai:'00:00',lokasi:'Eksternal',instruktur:$('ucKet').value||'Eksternal',penyelenggara:'Eksternal',is_core:true,status:'selesai',dibuat_oleh:s.uid,tgl_dibuat:serverTimestamp()});
-      await setDoc(doc(collection(db,'peserta_pelatihan')),{id_pelatihan:pltId,perner,ditambahkan_oleh:s.uid,tgl_ditambahkan:serverTimestamp(),hadir:true});
-      ok++;
+    const ket=$('ucKet').value.trim()||'Eksternal';
+    let ok=0,skip=0,skipList=[];
+
+    /* Validasi semua perner */
+    const validKary=[];
+    for(const perner of allPerners){
+      const k=allKaryawan.find(k=>k.perner===perner);
+      if(!k){skip++;skipList.push(perner);continue;}
+      validKary.push({perner,k});ok++;
     }
-    await logAct('update_core_luar','',{core,tgl,ok,skip});
-    closeModal('moUpdateCore');await loadAllData();toast(`Update core berhasil: ${ok} karyawan${skip>0?`, ${skip} perner tidak ditemukan`:''}!`,skip>0?'warn':'success');
+
+    if(!validKary.length){
+      toast('Tidak ada perner valid ditemukan','error');
+      hideLoad();return;
+    }
+
+    /* Buat SATU dokumen pelatihan untuk semua peserta */
+    const ds=tgl.replace(/-/g,'');
+    const coreSlug=core.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
+    const pltId=`EXT-${ds}-${coreSlug}`;
+
+    await setDoc(doc(db,'pelatihan',pltId),{
+      topik:core,
+      unit_pembuat:s.unit||'',
+      tanggal:tgl,
+      hari:hariIndo(tgl),
+      waktu_mulai:'00:00',
+      waktu_selesai:'00:00',
+      lokasi:'Eksternal',
+      instruktur:ket,
+      penyelenggara:'Eksternal',
+      is_core:true,
+      status:'selesai',
+      dibuat_oleh:s.uid,
+      tgl_dibuat:serverTimestamp(),
+      is_eksternal:true
+    },{merge:true});
+
+    /* Tambahkan semua peserta ke peserta_pelatihan */
+    /* Cek peserta yang sudah ada agar tidak duplikat */
+    const existSnap=await getDocs(query(collection(db,'peserta_pelatihan'),where('id_pelatihan','==',pltId)));
+    const existPerners=new Set(existSnap.docs.map(d=>d.data().perner));
+
+    const batch=writeBatch(db);
+    let added=0;
+    for(const {perner} of validKary){
+      if(existPerners.has(perner))continue;
+      const r=doc(collection(db,'peserta_pelatihan'));
+      batch.set(r,{
+        id_pelatihan:pltId,
+        perner,
+        ditambahkan_oleh:s.uid,
+        tgl_ditambahkan:serverTimestamp(),
+        hadir:true
+      });
+      added++;
+    }
+    if(added>0)await batch.commit();
+
+    await logAct('update_core_luar','',{core,tgl,ok,skip,pltId});
+    closeModal('moUpdateCore');
+    await loadAllData();
+
+    let msg=`✅ ${ok} karyawan berhasil dicatat untuk core "${core}"`;
+    if(skip>0)msg+=`\n⚠️ ${skip} perner tidak ditemukan: ${skipList.slice(0,5).join(', ')}${skipList.length>5?'...':''}`;
+    toast(msg.split('\n')[0], skip>0?'warn':'success');
+    if(skip>0)setTimeout(()=>toast('Perner tidak ditemukan: '+skipList.slice(0,5).join(', ')+(skipList.length>5?' ...':''),'warn'),500);
   }catch(e){toast('Gagal: '+e.message,'error');}finally{hideLoad();}
 });
 
-/* ═══ MANAJEMEN USER ═══ */
+/* ═══ IMPORT CORE EKSTERNAL ═══ */
+let _impCoreRows=[];
+
+$('btnImportCore')?.addEventListener('click',()=>{
+  _impCoreRows=[];
+  $('importCorePreview').style.display='none';
+  $('btnDoImportCore').style.display='none';
+  $('importCoreFile').value='';
+  $('impCoreResult').textContent='';
+  openModal('moImportCore');
+});
+
+$('btnTplCore')?.addEventListener('click',()=>{
+  /* Template CSV dengan contoh data */
+  const csv='\uFEFFPerner,Topik,Tanggal,Keterangan\n'
+    +'90001234,SJPH,2024-03-15,Pelatihan eksternal\n'
+    +'90002345,ISO 9001,2024-06-20,Sertifikasi\n'
+    +'90003456,CPOTB 1-6,2024-09-10,\n';
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='template_import_core.csv';
+  a.click();
+});
+
+$('importCoreFile')?.addEventListener('change',async e=>{
+  const f=e.target.files[0];if(!f)return;
+  try{
+    let data;
+    if(f.name.endsWith('.csv')){
+      const t=await f.text();
+      data=Papa.parse(t,{header:true,skipEmptyLines:true}).data;
+    }else{
+      const buf=await f.arrayBuffer();
+      const wb=XLSX.read(buf,{type:'array'});
+      data=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+    }
+    renderImportCorePreview(data);
+  }catch(err){toast('Gagal baca file: '+err.message,'error');}
+});
+
+function renderImportCorePreview(data){
+  if(!data.length){toast('File kosong','error');return;}
+
+  const cols=Object.keys(data[0]).map(c=>c.trim());
+
+  /* Flexible column mapping */
+  const findCol=(aliases)=>cols.find(c=>aliases.map(a=>a.toLowerCase()).includes(c.toLowerCase().trim()))||null;
+  const colPerner=findCol(['perner','no induk','no. induk','nik','nip','nomor induk','employee id']);
+  const colTopik=findCol(['topik','topik core','core','nama topik','topic','pelatihan']);
+  const colTgl=findCol(['tanggal','tgl','date','tanggal pelatihan','tgl pelatihan']);
+  const colKet=findCol(['keterangan','ket','catatan','note','notes','instruktur']);
+
+  if(!colPerner||!colTopik||!colTgl){
+    toast('Kolom Perner, Topik, dan Tanggal wajib ada','error');
+    return;
+  }
+
+  const validTopiks=new Set(masterCore.map(c=>(c.nama_pelatihan||c.id).toLowerCase()));
+
+  let ok=0,skipKary=0,skipTopik=0,skipTgl=0;
+  _impCoreRows=data.map(row=>{
+    const perner=(row[colPerner]||'').toString().trim();
+    const topik=(row[colTopik]||'').toString().trim();
+    const tglRaw=(row[colTgl]||'').toString().trim();
+    const ket=(colKet?row[colKet]||'':'').toString().trim();
+
+    /* Validasi perner */
+    const kary=allKaryawan.find(k=>k.perner===perner);
+    if(!kary)return{perner,topik,tgl:tglRaw,ket,status:'❌ Perner tdk ditemukan',cls:'ir-err',valid:false,skipReason:'kary'};
+
+    /* Validasi topik — cari match fleksibel */
+    const topikMatch=masterCore.find(c=>{
+      const cn=(c.nama_pelatihan||c.id).toLowerCase();
+      return cn===topik.toLowerCase()||cn.includes(topik.toLowerCase())||topik.toLowerCase().includes(cn);
+    });
+    if(!topikMatch)return{perner,topik,tgl:tglRaw,ket,status:'❌ Topik tdk dikenal',cls:'ir-err',valid:false,skipReason:'topik'};
+
+    /* Validasi tanggal */
+    const tgl=tglRaw.includes('/')?tglRaw.split('/').reverse().join('-'):
+               tglRaw.includes('-')&&tglRaw.length===10?tglRaw:
+               tglRaw.length===8?`${tglRaw.slice(0,4)}-${tglRaw.slice(4,6)}-${tglRaw.slice(6,8)}`:null;
+    if(!tgl||isNaN(new Date(tgl+'T00:00:00').getTime()))
+      return{perner,topik:topikMatch.nama_pelatihan||topikMatch.id,tgl:tglRaw,ket,status:'❌ Format tanggal salah',cls:'ir-err',valid:false,skipReason:'tgl'};
+
+    ok++;
+    return{perner,topik:topikMatch.nama_pelatihan||topikMatch.id,tgl,ket,kary,status:'✅ Siap',cls:'ir-new',valid:true};
+  });
+
+  /* Hitung stats */
+  _impCoreRows.forEach(r=>{if(!r.valid){if(r.skipReason==='kary')skipKary++;else if(r.skipReason==='topik')skipTopik++;else skipTgl++;}});
+
+  $('importCoreInfo').textContent=`${data.length} baris — ${ok} siap, ${data.length-ok} dilewati`;
+  $('importCoreStats').innerHTML=
+    `<span style="color:#059669;">✅ ${ok} valid</span>`+
+    (skipKary?`<span style="color:#e11d48;">❌ ${skipKary} perner tdk ada</span>`:'')  +
+    (skipTopik?`<span style="color:#d97706;">⚠️ ${skipTopik} topik tdk dikenal</span>`:'')  +
+    (skipTgl?`<span style="color:#e11d48;">❌ ${skipTgl} tanggal salah</span>`:'');
+
+  $('impCoreHead').innerHTML=`<tr><th>Perner</th><th>Nama</th><th>Topik Core</th><th>Tanggal</th><th>Keterangan</th><th>Status</th></tr>`;
+  $('impCoreBody').innerHTML=_impCoreRows.slice(0,10).map(r=>`
+    <tr class="${r.cls}">
+      <td>${r.perner}</td>
+      <td style="font-weight:700;">${r.kary?.nama_lengkap||'–'}</td>
+      <td>${r.topik}</td>
+      <td>${r.tgl}</td>
+      <td class="td-m">${r.ket||'–'}</td>
+      <td style="font-size:10px;font-weight:800;">${r.status}</td>
+    </tr>`).join('');
+  if(_impCoreRows.length>10){
+    $('impCoreBody').innerHTML+=`<tr><td colspan="6" style="text-align:center;color:#94a3b8;font-size:10px;font-weight:800;padding:8px;">... dan ${_impCoreRows.length-10} baris lainnya</td></tr>`;
+  }
+
+  $('importCorePreview').style.display='block';
+  $('btnDoImportCore').style.display=ok>0?'inline-flex':'none';
+}
+
+$('btnDoImportCore')?.addEventListener('click',async()=>{
+  const valid=_impCoreRows.filter(r=>r.valid);
+  if(!valid.length)return;
+  const s=S();
+  showLoad('Mengimpor data core…');
+  $('impCorePW').style.display='block';
+
+  try{
+    /* Group by topik+tanggal untuk membuat 1 dokumen pelatihan per grup */
+    const groups={};
+    valid.forEach(r=>{
+      const key=`${r.topik}|||${r.tgl}`;
+      if(!groups[key])groups[key]={topik:r.topik,tgl:r.tgl,ket:r.ket,perners:[]};
+      groups[key].perners.push(r.perner);
+    });
+
+    let totalOk=0;
+    const keys=Object.keys(groups);
+    for(let gi=0;gi<keys.length;gi++){
+      const g=groups[keys[gi]];
+      const ds=g.tgl.replace(/-/g,'');
+      const coreSlug=g.topik.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
+      const pltId=`EXT-${ds}-${coreSlug}`;
+
+      /* Buat/update dokumen pelatihan */
+      await setDoc(doc(db,'pelatihan',pltId),{
+        topik:g.topik,
+        unit_pembuat:s.unit||'',
+        tanggal:g.tgl,
+        hari:hariIndo(g.tgl),
+        waktu_mulai:'00:00',
+        waktu_selesai:'00:00',
+        lokasi:'Eksternal',
+        instruktur:g.ket||'Eksternal',
+        penyelenggara:'Eksternal',
+        is_core:true,
+        status:'selesai',
+        dibuat_oleh:s.uid,
+        tgl_dibuat:serverTimestamp(),
+        is_eksternal:true
+      },{merge:true});
+
+      /* Cek peserta yang sudah ada */
+      const existSnap=await getDocs(query(collection(db,'peserta_pelatihan'),where('id_pelatihan','==',pltId)));
+      const existPerners=new Set(existSnap.docs.map(d=>d.data().perner));
+
+      /* Tambahkan peserta yang belum ada */
+      const batch=writeBatch(db);
+      let batchCount=0;
+      for(const perner of g.perners){
+        if(existPerners.has(perner))continue;
+        const r=doc(collection(db,'peserta_pelatihan'));
+        batch.set(r,{id_pelatihan:pltId,perner,ditambahkan_oleh:s.uid,tgl_ditambahkan:serverTimestamp(),hadir:true});
+        batchCount++;totalOk++;
+      }
+      if(batchCount>0)await batch.commit();
+
+      /* Update progress bar */
+      $('impCorePF').style.width=Math.round(((gi+1)/keys.length)*100)+'%';
+    }
+
+    await logAct('import_core_eksternal','',{total:valid.length,groups:keys.length});
+    $('impCoreResult').textContent=`✅ ${totalOk} data core berhasil diimport dalam ${keys.length} grup pelatihan.`;
+    $('btnDoImportCore').style.display='none';
+    await loadAllData();
+    toast(`Import core selesai: ${totalOk} karyawan, ${keys.length} grup pelatihan`);
+
+  }catch(e){
+    toast('Gagal import: '+e.message,'error');
+    $('impCoreResult').textContent='❌ Error: '+e.message;
+  }finally{
+    hideLoad();
+    $('impCorePW').style.display='none';
+  }
+});
 async function renderUsers(){
   const q=$('searchUser')?.value.toLowerCase()||'',level=$('filterUserLevel')?.value||'',status=$('filterUserStatus')?.value||'';
   if(!allUsers.length){showLoad();try{const sn=await getDocs(collection(db,'users'));allUsers=sn.docs.map(d=>({id:d.id,...d.data()}));}catch(e){toast('Gagal: '+e.message,'error');}finally{hideLoad();}}
@@ -1646,25 +2064,69 @@ async function renderLog(){
 }
 ['searchLog','filterLogAksi','filterLogDate'].forEach(id=>{$(id)?.addEventListener('input',()=>{logPage=1;allLogs=[];renderLog();});$(id)?.addEventListener('change',()=>{logPage=1;allLogs=[];renderLog();});});
 
+/* ═══ REALTIME LISTENERS ═══ */
+let _unsubPlt=null,_unsubPst=null,_unsubKary=null;
+let _realtimeReady=false;
+
+function startRealtimeListeners(){
+  _unsubPlt?.();_unsubPst?.();_unsubKary?.();
+
+  _unsubPlt=onSnapshot(collection(db,'pelatihan'),snap=>{
+    if(!_realtimeReady)return;
+    allPelatihan=snap.docs.map(d=>({id:d.id,...d.data()}))
+      .sort((a,b)=>{
+        const ta=a.tgl_dibuat?.toDate?.()?.getTime()||new Date((a.tanggal||'2000-01-01')+'T00:00:00').getTime();
+        const tb=b.tgl_dibuat?.toDate?.()?.getTime()||new Date((b.tanggal||'2000-01-01')+'T00:00:00').getTime();
+        return tb-ta;
+      });
+    _refreshView();
+  });
+
+  _unsubPst=onSnapshot(collection(db,'peserta_pelatihan'),snap=>{
+    if(!_realtimeReady)return;
+    allPesertaMap={};
+    snap.docs.forEach(d=>{const x=d.data();if(!allPesertaMap[x.id_pelatihan])allPesertaMap[x.id_pelatihan]=[];allPesertaMap[x.id_pelatihan].push({id:d.id,...x});});
+    _refreshView();
+  });
+
+  _unsubKary=onSnapshot(collection(db,'karyawan'),snap=>{
+    if(!_realtimeReady)return;
+    allKaryawan=snap.docs.map(d=>({id:d.id,...d.data()}))
+      .sort((a,b)=>(a.nama_lengkap||'').localeCompare(b.nama_lengkap||'','id'));
+    _refreshView();
+  });
+}
+
+function _refreshView(){
+  const ap=document.querySelector('.page.active')?.id||'';
+  if(ap==='pageDashboard')     renderDashboard();
+  else if(ap==='pagePelatihan')  renderPelatihan();
+  else if(ap==='pageKaryawan')   renderKaryawan();
+  else if(ap==='pageRekapCore')  renderRekap();
+}
+
 /* ═══ PAGINATION ═══ */
-window._pagCbs={};
 function renderPag(cid,total,cur,onPg){
   const cont=$(cid);if(!cont)return;
   const pages=Math.ceil(total/PAGE);
   if(pages<=1){cont.innerHTML='';return;}
-  /* Register callback globally to avoid toString() issues */
-  const cbKey='_pag_'+cid;
-  window._pagCbs[cbKey]=onPg;
-  let h=`<button class="pb" ${cur===1?'disabled':''} onclick="window._pagCbs['${cbKey}'](${cur-1})">‹</button>`;
+  let h=`<button class="pb" data-pg="${cur-1}" ${cur===1?'disabled':''}>‹</button>`;
   for(let p=1;p<=pages;p++){
     if(p===1||p===pages||Math.abs(p-cur)<=1){
-      h+=`<button class="pb ${p===cur?'active':''}" onclick="window._pagCbs['${cbKey}'](${p})">${p}</button>`;
+      h+=`<button class="pb ${p===cur?'active':''}" data-pg="${p}">${p}</button>`;
     }else if(Math.abs(p-cur)===2){
       h+=`<span style="color:#94a3b8;padding:0 3px;">…</span>`;
     }
   }
-  h+=`<button class="pb" ${cur===pages?'disabled':''} onclick="window._pagCbs['${cbKey}'](${cur+1})">›</button>`;
+  h+=`<button class="pb" data-pg="${cur+1}" ${cur===pages?'disabled':''}>›</button>`;
   cont.innerHTML=h;
+  /* Attach click handlers directly — no global scope needed */
+  cont.querySelectorAll('.pb:not([disabled])').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const pg=parseInt(btn.dataset.pg);
+      if(!isNaN(pg))onPg(pg);
+    });
+  });
 }
 
 /* ═══ LISTENERS ═══ */
