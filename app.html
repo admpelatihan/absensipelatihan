@@ -1230,9 +1230,29 @@ function renderDashboard(){
   $('statPlt').textContent=pf.length; $('statPltLbl').textContent=bulan?'Pelatihan Bulan Ini':'Total Pelatihan';
   $('statJam').textContent=calcJam(pf)+'h'; $('statJamLbl').textContent=bulan?'Jam Bulan Ini':'Total Jam';
   /* Matrix */
-  const abMap={};allPelatihan.forEach(p=>{if(!p.is_core)return;const tp=p.tanggal?new Date(p.tanggal+'T00:00:00').getFullYear():null;(allPesertaMap[p.id]||[]).forEach(pe=>{if(!abMap[pe.perner])abMap[pe.perner]=new Set();abMap[pe.perner].add(`${p.topik}|${tp}`);});});
+  /* Matrix — rolling 12 bulan dari tanggal terakhir pelatihan, sama dengan Rekap Core */
+  const todayMs=Date.now();
+  const MS12=365*24*60*60*1000;
+  /* Build map: perner -> topik -> lastDate */
+  const lastDateMap={};
+  allPelatihan.forEach(p=>{
+    if(!p.is_core||!p.tanggal)return;
+    (allPesertaMap[p.id]||[]).forEach(pe=>{
+      if(!lastDateMap[pe.perner])lastDateMap[pe.perner]={};
+      const cur=lastDateMap[pe.perner][p.topik];
+      if(!cur||p.tanggal>cur)lastDateMap[pe.perner][p.topik]=p.tanggal;
+    });
+  });
   const mg=$('matrixGrid');mg.innerHTML='';
-  masterCore.forEach(c=>{const topik=c.nama_pelatihan||c.id;let L=0,R=0,B=0;kf.forEach(k=>{const hT=abMap[k.perner]?.has(`${topik}|${tahun}`),hL=abMap[k.perner]?.has(`${topik}|${tahun-1}`);if(hT)L++;else if(hL)R++;else B++;});
+  masterCore.forEach(c=>{
+    const topik=c.nama_pelatihan||c.id;
+    let L=0,R=0,B=0;
+    kf.forEach(k=>{
+      const ld=lastDateMap[k.perner]?.[topik];
+      if(!ld){B++;return;}
+      const diffMs=todayMs-new Date(ld+'T00:00:00').getTime();
+      if(diffMs<MS12)L++;else R++;
+    });
     const card=document.createElement('div');card.className='mx-card';
     card.innerHTML=`<div class="mx-title">${topik}</div><div class="mx-nums"><div><div class="mnum" style="background:#ecfdf5;" onclick="goRekap('${topik}','lunas')"><div class="mnum-val" style="color:#064e3b;">${L}</div><div class="mnum-lbl" style="color:#059669;">OK</div></div></div><div><div class="mnum" style="background:#fffbeb;" onclick="goRekap('${topik}','refresh')"><div class="mnum-val" style="color:#92400e;">${R}</div><div class="mnum-lbl" style="color:#d97706;">REF</div></div></div><div><div class="mnum" style="background:#fff1f2;" onclick="goRekap('${topik}','belum')"><div class="mnum-val" style="color:#9f1239;">${B}</div><div class="mnum-lbl" style="color:#e11d48;">NO</div></div></div></div>`;
     mg.appendChild(card);
@@ -1627,11 +1647,23 @@ async function renderLog(){
 ['searchLog','filterLogAksi','filterLogDate'].forEach(id=>{$(id)?.addEventListener('input',()=>{logPage=1;allLogs=[];renderLog();});$(id)?.addEventListener('change',()=>{logPage=1;allLogs=[];renderLog();});});
 
 /* ═══ PAGINATION ═══ */
+window._pagCbs={};
 function renderPag(cid,total,cur,onPg){
-  const cont=$(cid);if(!cont)return;const pages=Math.ceil(total/PAGE);if(pages<=1){cont.innerHTML='';return;}
-  let h=`<button class="pb" ${cur===1?'disabled':''} onclick="(${onPg.toString()})(${cur-1})">‹</button>`;
-  for(let p=1;p<=pages;p++){if(p===1||p===pages||Math.abs(p-cur)<=1)h+=`<button class="pb ${p===cur?'active':''}" onclick="(${onPg.toString()})(${p})">${p}</button>`;else if(Math.abs(p-cur)===2)h+=`<span style="color:#94a3b8;padding:0 3px;">…</span>`;}
-  h+=`<button class="pb" ${cur===pages?'disabled':''} onclick="(${onPg.toString()})(${cur+1})">›</button>`;
+  const cont=$(cid);if(!cont)return;
+  const pages=Math.ceil(total/PAGE);
+  if(pages<=1){cont.innerHTML='';return;}
+  /* Register callback globally to avoid toString() issues */
+  const cbKey='_pag_'+cid;
+  window._pagCbs[cbKey]=onPg;
+  let h=`<button class="pb" ${cur===1?'disabled':''} onclick="window._pagCbs['${cbKey}'](${cur-1})">‹</button>`;
+  for(let p=1;p<=pages;p++){
+    if(p===1||p===pages||Math.abs(p-cur)<=1){
+      h+=`<button class="pb ${p===cur?'active':''}" onclick="window._pagCbs['${cbKey}'](${p})">${p}</button>`;
+    }else if(Math.abs(p-cur)===2){
+      h+=`<span style="color:#94a3b8;padding:0 3px;">…</span>`;
+    }
+  }
+  h+=`<button class="pb" ${cur===pages?'disabled':''} onclick="window._pagCbs['${cbKey}'](${cur+1})">›</button>`;
   cont.innerHTML=h;
 }
 
