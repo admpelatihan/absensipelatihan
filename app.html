@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="id">
 <head>
   <meta charset="UTF-8"/>
@@ -17,349 +16,345 @@
     body{font-family:'Plus Jakarta Sans',sans-serif;background:#f8fafc;color:#1e293b;-webkit-font-smoothing:antialiased;}
     .app{display:flex;min-height:100vh;}
 
+    /* ═══ SIDEBAR ═══ */
+    .sidebar{width:var(--sw);flex-shrink:0;background:#fff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;}
+    .sidebar::-webkit-scrollbar{width:3px;}
+    .sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:3px;}
+    .sb-logo{padding:18px 18px 14px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:11px;}
+    .sb-logo-icon{width:38px;height:38px;border-radius:11px;background:var(--green);display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px;flex-shrink:0;}
+    .sb-logo-name{font-size:14px;font-weight:900;color:var(--green);text-transform:uppercase;letter-spacing:-.3px;line-height:1.1;}
+    .sb-logo-sub{font-size:9px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;margin-top:2px;}
 
-/* ═══ SIDEBAR ═══ */
-.sidebar{width:var(--sw);flex-shrink:0;background:#fff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;}
-.sidebar::-webkit-scrollbar{width:3px;}
-.sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:3px;}
-.sb-logo{padding:18px 18px 14px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:11px;}
-.sb-logo-icon{width:38px;height:38px;border-radius:11px;background:var(--green);display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px;flex-shrink:0;}
-.sb-logo-name{font-size:14px;font-weight:900;color:var(--green);text-transform:uppercase;letter-spacing:-.3px;line-height:1.1;}
-.sb-logo-sub{font-size:9px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;margin-top:2px;}
+    /* Greeting card */
+    .sb-greet{margin:10px 12px 0;padding:13px;background:#f0fdf4;border-radius:14px;border:1px solid #a7f3d0;cursor:pointer;transition:background .15s;user-select:none;-webkit-tap-highlight-color:transparent;}
+    .sb-greet:hover{background:#dcfce7;}
+    .sb-greet-avatar{width:34px;height:34px;border-radius:10px;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0;}
+    .sb-greet-text{min-width:0;flex:1;}
+    .sb-greet-hello{font-size:11px;font-weight:700;color:var(--green);line-height:1.2;}
+    .sb-greet-name{font-size:13px;font-weight:900;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .sb-greet-time{font-size:10px;font-weight:600;color:#64748b;margin-top:1px;}
 
-/* Greeting card */
-.sb-greet{margin:10px 12px 0;padding:13px;background:#f0fdf4;border-radius:14px;border:1px solid #a7f3d0;cursor:pointer;transition:background .15s;user-select:none;-webkit-tap-highlight-color:transparent;}
-.sb-greet:hover{background:#dcfce7;}
-.sb-greet-avatar{width:34px;height:34px;border-radius:10px;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0;}
-.sb-greet-text{min-width:0;flex:1;}
-.sb-greet-hello{font-size:11px;font-weight:700;color:var(--green);line-height:1.2;}
-.sb-greet-name{font-size:13px;font-weight:900;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.sb-greet-time{font-size:10px;font-weight:600;color:#64748b;margin-top:1px;}
+    .sb-nav{flex:1;padding:10px 10px 0;}
+    .sb-section{font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;padding:10px 10px 4px;}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:11px;cursor:pointer;color:#64748b;font-size:13px;font-weight:600;transition:all .15s;margin-bottom:2px;}
+    .nav-item:hover{background:#f0fdf4;color:var(--green);}
+    .nav-item.active{background:var(--green);color:#fff;}
+    .nav-item i{width:17px;text-align:center;font-size:14px;flex-shrink:0;}
+    .sb-footer{padding:12px;border-top:1px solid #f1f5f9;margin-top:auto;}
+    .btn-logout{width:100%;padding:10px;border-radius:11px;background:#fff1f2;border:1px solid #fecaca;color:#e11d48;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .2s;}
+    .btn-logout:hover{background:#e11d48;color:#fff;}
 
-.sb-nav{flex:1;padding:10px 10px 0;}
-.sb-section{font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;padding:10px 10px 4px;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:10px 11px;border-radius:11px;cursor:pointer;color:#64748b;font-size:13px;font-weight:600;transition:all .15s;margin-bottom:2px;}
-.nav-item:hover{background:#f0fdf4;color:var(--green);}
-.nav-item.active{background:var(--green);color:#fff;}
-.nav-item i{width:17px;text-align:center;font-size:14px;flex-shrink:0;}
-.sb-footer{padding:12px;border-top:1px solid #f1f5f9;margin-top:auto;}
-.btn-logout{width:100%;padding:10px;border-radius:11px;background:#fff1f2;border:1px solid #fecaca;color:#e11d48;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;transition:all .2s;}
-.btn-logout:hover{background:#e11d48;color:#fff;}
+    /* ═══ MAIN ═══ */
+    .main{flex:1;margin-left:var(--sw);display:flex;flex-direction:column;min-height:100vh;}
 
-/* ═══ MAIN ═══ */
-.main{flex:1;margin-left:var(--sw);display:flex;flex-direction:column;min-height:100vh;}
+    /* ═══ TOPBAR ═══ */
+    .topbar{background:#fff;border-bottom:1px solid #f1f5f9;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:90;}
+    .topbar-brand{font-size:15px;font-weight:900;color:#0f172a;text-transform:uppercase;letter-spacing:-.3px;}
+    .topbar-brand span{color:var(--green2);}
+    .topbar-clock{text-align:right;}
+    .topbar-date{font-size:11px;font-weight:700;color:#475569;}
+    .topbar-time{font-size:18px;font-weight:900;color:#0f172a;letter-spacing:1px;line-height:1.1;font-variant-numeric:tabular-nums;}
 
-/* ═══ TOPBAR ═══ */
-.topbar{background:#fff;border-bottom:1px solid #f1f5f9;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:90;}
-.topbar-brand{font-size:15px;font-weight:900;color:#0f172a;text-transform:uppercase;letter-spacing:-.3px;}
-.topbar-brand span{color:var(--green2);}
-.topbar-clock{text-align:right;}
-.topbar-date{font-size:11px;font-weight:700;color:#475569;}
-.topbar-time{font-size:18px;font-weight:900;color:#0f172a;letter-spacing:1px;line-height:1.1;font-variant-numeric:tabular-nums;}
+    /* ═══ CONTENT ═══ */
+    .content{flex:1;padding:22px;}
+    .page{display:none;}
+    .page.active{display:block;animation:fadeUp .22s ease;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
 
-/* ═══ CONTENT ═══ */
-.content{flex:1;padding:22px;}
-.page{display:none;}
-.page.active{display:block;animation:fadeUp .22s ease;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+    /* ═══ BOTTOM NAV (mobile only) ═══ */
+    .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e2e8f0;z-index:100;}
+    .bn-inner{display:flex;justify-content:space-around;align-items:stretch;}
+    .bn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:7px 4px;cursor:pointer;color:#94a3b8;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;gap:3px;border:none;background:none;transition:color .15s;min-height:54px;}
+    .bn-item i{font-size:18px;}
+    .bn-item.active{color:var(--green);}
 
-/* ═══ BOTTOM NAV (mobile only) ═══ */
-.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e2e8f0;z-index:100;}
-.bn-inner{display:flex;justify-content:space-around;align-items:stretch;}
-.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:7px 4px;cursor:pointer;color:#94a3b8;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;gap:3px;border:none;background:none;transition:color .15s;min-height:54px;}
-.bn-item i{font-size:18px;}
-.bn-item.active{color:var(--green);}
+    /* ═══ RESPONSIVE — MOBILE ═══ */
+    @media(max-width:768px){
+      /* Remove sidebar space completely */
+      .sidebar{display:none !important;}
+      .main{margin-left:0 !important;max-width:100vw !important;width:100vw !important;}
+      .app{overflow-x:hidden !important;}
 
-/* ═══ RESPONSIVE — MOBILE ═══ */
-@media(max-width:768px){
-  /* Remove sidebar space completely */
-  .sidebar{display:none !important;}
-  .main{margin-left:0 !important;max-width:100vw !important;width:100vw !important;}
-  .app{overflow-x:hidden !important;}
+      /* Content full width */
+      .content{padding:12px !important;padding-bottom:78px !important;width:100% !important;overflow-x:hidden !important;}
+      .topbar{padding:10px 14px !important;}
+      .bottom-nav{display:block !important;}
 
-  /* Content full width */
-  .content{padding:12px !important;padding-bottom:78px !important;width:100% !important;overflow-x:hidden !important;}
-  .topbar{padding:10px 14px !important;}
-  .bottom-nav{display:block !important;}
+      /* Topbar clock sizing */
+      .topbar-date{font-size:10px !important;}
+      .topbar-time{font-size:14px !important;}
 
-  /* Topbar clock sizing */
-  .topbar-date{font-size:10px !important;}
-  .topbar-time{font-size:14px !important;}
+      /* Stat cards — smaller padding */
+      .stat-card{padding:12px !important;}
+      .stat-val{font-size:20px !important;}
+      .stat-icon{width:30px !important;height:30px !important;font-size:13px !important;margin-bottom:8px !important;}
 
-  /* Stat cards — smaller padding */
-  .stat-card{padding:12px !important;}
-  .stat-val{font-size:20px !important;}
-  .stat-icon{width:30px !important;height:30px !important;font-size:13px !important;margin-bottom:8px !important;}
+      /* Dashboard shortcuts */
+      .dash-shortcuts{grid-template-columns:1fr 1fr !important;gap:8px !important;}
+      .shortcut-btn{padding:11px 12px !important;}
+      .shortcut-lbl{font-size:10px !important;}
 
-  /* Dashboard shortcuts */
-  .dash-shortcuts{grid-template-columns:1fr 1fr !important;gap:8px !important;}
-  .shortcut-btn{padding:11px 12px !important;}
-  .shortcut-lbl{font-size:10px !important;}
+      /* Matrix 2 columns */
+      #matrixGrid{grid-template-columns:repeat(2,1fr) !important;gap:7px !important;}
 
-  /* Matrix 2 columns */
-  #matrixGrid{grid-template-columns:repeat(2,1fr) !important;gap:7px !important;}
+      /* Filters — full width stacked */
+      .filters{flex-direction:column !important;align-items:stretch !important;gap:8px !important;}
+      .fl-group{width:100% !important;}
+      .fl-group select,
+      .fl-group input[type=search],
+      .fl-group input[type=date]{width:100% !important;min-width:unset !important;}
+      .sw{width:100% !important;}
+      .sw input[type=search]{width:100% !important;}
 
-  /* Filters — full width stacked */
-  .filters{flex-direction:column !important;align-items:stretch !important;gap:8px !important;}
-  .fl-group{width:100% !important;}
-  .fl-group select,
-  .fl-group input[type=search],
-  .fl-group input[type=date]{width:100% !important;min-width:unset !important;}
-  .sw{width:100% !important;}
-  .sw input[type=search]{width:100% !important;}
+      /* Card and table — full width, horizontal scroll inside */
+      .card{padding:10px !important;overflow:hidden !important;}
+      .tw{overflow-x:auto !important;-webkit-overflow-scrolling:touch !important;width:100% !important;}
 
-  /* Card and table — full width, horizontal scroll inside */
-  .card{padding:10px !important;overflow:hidden !important;}
-  .tw{overflow-x:auto !important;-webkit-overflow-scrolling:touch !important;width:100% !important;}
+      /* Plt grid single column */
+      .plt-grid{grid-template-columns:1fr !important;}
 
-  /* Plt grid single column */
-  .plt-grid{grid-template-columns:1fr !important;}
+      /* Form rows single column */
+      .fr{grid-template-columns:1fr !important;}
 
-  /* Form rows single column */
-  .fr{grid-template-columns:1fr !important;}
+      /* Page titles */
+      .pg-title{font-size:17px !important;}
+      .pg-sub{margin-bottom:10px !important;}
 
-  /* Page titles */
-  .pg-title{font-size:17px !important;}
-  .pg-sub{margin-bottom:10px !important;}
+      /* Modals slide up from bottom */
+      .mo{padding:0 !important;align-items:flex-end !important;}
+      .mo-box,.mo-box.lg,.mo-box.xl,.mo-box.sm{
+        border-radius:22px 22px 0 0 !important;
+        max-width:100% !important;
+        max-height:90vh !important;
+        overflow-y:auto !important;
+      }
+      .mo-body{padding:14px 15px !important;}
+      .mo-head{padding:14px 15px 11px !important;}
+      .mo-foot{padding:10px 15px 22px !important;}
 
-  /* Modals slide up from bottom */
-  .mo{padding:0 !important;align-items:flex-end !important;}
-  .mo-box,.mo-box.lg,.mo-box.xl,.mo-box.sm{
-    border-radius:22px 22px 0 0 !important;
-    max-width:100% !important;
-    max-height:90vh !important;
-    overflow-y:auto !important;
-  }
-  .mo-body{padding:14px 15px !important;}
-  .mo-head{padding:14px 15px 11px !important;}
-  .mo-foot{padding:10px 15px 22px !important;}
+      /* Float bar above bottom nav */
+      .float-bar{bottom:76px !important;}
 
-  /* Float bar above bottom nav */
-  .float-bar{bottom:76px !important;}
+      /* Log terminal */
+      #logTerm{max-height:52vh !important;}
+      .log-ln{flex-wrap:wrap !important;gap:2px !important;}
+      .log-ts,.log-usr{width:auto !important;font-size:9px !important;}
 
-  /* Log terminal */
-  #logTerm{max-height:52vh !important;}
-  .log-ln{flex-wrap:wrap !important;gap:2px !important;}
-  .log-ts,.log-usr{width:auto !important;font-size:9px !important;}
+      /* Riwayat stats */
+      .rwy-stat{padding:10px !important;}
+      .rwy-stat-val{font-size:18px !important;}
 
-  /* Riwayat stats */
-  .rwy-stat{padding:10px !important;}
-  .rwy-stat-val{font-size:18px !important;}
+      /* Section label */
+      .sec-label{font-size:8px !important;}
 
-  /* Section label */
-  .sec-label{font-size:8px !important;}
+      /* Inline dashboard filter bar */
+      #pageDashboard > div:first-of-type{flex-wrap:wrap !important;width:100% !important;}
+    }
 
-  /* Inline dashboard filter bar */
-  #pageDashboard > div:first-of-type{flex-wrap:wrap !important;width:100% !important;}
-}
+    @media(max-width:380px){
+      .dash-shortcuts{grid-template-columns:1fr !important;}
+      #matrixGrid{grid-template-columns:1fr !important;}
+      .stat-val{font-size:17px !important;}
+    }
 
-@media(max-width:380px){
-  .dash-shortcuts{grid-template-columns:1fr !important;}
-  #matrixGrid{grid-template-columns:1fr !important;}
-  .stat-val{font-size:17px !important;}
-}
+    /* ═══ TYPOGRAPHY ═══ */
+    .pg-title{font-size:20px;font-weight:900;color:#0f172a;text-transform:uppercase;letter-spacing:-.3px;margin-bottom:2px;}
+    .pg-sub{font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;margin-bottom:18px;}
+    .sec-label{font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:3px;margin-bottom:10px;}
 
-/* ═══ TYPOGRAPHY ═══ */
-.pg-title{font-size:20px;font-weight:900;color:#0f172a;text-transform:uppercase;letter-spacing:-.3px;margin-bottom:2px;}
-.pg-sub{font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;margin-bottom:18px;}
-.sec-label{font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:3px;margin-bottom:10px;}
+    /* ═══ CARDS ═══ */
+    .card{background:#fff;border-radius:18px;border:1px solid #f1f5f9;box-shadow:0 1px 4px rgba(0,0,0,.04);padding:18px;}
+    .stat-card{background:#fff;border-radius:18px;border:1px solid #f1f5f9;box-shadow:0 1px 4px rgba(0,0,0,.04);padding:18px;}
+    .stat-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:12px;}
+    .stat-val{font-size:26px;font-weight:900;color:#0f172a;letter-spacing:-1px;margin-top:2px;}
+    .stat-lbl{font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;}
 
-/* ═══ CARDS ═══ */
-.card{background:#fff;border-radius:18px;border:1px solid #f1f5f9;box-shadow:0 1px 4px rgba(0,0,0,.04);padding:18px;}
-.stat-card{background:#fff;border-radius:18px;border:1px solid #f1f5f9;box-shadow:0 1px 4px rgba(0,0,0,.04);padding:18px;}
-.stat-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:12px;}
-.stat-val{font-size:26px;font-weight:900;color:#0f172a;letter-spacing:-1px;margin-top:2px;}
-.stat-lbl{font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;}
+    /* ═══ MATRIX ═══ */
+    .mx-card{background:#fff;border-radius:14px;border:1px solid #f1f5f9;padding:13px;transition:all .2s;}
+    .mx-card:hover{border-color:var(--green2);box-shadow:0 4px 14px rgba(5,150,105,.1);}
+    .mx-title{font-size:9px;font-weight:900;color:#0f172a;text-transform:uppercase;letter-spacing:.3px;margin-bottom:9px;line-height:1.3;}
+    .mx-nums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;}
+    .mnum{text-align:center;border-radius:7px;padding:5px 2px;cursor:pointer;transition:transform .15s;}
+    .mnum:hover{transform:scale(1.08);}
+    .mnum-val{font-size:13px;font-weight:900;}
+    .mnum-lbl{font-size:6px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-top:1px;}
 
-/* ═══ MATRIX ═══ */
-.mx-card{background:#fff;border-radius:14px;border:1px solid #f1f5f9;padding:13px;transition:all .2s;}
-.mx-card:hover{border-color:var(--green2);box-shadow:0 4px 14px rgba(5,150,105,.1);}
-.mx-title{font-size:9px;font-weight:900;color:#0f172a;text-transform:uppercase;letter-spacing:.3px;margin-bottom:9px;line-height:1.3;}
-.mx-nums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;}
-.mnum{text-align:center;border-radius:7px;padding:5px 2px;cursor:pointer;transition:transform .15s;}
-.mnum:hover{transform:scale(1.08);}
-.mnum-val{font-size:13px;font-weight:900;}
-.mnum-lbl{font-size:6px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-top:1px;}
+    /* ═══ SHORTCUT BUTTONS (dashboard) ═══ */
+    .dash-shortcuts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+    .shortcut-btn{display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:14px;border:1.5px solid #e2e8f0;background:#fff;cursor:pointer;transition:all .2s;text-align:left;}
+    .shortcut-btn:hover{border-color:var(--green2);background:#f0fdf4;}
+    .shortcut-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+    .shortcut-lbl{font-size:11px;font-weight:900;color:#0f172a;text-transform:uppercase;letter-spacing:.3px;line-height:1.3;}
+    .shortcut-sub{font-size:10px;font-weight:600;color:#94a3b8;margin-top:1px;}
 
-/* ═══ SHORTCUT BUTTONS (dashboard) ═══ */
-.dash-shortcuts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
-.shortcut-btn{display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:14px;border:1.5px solid #e2e8f0;background:#fff;cursor:pointer;transition:all .2s;text-align:left;}
-.shortcut-btn:hover{border-color:var(--green2);background:#f0fdf4;}
-.shortcut-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
-.shortcut-lbl{font-size:11px;font-weight:900;color:#0f172a;text-transform:uppercase;letter-spacing:.3px;line-height:1.3;}
-.shortcut-sub{font-size:10px;font-weight:600;color:#94a3b8;margin-top:1px;}
+    /* ═══ FILTERS ═══ */
+    .filters{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:14px;}
+    .fl-group{display:flex;flex-direction:column;gap:4px;}
+    .fl-lbl{font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;}
+    select,input[type=text],input[type=date],input[type=search],input[type=time]{height:37px;padding:0 11px;border:1.5px solid #e2e8f0;border-radius:11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:#1e293b;background:#fff;outline:none;transition:border-color .2s,box-shadow .2s;}
+    select:focus,input:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(5,150,105,.1);}
+    .sw{position:relative;}
+    .si{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:12px;pointer-events:none;}
+    input[type=search]{padding-left:30px;}
 
-/* ═══ FILTERS ═══ */
-.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:14px;}
-.fl-group{display:flex;flex-direction:column;gap:4px;}
-.fl-lbl{font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;}
-select,input[type=text],input[type=date],input[type=search],input[type=time]{height:37px;padding:0 11px;border:1.5px solid #e2e8f0;border-radius:11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:#1e293b;background:#fff;outline:none;transition:border-color .2s,box-shadow .2s;}
-select:focus,input:focus{border-color:var(--green2);box-shadow:0 0 0 3px rgba(5,150,105,.1);}
-.sw{position:relative;}
-.si{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:12px;pointer-events:none;}
-input[type=search]{padding-left:30px;}
+    /* ═══ BUTTONS ═══ */
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;border:none;transition:all .2s;white-space:nowrap;}
+    .btn-sm{padding:6px 11px;font-size:10px;border-radius:9px;}
+    .btn-p{background:var(--green);color:#fff;box-shadow:0 4px 12px rgba(6,78,59,.2);}
+    .btn-p:hover{background:#065f46;transform:translateY(-1px);}
+    .btn-o{background:#fff;border:1.5px solid #e2e8f0;color:#475569;}
+    .btn-o:hover{border-color:var(--green2);color:var(--green);background:#f0fdf4;}
+    .btn-r{background:#fff1f2;border:1px solid #fecaca;color:#e11d48;}
+    .btn-r:hover{background:#e11d48;color:#fff;}
+    .btn-a{background:#fffbeb;border:1px solid #fde68a;color:#d97706;}
+    .btn-a:hover{background:#d97706;color:#fff;}
+    .btn-b{background:#eff6ff;border:1px solid #bfdbfe;color:#2563eb;}
+    .btn-b:hover{background:#2563eb;color:#fff;}
 
-/* ═══ BUTTONS ═══ */
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:11px;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;border:none;transition:all .2s;white-space:nowrap;}
-.btn-sm{padding:6px 11px;font-size:10px;border-radius:9px;}
-.btn-p{background:var(--green);color:#fff;box-shadow:0 4px 12px rgba(6,78,59,.2);}
-.btn-p:hover{background:#065f46;transform:translateY(-1px);}
-.btn-o{background:#fff;border:1.5px solid #e2e8f0;color:#475569;}
-.btn-o:hover{border-color:var(--green2);color:var(--green);background:#f0fdf4;}
-.btn-r{background:#fff1f2;border:1px solid #fecaca;color:#e11d48;}
-.btn-r:hover{background:#e11d48;color:#fff;}
-.btn-a{background:#fffbeb;border:1px solid #fde68a;color:#d97706;}
-.btn-a:hover{background:#d97706;color:#fff;}
-.btn-b{background:#eff6ff;border:1px solid #bfdbfe;color:#2563eb;}
-.btn-b:hover{background:#2563eb;color:#fff;}
+    /* ═══ TABLE ═══ */
+    .tw{overflow-x:auto;border-radius:13px;border:1px solid #f1f5f9;}
+    table{width:100%;border-collapse:collapse;font-size:13px;}
+    thead tr{background:#f8fafc;}
+    thead th{padding:11px 14px;text-align:left;font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;border-bottom:1px solid #f1f5f9;white-space:nowrap;}
+    tbody tr{border-bottom:1px solid #f8fafc;transition:background .15s;}
+    tbody tr:hover{background:#fafafa;}
+    tbody tr:last-child{border-bottom:none;}
+    td{padding:11px 14px;color:#334155;vertical-align:middle;}
+    .td-name{font-size:13px;font-weight:700;color:#0f172a;cursor:pointer;}
+    .td-name:hover{color:var(--green);}
+    .td-sub{font-size:11px;color:#94a3b8;font-weight:600;margin-top:1px;}
+    .td-m{color:#94a3b8;font-size:12px;}
 
-/* ═══ TABLE ═══ */
-.tw{overflow-x:auto;border-radius:13px;border:1px solid #f1f5f9;}
-table{width:100%;border-collapse:collapse;font-size:13px;}
-thead tr{background:#f8fafc;}
-thead th{padding:11px 14px;text-align:left;font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;border-bottom:1px solid #f1f5f9;white-space:nowrap;}
-tbody tr{border-bottom:1px solid #f8fafc;transition:background .15s;}
-tbody tr:hover{background:#fafafa;}
-tbody tr:last-child{border-bottom:none;}
-td{padding:11px 14px;color:#334155;vertical-align:middle;}
-.td-name{font-size:13px;font-weight:700;color:#0f172a;cursor:pointer;}
-.td-name:hover{color:var(--green);}
-.td-sub{font-size:11px;color:#94a3b8;font-weight:600;margin-top:1px;}
-.td-m{color:#94a3b8;font-size:12px;}
+    /* ═══ PILLS ═══ */
+    .pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:7px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
+    .pill-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+    .pill-lunas{background:#ecfdf5;color:#064e3b;}.pill-lunas .pill-dot{background:#059669;}
+    .pill-refresh{background:#fffbeb;color:#92400e;}.pill-refresh .pill-dot{background:#d97706;}
+    .pill-belum{background:#fff1f2;color:#9f1239;}.pill-belum .pill-dot{background:#e11d48;}
+    .pill-aktif{background:#ecfdf5;color:#064e3b;}
+    .pill-nonaktif{background:#f1f5f9;color:#64748b;}
+    .pill-selesai{background:#eff6ff;color:#1d4ed8;}
+    .pill-proses{background:#fffbeb;color:#92400e;}
+    .pill-core{background:#ede9fe;color:#5b21b6;}
 
-/* ═══ PILLS ═══ */
-.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:7px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;}
-.pill-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
-.pill-lunas{background:#ecfdf5;color:#064e3b;}.pill-lunas .pill-dot{background:#059669;}
-.pill-refresh{background:#fffbeb;color:#92400e;}.pill-refresh .pill-dot{background:#d97706;}
-.pill-belum{background:#fff1f2;color:#9f1239;}.pill-belum .pill-dot{background:#e11d48;}
-.pill-aktif{background:#ecfdf5;color:#064e3b;}
-.pill-nonaktif{background:#f1f5f9;color:#64748b;}
-.pill-selesai{background:#eff6ff;color:#1d4ed8;}
-.pill-proses{background:#fffbeb;color:#92400e;}
-.pill-core{background:#ede9fe;color:#5b21b6;}
+    /* ═══ PLT GRID ═══ */
+    .plt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:13px;}
+    .plt-card{background:#fff;border-radius:18px;border:1px solid #f1f5f9;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.04);cursor:pointer;transition:all .2s;}
+    .plt-card:hover{border-color:var(--green2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(5,150,105,.1);}
 
-/* ═══ PLT GRID ═══ */
-.plt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:13px;}
-.plt-card{background:#fff;border-radius:18px;border:1px solid #f1f5f9;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.04);cursor:pointer;transition:all .2s;}
-.plt-card:hover{border-color:var(--green2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(5,150,105,.1);}
+    /* ═══ CHIPS ═══ */
+    .chip-area{display:flex;flex-wrap:wrap;gap:6px;padding:10px;border:1.5px dashed #e2e8f0;border-radius:13px;min-height:44px;}
+    .chip{display:inline-flex;align-items:center;gap:5px;background:#f0fdf4;border:1px solid #a7f3d0;border-radius:99px;padding:4px 10px;font-size:12px;font-weight:600;color:#065f46;}
+    .chip-x{background:none;border:none;cursor:pointer;color:#94a3b8;font-size:14px;line-height:1;transition:color .15s;padding:0;}
+    .chip-x:hover{color:#e11d48;}
 
-/* ═══ CHIPS ═══ */
-.chip-area{display:flex;flex-wrap:wrap;gap:6px;padding:10px;border:1.5px dashed #e2e8f0;border-radius:13px;min-height:44px;}
-.chip{display:inline-flex;align-items:center;gap:5px;background:#f0fdf4;border:1px solid #a7f3d0;border-radius:99px;padding:4px 10px;font-size:12px;font-weight:600;color:#065f46;}
-.chip-x{background:none;border:none;cursor:pointer;color:#94a3b8;font-size:14px;line-height:1;transition:color .15s;padding:0;}
-.chip-x:hover{color:#e11d48;}
+    /* ═══ AUTOCOMPLETE ═══ */
+    .ac-wrap{position:relative;}
+    .ac-list{position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid #e2e8f0;border-radius:11px;box-shadow:0 8px 24px rgba(0,0,0,.1);z-index:200;max-height:190px;overflow-y:auto;display:none;margin-top:3px;}
+    .ac-list.show{display:block;}
+    .ac-item{padding:9px 13px;cursor:pointer;font-size:13px;font-weight:600;color:#1e293b;transition:background .15s;display:flex;align-items:center;gap:8px;}
+    .ac-item:hover{background:#f0fdf4;color:var(--green);}
+    .ac-badge{background:#ede9fe;color:#5b21b6;font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;padding:2px 6px;border-radius:5px;}
 
-/* ═══ AUTOCOMPLETE ═══ */
-.ac-wrap{position:relative;}
-.ac-list{position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid #e2e8f0;border-radius:11px;box-shadow:0 8px 24px rgba(0,0,0,.1);z-index:200;max-height:190px;overflow-y:auto;display:none;margin-top:3px;}
-.ac-list.show{display:block;}
-.ac-item{padding:9px 13px;cursor:pointer;font-size:13px;font-weight:600;color:#1e293b;transition:background .15s;display:flex;align-items:center;gap:8px;}
-.ac-item:hover{background:#f0fdf4;color:var(--green);}
-.ac-badge{background:#ede9fe;color:#5b21b6;font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;padding:2px 6px;border-radius:5px;}
+    /* ═══ MODAL ═══ */
+    .mo{display:none;position:fixed;inset:0;z-index:500;background:rgba(15,23,42,.4);backdrop-filter:blur(4px);align-items:flex-start;justify-content:center;padding:14px;overflow-y:auto;}
+    .mo.open{display:flex;animation:fadeIn .2s ease;}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    .mo-box{background:#fff;border-radius:22px;width:100%;max-width:540px;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:slideUp .22s cubic-bezier(.4,0,.2,1);margin:auto;}
+    .mo-box.lg{max-width:680px;}
+    .mo-box.xl{max-width:860px;}
+    .mo-box.sm{max-width:380px;}
+    @keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+    .mo-head{padding:18px 20px 14px;border-bottom:1px solid #f8fafc;display:flex;align-items:center;justify-content:space-between;}
+    .mo-title{font-size:15px;font-weight:900;color:#0f172a;text-transform:uppercase;letter-spacing:-.2px;}
+    .mo-close{width:28px;height:28px;border-radius:8px;border:1px solid #e2e8f0;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:13px;transition:all .15s;}
+    .mo-close:hover{background:#f8fafc;color:#334155;}
+    .mo-body{padding:18px 20px;overflow-y:auto;}
+    .mo-foot{padding:12px 20px 18px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid #f8fafc;}
 
-/* ═══ MODAL ═══ */
-.mo{display:none;position:fixed;inset:0;z-index:500;background:rgba(15,23,42,.4);backdrop-filter:blur(4px);align-items:flex-start;justify-content:center;padding:14px;overflow-y:auto;}
-.mo.open{display:flex;animation:fadeIn .2s ease;}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.mo-box{background:#fff;border-radius:22px;width:100%;max-width:540px;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:slideUp .22s cubic-bezier(.4,0,.2,1);margin:auto;}
-.mo-box.lg{max-width:680px;}
-.mo-box.xl{max-width:860px;}
-.mo-box.sm{max-width:380px;}
-@keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-.mo-head{padding:18px 20px 14px;border-bottom:1px solid #f8fafc;display:flex;align-items:center;justify-content:space-between;}
-.mo-title{font-size:15px;font-weight:900;color:#0f172a;text-transform:uppercase;letter-spacing:-.2px;}
-.mo-close{width:28px;height:28px;border-radius:8px;border:1px solid #e2e8f0;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:13px;transition:all .15s;}
-.mo-close:hover{background:#f8fafc;color:#334155;}
-.mo-body{padding:18px 20px;overflow-y:auto;}
-.mo-foot{padding:12px 20px 18px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid #f8fafc;}
+    /* ═══ FORM ═══ */
+    .fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+    .fr-full{grid-template-columns:1fr;}
+    .fg{display:flex;flex-direction:column;gap:4px;}
+    .fl{font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;}
+    .fg input,.fg select,.fg textarea{background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:11px;padding:9px 12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:#1e293b;outline:none;transition:all .2s;}
+    .fg textarea{resize:vertical;min-height:68px;line-height:1.5;}
+    .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--green2);background:#fff;box-shadow:0 0 0 3px rgba(5,150,105,.1);}
+    .core-hint{display:none;font-size:10px;font-weight:800;color:#2563eb;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:5px 10px;margin-top:3px;text-transform:uppercase;letter-spacing:.5px;}
+    .core-hint.show{display:flex;align-items:center;gap:5px;}
 
-/* ═══ FORM ═══ */
-.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
-.fr-full{grid-template-columns:1fr;}
-.fg{display:flex;flex-direction:column;gap:4px;}
-.fl{font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;}
-.fg input,.fg select,.fg textarea{background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:11px;padding:9px 12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:#1e293b;outline:none;transition:all .2s;}
-.fg textarea{resize:vertical;min-height:68px;line-height:1.5;}
-.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--green2);background:#fff;box-shadow:0 0 0 3px rgba(5,150,105,.1);}
-.core-hint{display:none;font-size:10px;font-weight:800;color:#2563eb;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:5px 10px;margin-top:3px;text-transform:uppercase;letter-spacing:.5px;}
-.core-hint.show{display:flex;align-items:center;gap:5px;}
+    /* ═══ TAB BAR ═══ */
+    .tab-bar{display:flex;gap:2px;border-bottom:2px solid #f1f5f9;margin-bottom:13px;}
+    .tab-btn{padding:7px 15px;background:none;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;color:#94a3b8;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;}
+    .tab-btn.active{color:var(--green);border-bottom-color:var(--green2);}
 
-/* ═══ TAB BAR ═══ */
-.tab-bar{display:flex;gap:2px;border-bottom:2px solid #f1f5f9;margin-bottom:13px;}
-.tab-btn{padding:7px 15px;background:none;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;color:#94a3b8;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;}
-.tab-btn.active{color:var(--green);border-bottom-color:var(--green2);}
+    /* ═══ PROGRESS ═══ */
+    .pw{height:5px;border-radius:99px;background:#e2e8f0;overflow:hidden;margin:7px 0;}
+    .pf{height:100%;border-radius:99px;background:var(--green2);transition:width .3s;}
 
-/* ═══ PROGRESS ═══ */
-.pw{height:5px;border-radius:99px;background:#e2e8f0;overflow:hidden;margin:7px 0;}
-.pf{height:100%;border-radius:99px;background:var(--green2);transition:width .3s;}
+    /* ═══ FLOAT BAR (Rekap Core only) ═══ */
+    .float-bar{position:fixed;bottom:76px;left:50%;transform:translateX(-50%) translateY(80px);background:#0f172a;border-radius:15px;padding:11px 18px;display:flex;align-items:center;gap:13px;box-shadow:0 14px 40px rgba(0,0,0,.2);transition:transform .3s cubic-bezier(.4,0,.2,1);z-index:400;pointer-events:none;opacity:0;}
+    .float-bar.show{transform:translateX(-50%) translateY(0);pointer-events:auto;opacity:1;}
+    @media(min-width:769px){.float-bar{bottom:26px;}}
+    .fc{background:var(--green2);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;}
+    .ft{color:#fff;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;}
 
-/* ═══ FLOAT BAR (Rekap Core only) ═══ */
-.float-bar{position:fixed;bottom:76px;left:50%;transform:translateX(-50%) translateY(80px);background:#0f172a;border-radius:15px;padding:11px 18px;display:flex;align-items:center;gap:13px;box-shadow:0 14px 40px rgba(0,0,0,.2);transition:transform .3s cubic-bezier(.4,0,.2,1);z-index:400;pointer-events:none;opacity:0;}
-.float-bar.show{transform:translateX(-50%) translateY(0);pointer-events:auto;opacity:1;}
-@media(min-width:769px){.float-bar{bottom:26px;}}
-.fc{background:var(--green2);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;}
-.ft{color:#fff;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;}
+    /* ═══ TOAST ═══ */
+    #toastCont{position:fixed;top:14px;right:14px;z-index:9999;display:flex;flex-direction:column;gap:7px;pointer-events:none;}
+    .toast-item{padding:10px 14px;border-radius:12px;font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:7px;box-shadow:0 8px 24px rgba(0,0,0,.12);animation:fadeUp .3s ease;pointer-events:auto;max-width:280px;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
 
-/* ═══ TOAST ═══ */
-#toastCont{position:fixed;top:14px;right:14px;z-index:9999;display:flex;flex-direction:column;gap:7px;pointer-events:none;}
-.toast-item{padding:10px 14px;border-radius:12px;font-size:11px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:7px;box-shadow:0 8px 24px rgba(0,0,0,.12);animation:fadeUp .3s ease;pointer-events:auto;max-width:280px;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+    /* ═══ LOADING ═══ */
+    #loadOv{display:none;position:fixed;inset:0;z-index:8999;background:rgba(255,255,255,.8);backdrop-filter:blur(4px);align-items:center;justify-content:center;flex-direction:column;gap:11px;}
+    #loadOv.show{display:flex;}
+    .spin-lg{width:38px;height:38px;border:3px solid #d1fae5;border-top-color:var(--green2);border-radius:50%;animation:spin .7s linear infinite;}
+    .load-lbl{font-size:10px;font-weight:900;color:#64748b;text-transform:uppercase;letter-spacing:2px;}
+    @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ═══ LOADING ═══ */
-#loadOv{display:none;position:fixed;inset:0;z-index:8999;background:rgba(255,255,255,.8);backdrop-filter:blur(4px);align-items:center;justify-content:center;flex-direction:column;gap:11px;}
-#loadOv.show{display:flex;}
-.spin-lg{width:38px;height:38px;border:3px solid #d1fae5;border-top-color:var(--green2);border-radius:50%;animation:spin .7s linear infinite;}
-.load-lbl{font-size:10px;font-weight:900;color:#64748b;text-transform:uppercase;letter-spacing:2px;}
-@keyframes spin{to{transform:rotate(360deg)}}
+    /* ═══ LOG TERMINAL ═══ */
+    #logTerm{background:#0f172a;border-radius:18px;padding:18px;overflow-y:auto;max-height:62vh;}
+    #logTerm::-webkit-scrollbar{width:3px;}
+    #logTerm::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:3px;}
+    .log-ln{display:flex;gap:11px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:11px;}
+    .log-ts{color:rgba(255,255,255,.22);font-family:monospace;width:116px;flex-shrink:0;}
+    .log-usr{color:rgba(255,255,255,.3);width:88px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .log-ak{font-weight:800;text-transform:uppercase;letter-spacing:.3px;flex:1;}
+    .lc .log-ak{color:#4ade80;} .lu .log-ak{color:#fbbf24;} .ld .log-ak{color:#f87171;} .ls .log-ak{color:#60a5fa;}
 
-/* ═══ LOG TERMINAL ═══ */
-#logTerm{background:#0f172a;border-radius:18px;padding:18px;overflow-y:auto;max-height:62vh;}
-#logTerm::-webkit-scrollbar{width:3px;}
-#logTerm::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:3px;}
-.log-ln{display:flex;gap:11px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:11px;}
-.log-ts{color:rgba(255,255,255,.22);font-family:monospace;width:116px;flex-shrink:0;}
-.log-usr{color:rgba(255,255,255,.3);width:88px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.log-ak{font-weight:800;text-transform:uppercase;letter-spacing:.3px;flex:1;}
-.lc .log-ak{color:#4ade80;} .lu .log-ak{color:#fbbf24;} .ld .log-ak{color:#f87171;} .ls .log-ak{color:#60a5fa;}
+    /* ═══ PAGINATION ═══ */
+    .pag{display:flex;gap:4px;margin-top:13px;justify-content:center;flex-wrap:wrap;}
+    .pb{width:30px;height:30px;border-radius:8px;border:1px solid #e2e8f0;background:#fff;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;color:#64748b;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+    .pb:hover:not(:disabled){background:#f0fdf4;border-color:var(--green2);color:var(--green);}
+    .pb.active{background:var(--green);color:#fff;border-color:var(--green);}
+    .pb:disabled{opacity:.4;cursor:not-allowed;}
 
-/* ═══ PAGINATION ═══ */
-.pag{display:flex;gap:4px;margin-top:13px;justify-content:center;flex-wrap:wrap;}
-.pb{width:30px;height:30px;border-radius:8px;border:1px solid #e2e8f0;background:#fff;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;color:#64748b;display:flex;align-items:center;justify-content:center;transition:all .15s;}
-.pb:hover:not(:disabled){background:#f0fdf4;border-color:var(--green2);color:var(--green);}
-.pb.active{background:var(--green);color:#fff;border-color:var(--green);}
-.pb:disabled{opacity:.4;cursor:not-allowed;}
+    /* ═══ RIWAYAT STATS ═══ */
+    .rwy-stat{background:#f0fdf4;border-radius:12px;border:1px solid #a7f3d0;padding:14px;display:flex;flex-direction:column;gap:2px;}
+    .rwy-stat-val{font-size:22px;font-weight:900;color:var(--green);letter-spacing:-1px;}
+    .rwy-stat-lbl{font-size:9px;font-weight:900;color:#64748b;text-transform:uppercase;letter-spacing:2px;}
 
-/* ═══ RIWAYAT STATS ═══ */
-.rwy-stat{background:#f0fdf4;border-radius:12px;border:1px solid #a7f3d0;padding:14px;display:flex;flex-direction:column;gap:2px;}
-.rwy-stat-val{font-size:22px;font-weight:900;color:var(--green);letter-spacing:-1px;}
-.rwy-stat-lbl{font-size:9px;font-weight:900;color:#64748b;text-transform:uppercase;letter-spacing:2px;}
+    /* ═══ MULTI PERNER (Update Core) ═══ */
+    .mperner-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+    .mperner-input{flex:1;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:11px;padding:9px 12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:#1e293b;outline:none;transition:all .2s;}
+    .mperner-input:focus{border-color:var(--green2);background:#fff;box-shadow:0 0 0 3px rgba(5,150,105,.1);}
 
-/* ═══ MULTI PERNER (Update Core) ═══ */
-.mperner-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-.mperner-input{flex:1;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:11px;padding:9px 12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;color:#1e293b;outline:none;transition:all .2s;}
-.mperner-input:focus{border-color:var(--green2);background:#fff;box-shadow:0 0 0 3px rgba(5,150,105,.1);}
+    /* ═══ MISC ═══ */
+    .empty-st{text-align:center;padding:44px 20px;color:#94a3b8;}
+    .empty-icon{font-size:30px;margin-bottom:9px;}
+    .empty-lbl{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:2px;}
+    @media(max-width:600px){.fr{grid-template-columns:1fr;} .plt-grid{grid-template-columns:1fr;} .dash-shortcuts{grid-template-columns:1fr;}}
 
-/* ═══ MISC ═══ */
-.empty-st{text-align:center;padding:44px 20px;color:#94a3b8;}
-.empty-icon{font-size:30px;margin-bottom:9px;}
-.empty-lbl{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:2px;}
-@media(max-width:600px){.fr{grid-template-columns:1fr;} .plt-grid{grid-template-columns:1fr;} .dash-shortcuts{grid-template-columns:1fr;}}
-
-/* ═══ IMPORT ROWS ═══ */
-.ir-new td{background:rgba(5,150,105,.04);}
-.ir-upd td{background:rgba(59,130,246,.05);}
-.ir-dup td{background:rgba(245,158,11,.05);}
-.ir-err td{background:rgba(225,29,72,.04);opacity:.7;}
-
-
+    /* ═══ IMPORT ROWS ═══ */
+    .ir-new td{background:rgba(5,150,105,.04);}
+    .ir-upd td{background:rgba(59,130,246,.05);}
+    .ir-dup td{background:rgba(245,158,11,.05);}
+    .ir-err td{background:rgba(225,29,72,.04);opacity:.7;}
   </style>
 </head>
 <body>
 <div class="app">
 
 <!-- ═══ SIDEBAR ═══ -->
-
 <aside class="sidebar" id="sidebar">
   <div class="sb-logo">
     <div class="sb-logo-icon"><i class="fas fa-leaf"></i></div>
@@ -370,7 +365,6 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
   </div>
 
   <!-- Greeting (clickable) -->
-
   <div class="sb-greet" id="sbGreet" style="display:flex;gap:10px;align-items:center;" onclick="openModal('moProfile')">
     <div class="sb-greet-avatar" id="sbAvatar">?</div>
     <div class="sb-greet-text">
@@ -389,11 +383,9 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
 </aside>
 
 <!-- ═══ MAIN ═══ -->
-
 <div class="main">
 
   <!-- TOPBAR -->
-
   <div class="topbar">
     <div class="topbar-brand">E-<span>Attendance</span></div>
     <div class="topbar-clock">
@@ -403,204 +395,199 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
   </div>
 
   <!-- CONTENT -->
-
   <div class="content" id="contentArea">
 
+    <!-- ── DASHBOARD ── -->
+    <div class="page active" id="pageDashboard">
+      <div class="pg-title">Dashboard</div>
+      <div class="pg-sub" id="dashSub">Ringkasan Data Pelatihan</div>
 
-<!-- ── DASHBOARD ── -->
-<div class="page active" id="pageDashboard">
-  <div class="pg-title">Dashboard</div>
-  <div class="pg-sub" id="dashSub">Ringkasan Data Pelatihan</div>
+      <!-- Filter bar -->
+      <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;background:#fff;padding:7px 13px;border-radius:13px;border:1.5px solid #e2e8f0;margin-bottom:14px;width:100%;">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <span style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">Unit</span>
+          <select id="dashUnit" style="border:none;outline:none;font-size:12px;font-weight:700;color:#475569;height:auto;padding:0;background:transparent;"></select>
+          <div style="width:1px;height:16px;background:#e2e8f0;"></div>
+          <span style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">Bulan</span>
+          <select id="dashBulan" style="border:none;outline:none;font-size:12px;font-weight:700;color:#475569;height:auto;padding:0;background:transparent;">
+            <option value="">Semua</option>
+            <option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option>
+            <option value="4">Apr</option><option value="5">Mei</option><option value="6">Jun</option>
+            <option value="7">Jul</option><option value="8">Agu</option><option value="9">Sep</option>
+            <option value="10">Okt</option><option value="11">Nov</option><option value="12">Des</option>
+          </select>
+          <div style="width:1px;height:16px;background:#e2e8f0;"></div>
+          <span style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">Tahun</span>
+          <select id="dashTahun" style="border:none;outline:none;font-size:12px;font-weight:700;color:#475569;height:auto;padding:0;background:transparent;"></select>
+        </div>
+        <button class="btn btn-p btn-sm" id="btnApplyDash"><i class="fas fa-filter"></i> Terapkan</button>
+      </div>
 
-  <!-- Filter bar -->
-  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:8px;background:#fff;padding:7px 13px;border-radius:13px;border:1.5px solid #e2e8f0;margin-bottom:14px;width:100%;">
-    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-      <span style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">Unit</span>
-      <select id="dashUnit" style="border:none;outline:none;font-size:12px;font-weight:700;color:#475569;height:auto;padding:0;background:transparent;"></select>
-      <div style="width:1px;height:16px;background:#e2e8f0;"></div>
-      <span style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">Bulan</span>
-      <select id="dashBulan" style="border:none;outline:none;font-size:12px;font-weight:700;color:#475569;height:auto;padding:0;background:transparent;">
-        <option value="">Semua</option>
-        <option value="1">Jan</option><option value="2">Feb</option><option value="3">Mar</option>
-        <option value="4">Apr</option><option value="5">Mei</option><option value="6">Jun</option>
-        <option value="7">Jul</option><option value="8">Agu</option><option value="9">Sep</option>
-        <option value="10">Okt</option><option value="11">Nov</option><option value="12">Des</option>
-      </select>
-      <div style="width:1px;height:16px;background:#e2e8f0;"></div>
-      <span style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">Tahun</span>
-      <select id="dashTahun" style="border:none;outline:none;font-size:12px;font-weight:700;color:#475569;height:auto;padding:0;background:transparent;"></select>
+      <!-- Stat cards -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
+        <div class="stat-card"><div class="stat-icon" style="background:#ecfdf5;color:#059669;"><i class="fas fa-users"></i></div><div class="stat-lbl">Karyawan Aktif</div><div class="stat-val" id="statKary">–</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#eff6ff;color:#3b82f6;"><i class="fas fa-clipboard-list"></i></div><div class="stat-lbl" id="statPltLbl">Total Pelatihan</div><div class="stat-val" id="statPlt">–</div></div>
+        <div class="stat-card"><div class="stat-icon" style="background:#fffbeb;color:#f59e0b;"><i class="fas fa-clock"></i></div><div class="stat-lbl" id="statJamLbl">Total Jam</div><div class="stat-val" id="statJam">–</div></div>
+      </div>
+
+      <!-- Dashboard shortcuts -->
+      <div class="dash-shortcuts">
+        <button class="shortcut-btn" id="btnShortBuat">
+          <div class="shortcut-icon" style="background:#ecfdf5;color:var(--green);"><i class="fas fa-plus"></i></div>
+          <div><div class="shortcut-lbl">Buat Pelatihan</div><div class="shortcut-sub">Input jadwal baru</div></div>
+        </button>
+        <button class="shortcut-btn" id="btnShortRiwayat">
+          <div class="shortcut-icon" style="background:#eff6ff;color:#2563eb;"><i class="fas fa-history"></i></div>
+          <div><div class="shortcut-lbl">Riwayat Saya</div><div class="shortcut-sub">Pelatihan yg diikuti</div></div>
+        </button>
+      </div>
+
+      <!-- Matrix -->
+      <div class="sec-label">Matriks Core Training Wajib</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:9px;margin-bottom:18px;" id="matrixGrid"></div>
+
+      <div class="sec-label">10 Pelatihan Terkini</div>
+      <div class="card">
+        <div class="tw">
+          <table>
+            <thead><tr><th>Topik</th><th>Unit</th><th>Tanggal</th><th>Instruktur</th><th>Status</th></tr></thead>
+            <tbody id="dashPltBody"><tr><td colspan="5" class="empty-st"><div class="empty-lbl">Memuat…</div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
     </div>
-    <button class="btn btn-p btn-sm" id="btnApplyDash"><i class="fas fa-filter"></i> Terapkan</button>
-  </div>
 
-  <!-- Stat cards -->
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
-    <div class="stat-card"><div class="stat-icon" style="background:#ecfdf5;color:#059669;"><i class="fas fa-users"></i></div><div class="stat-lbl">Karyawan Aktif</div><div class="stat-val" id="statKary">–</div></div>
-    <div class="stat-card"><div class="stat-icon" style="background:#eff6ff;color:#3b82f6;"><i class="fas fa-clipboard-list"></i></div><div class="stat-lbl" id="statPltLbl">Total Pelatihan</div><div class="stat-val" id="statPlt">–</div></div>
-    <div class="stat-card"><div class="stat-icon" style="background:#fffbeb;color:#f59e0b;"><i class="fas fa-clock"></i></div><div class="stat-lbl" id="statJamLbl">Total Jam</div><div class="stat-val" id="statJam">–</div></div>
-  </div>
-
-  <!-- Dashboard shortcuts -->
-  <div class="dash-shortcuts">
-    <button class="shortcut-btn" id="btnShortBuat">
-      <div class="shortcut-icon" style="background:#ecfdf5;color:var(--green);"><i class="fas fa-plus"></i></div>
-      <div><div class="shortcut-lbl">Buat Pelatihan</div><div class="shortcut-sub">Input jadwal baru</div></div>
-    </button>
-    <button class="shortcut-btn" id="btnShortRiwayat">
-      <div class="shortcut-icon" style="background:#eff6ff;color:#2563eb;"><i class="fas fa-history"></i></div>
-      <div><div class="shortcut-lbl">Riwayat Saya</div><div class="shortcut-sub">Pelatihan yg diikuti</div></div>
-    </button>
-  </div>
-
-  <!-- Matrix -->
-  <div class="sec-label">Matriks Core Training Wajib</div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:9px;margin-bottom:18px;" id="matrixGrid"></div>
-
-  <div class="sec-label">10 Pelatihan Terkini</div>
-  <div class="card">
-    <div class="tw">
-      <table>
-        <thead><tr><th>Topik</th><th>Unit</th><th>Tanggal</th><th>Instruktur</th><th>Status</th></tr></thead>
-        <tbody id="dashPltBody"><tr><td colspan="5" class="empty-st"><div class="empty-lbl">Memuat…</div></td></tr></tbody>
-      </table>
+    <!-- ── PELATIHAN ── -->
+    <div class="page" id="pagePelatihan">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:2px;">
+        <div class="pg-title">Pelatihan</div>
+        <button class="btn btn-p" id="btnBuatPlt"><i class="fas fa-plus"></i> Buat Pelatihan</button>
+      </div>
+      <div class="pg-sub">Kelola Semua Data Pelatihan</div>
+      <div class="filters">
+        <div class="fl-group"><div class="fl-lbl">Cari</div><div class="sw"><span class="si"><i class="fas fa-search"></i></span><input type="search" id="searchPlt" placeholder="Topik / instruktur…" style="width:185px;"/></div></div>
+        <div class="fl-group"><div class="fl-lbl">Unit</div><select id="filterPltUnit" style="min-width:115px;"></select></div>
+        <div class="fl-group"><div class="fl-lbl">Status</div><select id="filterPltStatus"><option value="">Semua</option><option value="aktif">Aktif</option><option value="selesai">Selesai</option></select></div>
+        <div class="fl-group"><div class="fl-lbl">Tahun</div><select id="filterPltTahun" style="min-width:88px;"></select></div>
+      </div>
+      <div class="plt-grid" id="pltGrid"><div class="empty-st"><div class="empty-icon">📋</div><div class="empty-lbl">Memuat…</div></div></div>
     </div>
-  </div>
-</div>
 
-<!-- ── PELATIHAN ── -->
-<div class="page" id="pagePelatihan">
-  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:2px;">
-    <div class="pg-title">Pelatihan</div>
-    <button class="btn btn-p" id="btnBuatPlt"><i class="fas fa-plus"></i> Buat Pelatihan</button>
-  </div>
-  <div class="pg-sub">Kelola Semua Data Pelatihan</div>
-  <div class="filters">
-    <div class="fl-group"><div class="fl-lbl">Cari</div><div class="sw"><span class="si"><i class="fas fa-search"></i></span><input type="search" id="searchPlt" placeholder="Topik / instruktur…" style="width:185px;"/></div></div>
-    <div class="fl-group"><div class="fl-lbl">Unit</div><select id="filterPltUnit" style="min-width:115px;"></select></div>
-    <div class="fl-group"><div class="fl-lbl">Status</div><select id="filterPltStatus"><option value="">Semua</option><option value="aktif">Aktif</option><option value="selesai">Selesai</option></select></div>
-    <div class="fl-group"><div class="fl-lbl">Tahun</div><select id="filterPltTahun" style="min-width:88px;"></select></div>
-  </div>
-  <div class="plt-grid" id="pltGrid"><div class="empty-st"><div class="empty-icon">📋</div><div class="empty-lbl">Memuat…</div></div></div>
-</div>
+    <!-- ── KARYAWAN ── -->
+    <div class="page" id="pageKaryawan">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:2px;">
+        <div class="pg-title">Data Karyawan</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-o" id="btnImport"><i class="fas fa-file-import"></i> Import</button>
+          <button class="btn btn-o" id="btnTplKary"><i class="fas fa-file-csv"></i> Template</button>
+          <button class="btn btn-p" id="btnTambahKary"><i class="fas fa-plus"></i> Tambah</button>
+        </div>
+      </div>
+      <div class="pg-sub">Kelola Data Seluruh Karyawan</div>
+      <div class="filters">
+        <div class="fl-group"><div class="fl-lbl">Cari</div><div class="sw"><span class="si"><i class="fas fa-search"></i></span><input type="search" id="searchKary" placeholder="Nama atau perner…" style="width:185px;"/></div></div>
+        <div class="fl-group"><div class="fl-lbl">Unit</div><select id="filterKaryUnit" style="min-width:115px;"></select></div>
+        <div class="fl-group"><div class="fl-lbl">Bagian</div><select id="filterKaryBagian" style="min-width:125px;"></select></div>
+        <div class="fl-group"><div class="fl-lbl">Status</div><select id="filterKaryStatus"><option value="">Semua</option><option value="aktif">Aktif</option><option value="nonaktif">Nonaktif</option></select></div>
+      </div>
+      <div class="card">
+        <div class="tw">
+          <table>
+            <thead><tr><th>Nama &amp; Perner</th><th>Unit</th><th>Bagian</th><th>Jabatan</th><th>Status</th><th>Aksi</th></tr></thead>
+            <tbody id="karyBody"><tr><td colspan="6" class="empty-st"><div class="empty-lbl">Memuat…</div></td></tr></tbody>
+          </table>
+        </div>
+        <div class="pag" id="karyPag"></div>
+      </div>
+    </div>
 
-<!-- ── KARYAWAN ── -->
-<div class="page" id="pageKaryawan">
-  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:2px;">
-    <div class="pg-title">Data Karyawan</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="btn btn-o" id="btnImport"><i class="fas fa-file-import"></i> Import</button>
-      <button class="btn btn-o" id="btnTplKary"><i class="fas fa-file-csv"></i> Template</button>
-      <button class="btn btn-p" id="btnTambahKary"><i class="fas fa-plus"></i> Tambah</button>
+    <!-- ── REKAP CORE ── -->
+    <div class="page" id="pageRekapCore">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:2px;">
+        <div class="pg-title">Rekap Core</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;" id="rekapActWrap">
+          <button class="btn btn-o" id="btnUpdateCoreExt"><i class="fas fa-rotate"></i> Update Eksternal</button>
+          <button class="btn btn-p" id="btnExportRekap"><i class="fas fa-file-excel"></i> Export XLSX</button>
+        </div>
+      </div>
+      <div class="pg-sub">Status Ketercapaian Pelatihan Core Per Karyawan</div>
+      <div class="filters">
+        <div class="fl-group"><div class="fl-lbl">Cari</div><div class="sw"><span class="si"><i class="fas fa-search"></i></span><input type="search" id="searchRekap" placeholder="Nama / perner…" style="width:165px;"/></div></div>
+        <div class="fl-group"><div class="fl-lbl">Unit</div><select id="filterRekapUnit" style="min-width:115px;"></select></div>
+        <div class="fl-group"><div class="fl-lbl">Bagian</div><select id="filterRekapBagian" style="min-width:125px;"></select></div>
+        <div class="fl-group"><div class="fl-lbl">Core</div><select id="filterRekapCore" style="min-width:165px;"></select></div>
+        <div class="fl-group"><div class="fl-lbl">Status</div><select id="filterRekapStatus"><option value="">Semua</option><option value="lunas">Lunas</option><option value="refresh">Refresh</option><option value="belum">Belum</option></select></div>
+        <div class="fl-group"><div class="fl-lbl">Tahun</div><select id="filterRekapTahun" style="min-width:88px;"></select></div>
+      </div>
+      <div class="card">
+        <div class="tw">
+          <table>
+            <thead><tr>
+              <th id="rekapChkTh"><input type="checkbox" id="chkAllRekap"/></th>
+              <th>Nama &amp; Perner</th><th>Unit / Bagian</th><th>Topik Core</th><th>Tgl Terakhir</th><th>Status</th>
+            </tr></thead>
+            <tbody id="rekapBody"><tr><td colspan="6" class="empty-st"><div class="empty-lbl">Memuat…</div></td></tr></tbody>
+          </table>
+        </div>
+        <div style="padding:10px 14px;background:#f8fafc;border-top:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">Terpilih: <span id="rekapSelCnt" style="color:var(--green);">0</span></span>
+        </div>
+        <div class="pag" id="rekapPag"></div>
+      </div>
     </div>
-  </div>
-  <div class="pg-sub">Kelola Data Seluruh Karyawan</div>
-  <div class="filters">
-    <div class="fl-group"><div class="fl-lbl">Cari</div><div class="sw"><span class="si"><i class="fas fa-search"></i></span><input type="search" id="searchKary" placeholder="Nama atau perner…" style="width:185px;"/></div></div>
-    <div class="fl-group"><div class="fl-lbl">Unit</div><select id="filterKaryUnit" style="min-width:115px;"></select></div>
-    <div class="fl-group"><div class="fl-lbl">Bagian</div><select id="filterKaryBagian" style="min-width:125px;"></select></div>
-    <div class="fl-group"><div class="fl-lbl">Status</div><select id="filterKaryStatus"><option value="">Semua</option><option value="aktif">Aktif</option><option value="nonaktif">Nonaktif</option></select></div>
-  </div>
-  <div class="card">
-    <div class="tw">
-      <table>
-        <thead><tr><th>Nama &amp; Perner</th><th>Unit</th><th>Bagian</th><th>Jabatan</th><th>Status</th><th>Aksi</th></tr></thead>
-        <tbody id="karyBody"><tr><td colspan="6" class="empty-st"><div class="empty-lbl">Memuat…</div></td></tr></tbody>
-      </table>
-    </div>
-    <div class="pag" id="karyPag"></div>
-  </div>
-</div>
 
-<!-- ── REKAP CORE ── -->
-<div class="page" id="pageRekapCore">
-  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:2px;">
-    <div class="pg-title">Rekap Core</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;" id="rekapActWrap">
-      <button class="btn btn-o" id="btnUpdateCoreExt"><i class="fas fa-rotate"></i> Update Eksternal</button>
-      <button class="btn btn-p" id="btnExportRekap"><i class="fas fa-file-excel"></i> Export XLSX</button>
+    <!-- ── MANAJEMEN USER ── -->
+    <div class="page" id="pageManajemenUser">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:2px;">
+        <div class="pg-title">Manajemen User</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-o" id="btnKelolaLevel"><i class="fas fa-sliders"></i> Level Akses</button>
+          <button class="btn btn-p" id="btnTambahUser"><i class="fas fa-plus"></i> Tambah User</button>
+        </div>
+      </div>
+      <div class="pg-sub">Kelola Akun Pengguna Sistem</div>
+      <div class="filters">
+        <div class="fl-group"><div class="fl-lbl">Cari</div><div class="sw"><span class="si"><i class="fas fa-search"></i></span><input type="search" id="searchUser" placeholder="Nama / perner…" style="width:185px;"/></div></div>
+        <div class="fl-group"><div class="fl-lbl">Level</div><select id="filterUserLevel"><option value="">Semua Level</option><option value="superadmin">Level 1</option><option value="admin">Level 2</option><option value="unit">Level 3</option></select></div>
+        <div class="fl-group"><div class="fl-lbl">Status</div><select id="filterUserStatus"><option value="">Semua</option><option value="aktif">Aktif</option><option value="nonaktif">Nonaktif</option></select></div>
+      </div>
+      <div class="card">
+        <div class="tw">
+          <table>
+            <thead><tr><th>Nama &amp; Perner</th><th>Level</th><th>Unit</th><th>Status</th><th>Aksi</th></tr></thead>
+            <tbody id="userBody"><tr><td colspan="5" class="empty-st"><div class="empty-lbl">Memuat…</div></td></tr></tbody>
+          </table>
+        </div>
+        <div class="pag" id="userPag"></div>
+      </div>
     </div>
-  </div>
-  <div class="pg-sub">Status Ketercapaian Pelatihan Core Per Karyawan</div>
-  <div class="filters">
-    <div class="fl-group"><div class="fl-lbl">Cari</div><div class="sw"><span class="si"><i class="fas fa-search"></i></span><input type="search" id="searchRekap" placeholder="Nama / perner…" style="width:165px;"/></div></div>
-    <div class="fl-group"><div class="fl-lbl">Unit</div><select id="filterRekapUnit" style="min-width:115px;"></select></div>
-    <div class="fl-group"><div class="fl-lbl">Bagian</div><select id="filterRekapBagian" style="min-width:125px;"></select></div>
-    <div class="fl-group"><div class="fl-lbl">Core</div><select id="filterRekapCore" style="min-width:165px;"></select></div>
-    <div class="fl-group"><div class="fl-lbl">Status</div><select id="filterRekapStatus"><option value="">Semua</option><option value="lunas">Lunas</option><option value="refresh">Refresh</option><option value="belum">Belum</option></select></div>
-    <div class="fl-group"><div class="fl-lbl">Tahun</div><select id="filterRekapTahun" style="min-width:88px;"></select></div>
-  </div>
-  <div class="card">
-    <div class="tw">
-      <table>
-        <thead><tr>
-          <th id="rekapChkTh"><input type="checkbox" id="chkAllRekap"/></th>
-          <th>Nama &amp; Perner</th><th>Unit / Bagian</th><th>Topik Core</th><th>Tgl Terakhir</th><th>Status</th>
-        </tr></thead>
-        <tbody id="rekapBody"><tr><td colspan="6" class="empty-st"><div class="empty-lbl">Memuat…</div></td></tr></tbody>
-      </table>
-    </div>
-    <div style="padding:10px 14px;background:#f8fafc;border-top:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;">
-      <span style="font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">Terpilih: <span id="rekapSelCnt" style="color:var(--green);">0</span></span>
-    </div>
-    <div class="pag" id="rekapPag"></div>
-  </div>
-</div>
 
-<!-- ── MANAJEMEN USER ── -->
-<div class="page" id="pageManajemenUser">
-  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:2px;">
-    <div class="pg-title">Manajemen User</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="btn btn-o" id="btnKelolaLevel"><i class="fas fa-sliders"></i> Level Akses</button>
-      <button class="btn btn-p" id="btnTambahUser"><i class="fas fa-plus"></i> Tambah User</button>
+    <!-- ── LOG ── -->
+    <div class="page" id="pageLog">
+      <div class="pg-title">Log Aktivitas</div>
+      <div class="pg-sub">Riwayat Seluruh Aktivitas Sistem</div>
+      <div class="filters">
+        <div class="fl-group"><div class="fl-lbl">Cari</div><div class="sw"><span class="si"><i class="fas fa-search"></i></span><input type="search" id="searchLog" placeholder="Aksi / user…" style="width:185px;"/></div></div>
+        <div class="fl-group"><div class="fl-lbl">Jenis Aksi</div><select id="filterLogAksi" style="min-width:145px;"></select></div>
+        <div class="fl-group"><div class="fl-lbl">Tanggal</div><input type="date" id="filterLogDate"/></div>
+      </div>
+      <div id="logTerm">
+        <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:11px;margin-bottom:11px;">
+          <span style="color:#4ade80;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:3px;">System Activity Log</span>
+        </div>
+        <div id="logContent"></div>
+        <div class="pag" id="logPag" style="justify-content:center;margin-top:11px;"></div>
+      </div>
     </div>
-  </div>
-  <div class="pg-sub">Kelola Akun Pengguna Sistem</div>
-  <div class="filters">
-    <div class="fl-group"><div class="fl-lbl">Cari</div><div class="sw"><span class="si"><i class="fas fa-search"></i></span><input type="search" id="searchUser" placeholder="Nama / perner…" style="width:185px;"/></div></div>
-    <div class="fl-group"><div class="fl-lbl">Level</div><select id="filterUserLevel"><option value="">Semua Level</option><option value="superadmin">Level 1</option><option value="admin">Level 2</option><option value="unit">Level 3</option></select></div>
-    <div class="fl-group"><div class="fl-lbl">Status</div><select id="filterUserStatus"><option value="">Semua</option><option value="aktif">Aktif</option><option value="nonaktif">Nonaktif</option></select></div>
-  </div>
-  <div class="card">
-    <div class="tw">
-      <table>
-        <thead><tr><th>Nama &amp; Perner</th><th>Level</th><th>Unit</th><th>Status</th><th>Aksi</th></tr></thead>
-        <tbody id="userBody"><tr><td colspan="5" class="empty-st"><div class="empty-lbl">Memuat…</div></td></tr></tbody>
-      </table>
-    </div>
-    <div class="pag" id="userPag"></div>
-  </div>
-</div>
-
-<!-- ── LOG ── -->
-<div class="page" id="pageLog">
-  <div class="pg-title">Log Aktivitas</div>
-  <div class="pg-sub">Riwayat Seluruh Aktivitas Sistem</div>
-  <div class="filters">
-    <div class="fl-group"><div class="fl-lbl">Cari</div><div class="sw"><span class="si"><i class="fas fa-search"></i></span><input type="search" id="searchLog" placeholder="Aksi / user…" style="width:185px;"/></div></div>
-    <div class="fl-group"><div class="fl-lbl">Jenis Aksi</div><select id="filterLogAksi" style="min-width:145px;"></select></div>
-    <div class="fl-group"><div class="fl-lbl">Tanggal</div><input type="date" id="filterLogDate"/></div>
-  </div>
-  <div id="logTerm">
-    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:11px;margin-bottom:11px;">
-      <span style="color:#4ade80;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:3px;">System Activity Log</span>
-    </div>
-    <div id="logContent"></div>
-    <div class="pag" id="logPag" style="justify-content:center;margin-top:11px;"></div>
-  </div>
-</div>
-
 
   </div>
 </div>
 </div>
 
 <!-- ═══ BOTTOM NAV ═══ -->
-
 <nav class="bottom-nav"><div class="bn-inner" id="bnInner"></div></nav>
 
 <!-- ════════ FLOAT BAR (Rekap Core) ════════ -->
-
 <div class="float-bar" id="floatBar">
   <div class="fc" id="floatCnt">0</div>
   <div class="ft">karyawan dipilih</div>
@@ -611,7 +598,6 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
 <!-- ════════ MODALS ════════ -->
 
 <!-- Profil User -->
-
 <div class="mo" id="moProfile">
   <div class="mo-box sm">
     <div class="mo-head">
@@ -646,7 +632,6 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
 </div>
 
 <!-- Riwayat Saya (dashboard shortcut) -->
-
 <div class="mo" id="moRiwayatSaya">
   <div class="mo-box lg">
     <div class="mo-head">
@@ -680,7 +665,6 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
 </div>
 
 <!-- Riwayat Karyawan (dari tabel) -->
-
 <div class="mo" id="moRiwayatKary">
   <div class="mo-box lg">
     <div class="mo-head">
@@ -712,7 +696,6 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
 </div>
 
 <!-- Form Pelatihan -->
-
 <div class="mo" id="moPlt">
   <div class="mo-box lg">
     <div class="mo-head"><div class="mo-title" id="moPltTitle">Buat Pelatihan</div><button class="mo-close" onclick="closeModal('moPlt')">✕</button></div>
@@ -757,7 +740,6 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
 </div>
 
 <!-- Detail Pelatihan -->
-
 <div class="mo" id="moDetailPlt">
   <div class="mo-box lg">
     <div class="mo-head"><div class="mo-title" id="detailPltTitle">Detail Pelatihan</div><button class="mo-close" onclick="closeModal('moDetailPlt')">✕</button></div>
@@ -766,7 +748,6 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
 </div>
 
 <!-- Form Karyawan -->
-
 <div class="mo" id="moKary">
   <div class="mo-box">
     <div class="mo-head"><div class="mo-title" id="moKaryTitle">Tambah Karyawan</div><button class="mo-close" onclick="closeModal('moKary')">✕</button></div>
@@ -784,7 +765,6 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
 </div>
 
 <!-- Import Karyawan -->
-
 <div class="mo" id="moImport">
   <div class="mo-box xl">
     <div class="mo-head"><div class="mo-title">Import Data Karyawan</div><button class="mo-close" onclick="closeModal('moImport')">✕</button></div>
@@ -815,7 +795,6 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
 </div>
 
 <!-- Form User -->
-
 <div class="mo" id="moUser">
   <div class="mo-box">
     <div class="mo-head"><div class="mo-title" id="moUserTitle">Tambah User</div><button class="mo-close" onclick="closeModal('moUser')">✕</button></div>
@@ -832,7 +811,6 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
 </div>
 
 <!-- Reset Password -->
-
 <div class="mo" id="moResetPw">
   <div class="mo-box sm">
     <div class="mo-head"><div class="mo-title">Reset Password</div><button class="mo-close" onclick="closeModal('moResetPw')">✕</button></div>
@@ -851,7 +829,6 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
 </div>
 
 <!-- Level Akses Info -->
-
 <div class="mo" id="moLevel">
   <div class="mo-box sm">
     <div class="mo-head"><div class="mo-title">Level Akses Sistem</div><button class="mo-close" onclick="closeModal('moLevel')">✕</button></div>
@@ -866,7 +843,6 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
 </div>
 
 <!-- Update Core Eksternal (multi-perner) -->
-
 <div class="mo" id="moUpdateCore">
   <div class="mo-box">
     <div class="mo-head"><div class="mo-title">Update Core Eksternal</div><button class="mo-close" onclick="closeModal('moUpdateCore')">✕</button></div>
@@ -887,7 +863,6 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
 </div>
 
 <!-- Konfirmasi -->
-
 <div class="mo" id="moConfirm">
   <div class="mo-box sm" style="text-align:center;">
     <div class="mo-body" style="padding:26px 20px 8px;">
@@ -903,7 +878,6 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
 </div>
 
 <!-- Log Detail -->
-
 <div class="mo" id="moLogDetail">
   <div class="mo-box">
     <div class="mo-head"><div class="mo-title" id="logDetailTitle">Detail Log</div><button class="mo-close" onclick="closeModal('moLogDetail')">✕</button></div>
@@ -936,13 +910,11 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
 </div>
 
 <!-- Loading -->
-
 <div id="loadOv"><div class="spin-lg"></div><p class="load-lbl" id="loadTxt">Memuat…</p></div>
 <!-- Toast -->
 <div id="toastCont"></div>
 
 <!-- ═══════════════ FIREBASE + LOGIC ═══════════════ -->
-
 <script type="module">
 import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence, updateProfile }
@@ -1148,16 +1120,77 @@ function refreshJabatanDL(){const dl=$('jabatanDL');if(!dl)return;dl.innerHTML=j
 async function ensureJabatan(j){if(!j||jabatanOpts.includes(j))return;jabatanOpts.push(j);jabatanOpts.sort();refreshJabatanDL();try{await setDoc(doc(db,'jabatan_options',j),{jabatan:j});}catch(_){}}
 async function loadAllData(){
   showLoad('Memuat data…');
+  
+  /* Check auth state first */
+  if(!auth.currentUser){
+    toast('Sesi berakhir, memuat ulang…','warn');
+    /* Try to restore session */
+    const ae=LS.get('__ae'), ap2=LS.get('__ap');
+    if(ae&&ap2){
+      try{
+        const{signInWithEmailAndPassword:siw}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+        await siw(auth,atob(ae),atob(ap2));
+      }catch(authErr){
+        hideLoad();
+        toast('Gagal restore sesi: '+authErr.message,'error');
+        setTimeout(()=>{LS.clear();window.location.href='index.html';},2000);
+        return;
+      }
+    } else {
+      hideLoad();
+      LS.clear();
+      window.location.href='index.html';
+      return;
+    }
+  }
+
   try{
-    const[ks,ps]=await Promise.all([getDocs(query(collection(db,'karyawan'),orderBy('nama_lengkap'))),getDocs(query(collection(db,'pelatihan'),orderBy('tgl_dibuat','desc')))]);
-    allKaryawan=ks.docs.map(d=>({id:d.id,...d.data()}));
-    allPelatihan=ps.docs.map(d=>({id:d.id,...d.data()}));
-    const pps=await getDocs(collection(db,'peserta_pelatihan'));
+    /* Use simplest possible queries — no orderBy, no index required */
+    const[ks,ps,pps]=await Promise.all([
+      getDocs(collection(db,'karyawan')),
+      getDocs(collection(db,'pelatihan')),
+      getDocs(collection(db,'peserta_pelatihan'))
+    ]);
+
+    allKaryawan=ks.docs.map(d=>({id:d.id,...d.data()}))
+      .sort((a,b)=>(a.nama_lengkap||'').localeCompare(b.nama_lengkap||'','id'));
+
+    allPelatihan=ps.docs.map(d=>({id:d.id,...d.data()}))
+      .sort((a,b)=>{
+        const ta=a.tgl_dibuat?.toDate?.()?.getTime()||new Date((a.tanggal||'2000-01-01')+'T00:00:00').getTime();
+        const tb=b.tgl_dibuat?.toDate?.()?.getTime()||new Date((b.tanggal||'2000-01-01')+'T00:00:00').getTime();
+        return tb-ta;
+      });
+
     allPesertaMap={};
-    pps.docs.forEach(d=>{const x=d.data();if(!allPesertaMap[x.id_pelatihan])allPesertaMap[x.id_pelatihan]=[];allPesertaMap[x.id_pelatihan].push({id:d.id,...x});});
-  }catch(e){toast('Gagal memuat data: '+e.message,'error');}
-  finally{hideLoad();}
-  renderDashboard();
+    pps.docs.forEach(d=>{
+      const x=d.data();
+      if(!allPesertaMap[x.id_pelatihan])allPesertaMap[x.id_pelatihan]=[];
+      allPesertaMap[x.id_pelatihan].push({id:d.id,...x});
+    });
+
+  }catch(e){
+    hideLoad();
+    /* Show visible error with detail */
+    const errMsg='Gagal memuat: '+e.message+' (code: '+e.code+')';
+    toast(errMsg,'error');
+    /* Show error in grid too so user can see it */
+    const ap3=document.querySelector('.page.active')?.id||'';
+    if(ap3==='pagePelatihan'){
+      const g=document.getElementById('pltGrid');
+      if(g)g.innerHTML='<div class="empty-st" style="color:#e11d48;"><div class="empty-icon">⚠️</div><div class="empty-lbl">'+errMsg+'</div></div>';
+    }
+    return;
+  }finally{
+    hideLoad();
+  }
+
+  /* Refresh whichever page is active */
+  const ap=document.querySelector('.page.active')?.id||'';
+  if(ap==='pagePelatihan')renderPelatihan();
+  else if(ap==='pageKaryawan')renderKaryawan();
+  else if(ap==='pageRekapCore')renderRekap();
+  else renderDashboard();
 }
 
 /* ═══ HELPERS: get pelatihan by perner ═══ */
@@ -1242,6 +1275,9 @@ window.renderRiwayatSaya=()=>{
 /* ═══ PELATIHAN ═══ */
 function renderPelatihan(){
   const s=S(); const q=$('searchPlt')?.value.toLowerCase()||''; const unit=$('filterPltUnit')?.value||''; const status=$('filterPltStatus')?.value||''; const tahun=parseInt($('filterPltTahun')?.value)||0;
+  const cd=s.role!=='unit'; /* can delete */
+  const cf=s.role!=='unit'; /* can mark finished */
+  const cp=s.role!=='unit'; /* can print */
   let data=allPelatihan;
   if(s.role==='unit')data=data.filter(p=>p.unit_pembuat===s.unit);
   if(unit)data=data.filter(p=>p.unit_pembuat===unit);if(status)data=data.filter(p=>p.status===status);
@@ -1629,6 +1665,5 @@ window.showLogDetail=l=>{
   openModal('moLogDetail');
 };
 </script>
-
 </body>
 </html>
