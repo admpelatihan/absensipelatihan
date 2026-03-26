@@ -1850,8 +1850,13 @@ $('importCoreFile')?.addEventListener('change',async e=>{
       data=Papa.parse(t,{header:true,skipEmptyLines:true}).data;
     }else{
       const buf=await f.arrayBuffer();
-      const wb=XLSX.read(buf,{type:'array'});
-      data=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+      /* cellDates:true agar SheetJS konversi serial number ke Date object */
+      /* dateNF agar format tanggal konsisten */
+      const wb=XLSX.read(buf,{type:'array',cellDates:true,dateNF:'yyyy-mm-dd'});
+      data=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{
+        raw:false,        /* false = gunakan formatted string bukan raw number */
+        dateNF:'yyyy-mm-dd'
+      });
     }
     renderImportCorePreview(data);
   }catch(err){toast('Gagal baca file: '+err.message,'error');}
@@ -1894,12 +1899,33 @@ function renderImportCorePreview(data){
     });
     if(!topikMatch)return{perner,topik,tgl:tglRaw,ket,status:'❌ Topik tdk dikenal',cls:'ir-err',valid:false,skipReason:'topik'};
 
-    /* Validasi tanggal */
-    const tgl=tglRaw.includes('/')?tglRaw.split('/').reverse().join('-'):
-               tglRaw.includes('-')&&tglRaw.length===10?tglRaw:
-               tglRaw.length===8?`${tglRaw.slice(0,4)}-${tglRaw.slice(4,6)}-${tglRaw.slice(6,8)}`:null;
-    if(!tgl||isNaN(new Date(tgl+'T00:00:00').getTime()))
-      return{perner,topik:topikMatch.nama_pelatihan||topikMatch.id,tgl:tglRaw,ket,status:'❌ Format tanggal salah',cls:'ir-err',valid:false,skipReason:'tgl'};
+    /* Validasi tanggal — handle Excel serial number, string, dan berbagai format */
+    function parseExcelDate(val){
+      if(!val&&val!==0)return null;
+      /* Excel serial number (SheetJS reads Date cells as number) */
+      if(typeof val==='number'){
+        /* Excel epoch: 1 Jan 1900 = day 1, tapi ada bug leap year 1900 */
+        const d=new Date(Math.round((val-25569)*86400*1000));
+        const y=d.getUTCFullYear(),m=String(d.getUTCMonth()+1).padStart(2,'0'),dd=String(d.getUTCDate()).padStart(2,'0');
+        return`${y}-${m}-${dd}`;
+      }
+      const s=val.toString().trim();
+      /* YYYY-MM-DD */
+      if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;
+      /* DD/MM/YYYY */
+      if(/^\d{2}\/\d{2}\/\d{4}$/.test(s)){const[dd,mm,yy]=s.split('/');return`${yy}-${mm}-${dd}`;}
+      /* YYYYMMDD */
+      if(/^\d{8}$/.test(s))return`${s.slice(0,4)}-${s.slice(4,6)}-${s.slice(6,8)}`;
+      /* Coba parse langsung */
+      const dt=new Date(s);
+      if(!isNaN(dt.getTime())){
+        const y=dt.getFullYear(),m=String(dt.getMonth()+1).padStart(2,'0'),dd=String(dt.getDate()).padStart(2,'0');
+        return`${y}-${m}-${dd}`;
+      }
+      return null;
+    }
+    const tgl=parseExcelDate(row[colTgl]);
+    if(!tgl)return{perner,topik:topikMatch?topikMatch.nama_pelatihan||topikMatch.id:topik,tgl:tglRaw,ket,status:'❌ Format tanggal salah',cls:'ir-err',valid:false,skipReason:'tgl'};
 
     ok++;
     return{perner,topik:topikMatch.nama_pelatihan||topikMatch.id,tgl,ket,kary,status:'✅ Siap',cls:'ir-new',valid:true};
