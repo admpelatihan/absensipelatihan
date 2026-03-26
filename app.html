@@ -1275,15 +1275,28 @@ window.renderRiwayatSaya=()=>{
 /* ═══ PELATIHAN ═══ */
 function renderPelatihan(){
   const s=S(); const q=$('searchPlt')?.value.toLowerCase()||''; const unit=$('filterPltUnit')?.value||''; const status=$('filterPltStatus')?.value||''; const tahun=parseInt($('filterPltTahun')?.value)||0;
-  const cd=s.role!=='unit'; /* can delete */
-  const cf=s.role!=='unit'; /* can mark finished */
-  const cp=s.role!=='unit'; /* can print */
+  const cd=s.role!=='unit';
+  const cf=s.role!=='unit';
+  const cp=s.role!=='unit';
+  const grid=$('pltGrid');
+
+  /* If data empty show reload button */
+  if(!allPelatihan || allPelatihan.length===0){
+    var authInfo = auth.currentUser ? 'Login: OK' : 'Login: TIDAK';
+    var uidInfo = 'UID: ' + (LS.get('uid')||'-');
+    grid.innerHTML = '<div class="empty-st"><div class="empty-icon">📋</div>'
+      + '<div class="empty-lbl" style="color:#e11d48;">Data belum termuat</div>'
+      + '<div style="font-size:11px;color:#64748b;margin:8px 0;">' + authInfo + ' | ' + uidInfo + '</div>'
+      + '<button onclick="loadAllData()" class="btn btn-p" style="margin-top:10px;">'
+      + '<i class="fas fa-rotate-right"></i> Muat Ulang</button></div>';
+    return;
+  }
+
   let data=allPelatihan;
   if(s.role==='unit')data=data.filter(p=>p.unit_pembuat===s.unit);
   if(unit)data=data.filter(p=>p.unit_pembuat===unit);if(status)data=data.filter(p=>p.status===status);
   if(tahun)data=data.filter(p=>{const y=p.tanggal?new Date(p.tanggal+'T00:00:00').getFullYear():null;return y===tahun;});
   if(q)data=data.filter(p=>(p.topik||'').toLowerCase().includes(q)||(p.instruktur||'').toLowerCase().includes(q));
-  const grid=$('pltGrid');
   if(!data.length){grid.innerHTML='<div class="empty-st"><div class="empty-icon">📋</div><div class="empty-lbl">Tidak ada pelatihan ditemukan</div></div>';return;}
   grid.innerHTML=data.map(p=>{
     const cnt=(allPesertaMap[p.id]||[]).length;
