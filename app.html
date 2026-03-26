@@ -461,7 +461,10 @@
     <div class="page" id="pagePelatihan">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:2px;">
         <div class="pg-title">Pelatihan</div>
-        <button class="btn btn-p" id="btnBuatPlt"><i class="fas fa-plus"></i> Buat Pelatihan</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-o" id="btnBersihDuplikat" title="Deteksi dan hapus data pelatihan duplikat"><i class="fas fa-broom"></i> Bersihkan Duplikat</button>
+          <button class="btn btn-p" id="btnBuatPlt"><i class="fas fa-plus"></i> Buat Pelatihan</button>
+        </div>
       </div>
       <div class="pg-sub">Kelola Semua Data Pelatihan</div>
       <div class="filters">
@@ -840,6 +843,28 @@
         <div style="background:#f8fafc;border-radius:11px;padding:13px;border:1px solid #f1f5f9;"><div style="font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Level 2 — Admin</div><div style="font-size:12px;font-weight:600;color:#334155;">Akses dashboard, pelatihan (semua fitur), karyawan, dan rekap core.</div></div>
         <div style="background:#f8fafc;border-radius:11px;padding:13px;border:1px solid #f1f5f9;"><div style="font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Level 3 — Unit</div><div style="font-size:12px;font-weight:600;color:#334155;">Akses terbatas: dashboard unit sendiri, buat pelatihan, lihat rekap core unit sendiri.</div></div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bersihkan Duplikat -->
+<div class="mo" id="moBersihDuplikat">
+  <div class="mo-box xl">
+    <div class="mo-head">
+      <div class="mo-title">🧹 Bersihkan Data Duplikat</div>
+      <button class="mo-close" onclick="closeModal('moBersihDuplikat')">✕</button>
+    </div>
+    <div class="mo-body" style="max-height:75vh;overflow-y:auto;">
+      <div id="duplikatInfo" style="font-size:12px;font-weight:600;color:#64748b;margin-bottom:12px;line-height:1.7;">
+        Menganalisis data…
+      </div>
+      <div id="duplikatList"></div>
+      <div class="pw" id="duplikatPW" style="display:none;"><div class="pf" id="duplikatPF"></div></div>
+      <p id="duplikatResult" style="font-size:11px;font-weight:800;color:#059669;margin-top:8px;"></p>
+    </div>
+    <div class="mo-foot">
+      <button class="btn btn-o" onclick="closeModal('moBersihDuplikat')">Tutup</button>
+      <button class="btn btn-r" id="btnHapusDuplikat" style="display:none;"><i class="fas fa-trash"></i> Hapus Semua Duplikat</button>
     </div>
   </div>
 </div>
@@ -1240,12 +1265,23 @@ async function loadAllData(){
       .sort((a,b)=>(a.nama_lengkap||'').localeCompare(b.nama_lengkap||'','id'));
 
     /* Include ALL pelatihan including EXT- (core eksternal) */
-    allPelatihan=ps.docs.map(d=>({id:d.id,...d.data()}))
+    const rawPelatihan=ps.docs.map(d=>({id:d.id,...d.data()}))
       .sort((a,b)=>{
         const ta=a.tgl_dibuat?.toDate?.()?.getTime()||new Date((a.tanggal||'2000-01-01')+'T00:00:00').getTime();
         const tb=b.tgl_dibuat?.toDate?.()?.getTime()||new Date((b.tanggal||'2000-01-01')+'T00:00:00').getTime();
         return tb-ta;
       });
+
+    /* Deduplikasi PLT reguler: topik+tanggal+unit yang sama → simpan hanya yang pertama (terbaru) */
+    /* EXT- tidak didedup karena sudah punya ID unik */
+    const seenPltKey=new Set();
+    allPelatihan=rawPelatihan.filter(p=>{
+      if(p.id?.startsWith('EXT-'))return true; /* EXT selalu lolos */
+      const key=`${(p.topik||'').toLowerCase()}|${p.tanggal||''}|${p.unit_pembuat||''}`;
+      if(seenPltKey.has(key))return false; /* duplikat — buang */
+      seenPltKey.add(key);
+      return true;
+    });
 
     allPesertaMap={};
     pps.docs.forEach(d=>{
@@ -1360,7 +1396,19 @@ function renderDashboard(){
   /* Latest 10 */
   $('dashPltBody').innerHTML=!pf.length?`<tr><td colspan="5" class="empty-st"><div class="empty-lbl">Belum ada pelatihan</div></td></tr>`:pf.slice(0,10).map(p=>`<tr><td><strong>${p.topik||'–'}</strong>${p.is_core?` <span class="pill pill-core" style="font-size:8px;">Core</span>`:''}</td><td class="td-m">${p.unit_pembuat||'–'}</td><td class="td-m">${p.tanggal?hariIndo(p.tanggal)+', '+p.tanggal:'–'}</td><td class="td-m">${p.instruktur||'–'}</td><td><span class="pill ${p.status==='selesai'?'pill-selesai':'pill-proses'}">${p.status||'aktif'}</span></td></tr>`).join('');
 }
-window.goRekap=(topik,status)=>{$('filterRekapCore').value=topik;$('filterRekapStatus').value=status;showPage('RekapCore');};
+window.goRekap=(topik,status)=>{
+  /* Sync semua filter dari dashboard ke rekap core */
+  $('filterRekapCore').value=topik;
+  $('filterRekapStatus').value=status;
+  /* Bawa filter Unit dari dashboard */
+  const dashUnit=$('dashUnit')?.value||'';
+  if(dashUnit)$('filterRekapUnit').value=dashUnit;
+  /* Bawa filter Tahun dari dashboard */
+  const dashTahun=$('dashTahun')?.value||'';
+  if(dashTahun)$('filterRekapTahun').value=dashTahun;
+  rekapPage=1;
+  showPage('RekapCore');
+};
 $('btnApplyDash')?.addEventListener('click',renderDashboard);
 ['dashUnit','dashBulan','dashTahun'].forEach(id=>$(id)?.addEventListener('change',renderDashboard));
 
@@ -1509,7 +1557,34 @@ $('btnSimpanPlt')?.addEventListener('click',async()=>{
   try{const data={topik,unit_pembuat:$('pltUnit').value||s.unit||'',tanggal:tgl,hari:hariIndo(tgl),waktu_mulai:$('pltMulai').value,waktu_selesai:$('pltSelesai').value,lokasi:$('pltLokasi').value.trim(),instruktur:$('pltInstruktur').value.trim(),penyelenggara:$('pltPenyelenggara').value.trim(),is_core:isCore(topik),dibuat_oleh:s.uid};
     let pltId;
     if(editPltId){await updateDoc(doc(db,'pelatihan',editPltId),data);pltId=editPltId;await logAct('edit_pelatihan','',{topik});}
-    else{const ds=tgl.replace(/-/g,'');const cnt=allPelatihan.filter(p=>p.tanggal===tgl).length+1;pltId=`PLT-${ds}-${String(cnt).padStart(3,'0')}`;await setDoc(doc(db,'pelatihan',pltId),{...data,status:'aktif',tgl_dibuat:serverTimestamp()});await logAct('buat_pelatihan','',{topik,pltId});}
+    else{
+      /* Cek duplikat: topik + tanggal + unit yang sama */
+      const dupCheck=allPelatihan.find(p=>
+        p.topik?.toLowerCase()===topik.toLowerCase()&&
+        p.tanggal===tgl&&
+        p.unit_pembuat===(data.unit_pembuat)&&
+        !p.id?.startsWith('EXT-')
+      );
+      if(dupCheck){
+        /* Sudah ada — tanya user apakah mau edit yang sudah ada atau buat baru */
+        hideLoad();
+        const lanjut=await new Promise(res=>{
+          confirm2(
+            'Pelatihan Sudah Ada',
+            `Pelatihan "${topik}" pada ${tgl} di unit ${data.unit_pembuat} sudah ada. Lanjutkan buat baru?`,
+            '⚠️','Ya, Buat Baru','btn-a',()=>res(true)
+          );
+          $('confirmCancel').addEventListener('click',()=>res(false),{once:true});
+        });
+        if(!lanjut)return;
+        showLoad('Menyimpan pelatihan…');
+      }
+      const ds=tgl.replace(/-/g,'');
+      const cnt=allPelatihan.filter(p=>p.tanggal===tgl&&!p.id?.startsWith('EXT-')).length+1;
+      pltId=`PLT-${ds}-${String(cnt).padStart(3,'0')}`;
+      await setDoc(doc(db,'pelatihan',pltId),{...data,status:'aktif',tgl_dibuat:serverTimestamp()});
+      await logAct('buat_pelatihan','',{topik,pltId});
+    }
     const oldPP=allPesertaMap[pltId]||[];const bDel=writeBatch(db);oldPP.forEach(pe=>bDel.delete(doc(db,'peserta_pelatihan',pe.id)));await bDel.commit();
     const bAdd=writeBatch(db);[...selectedPeserta.values()].forEach(k=>{const r=doc(collection(db,'peserta_pelatihan'));bAdd.set(r,{id_pelatihan:pltId,perner:k.perner,ditambahkan_oleh:s.uid,tgl_ditambahkan:serverTimestamp()});});await bAdd.commit();
     closeModal('moPlt');await loadAllData();toast('Pelatihan berhasil disimpan!');
@@ -1599,7 +1674,12 @@ function renderImpPreview(data){
   _impRows=data.map(row=>{
     const nama=(row[cm.nama_lengkap]||row['Nama Lengkap']||row['Nama']||row['nama']||'').toString().trim();
     const perner=(row[cm.perner]||row['Perner']||row['No Induk']||row['NIK']||row['NIP']||'').toString().trim();
-    let cls='ir-new',st='✅ Baru';if(!perner){cls='ir-err';st='⛔ Skip';}else if(fP.has(perner)){cls='ir-dup';st='⚠️ Duplikat';}else if(exP.has(perner)){cls='ir-upd';st='🔵 Update';}if(perner)fP.add(perner);return{row,nama,perner,cls,st};
+    let cls='ir-new',st='✅ Baru';
+    if(!perner){cls='ir-err';st='⛔ Skip (Perner kosong)';}
+    else if(fP.has(perner)){cls='ir-dup';st='⚠️ Duplikat dalam file (dilewati)';}
+    else if(exP.has(perner)){cls='ir-upd';st='🔵 Update data yang ada';}
+    if(perner)fP.add(perner);
+    return{row,nama,perner,cls,st};
   });
   $('impHead').innerHTML=`<tr>${['Nama','Perner','Unit','Bagian','Jabatan','Status'].map(h=>`<th>${h}</th>`).join('')}<th>Status</th></tr>`;
   $('impBody').innerHTML=_impRows.slice(0,5).map(r=>`<tr class="${r.cls}"><td>${r.nama||'–'}</td><td>${r.perner||'–'}</td><td>${r.row[_colMap.unit]||r.row['Unit']||'–'}</td><td>${r.row[_colMap.bagian]||r.row['Bagian']||'–'}</td><td>${r.row[_colMap.jabatan]||r.row['Jabatan']||'–'}</td><td>${r.row[_colMap.status]||r.row['Status']||'aktif'}</td><td style="font-size:10px;font-weight:800;">${r.st}</td></tr>`).join('');
@@ -1927,32 +2007,77 @@ function renderImportCorePreview(data){
     const tgl=parseExcelDate(row[colTgl]);
     if(!tgl)return{perner,topik:topikMatch?topikMatch.nama_pelatihan||topikMatch.id:topik,tgl:tglRaw,ket,status:'❌ Format tanggal salah',cls:'ir-err',valid:false,skipReason:'tgl'};
 
+    /* Cek apakah perner ini sudah punya data core topik yang sama */
+    const topikFinal=topikMatch.nama_pelatihan||topikMatch.id;
+    const existingDates=[];
+    allPelatihan.filter(p=>p.is_core&&(p.topik===topikFinal||p.topik?.toLowerCase()===topikFinal.toLowerCase()))
+      .forEach(p=>{
+        if((allPesertaMap[p.id]||[]).some(pe=>pe.perner===perner)&&p.tanggal)
+          existingDates.push(p.tanggal);
+      });
+    (allCoreEksternal[perner]||[]).forEach(ce=>{
+      if(ce.topik===topikFinal||ce.topik?.toLowerCase()===topikFinal.toLowerCase())
+        existingDates.push(ce.tanggal);
+    });
+    existingDates.sort((a,b)=>b.localeCompare(a));
+    const lastExisting=existingDates[0]||null;
+
+    let rowStatus,rowCls,isUpdate=false;
+    if(lastExisting){
+      if(lastExisting===tgl){
+        /* Tanggal sama persis — skip duplikat */
+        rowStatus=`⚠️ Sudah ada (${lastExisting}) — dilewati`;
+        rowCls='ir-dup';
+        ok--;
+      } else {
+        /* Tanggal berbeda — ini update pelatihan terbaru */
+        isUpdate=true;
+        rowStatus=`🔵 Update: ${lastExisting} → ${tgl}`;
+        rowCls='ir-upd';
+      }
+    } else {
+      rowStatus='✅ Baru';
+      rowCls='ir-new';
+    }
+
     ok++;
-    return{perner,topik:topikMatch.nama_pelatihan||topikMatch.id,tgl,ket,kary,status:'✅ Siap',cls:'ir-new',valid:true};
+    return{perner,topik:topikFinal,tgl,ket,kary,lastExisting,isUpdate,
+      status:rowStatus,cls:rowCls,
+      valid:rowCls!=='ir-dup'}; /* duplikat tanggal sama tidak diproses */
   });
 
   /* Hitung stats */
-  _impCoreRows.forEach(r=>{if(!r.valid){if(r.skipReason==='kary')skipKary++;else if(r.skipReason==='topik')skipTopik++;else skipTgl++;}});
+  let cntBaru=0,cntUpdate=0,cntSkip=0;
+  _impCoreRows.forEach(r=>{
+    if(!r.valid||(r.cls==='ir-dup'&&r.lastExisting===r.tgl)){cntSkip++;}
+    else if(r.isUpdate){cntUpdate++;}
+    else if(r.valid){cntBaru++;}
+    if(r.skipReason==='kary')skipKary++;
+    else if(r.skipReason==='topik')skipTopik++;
+    else if(r.skipReason==='tgl')skipTgl++;
+  });
 
-  $('importCoreInfo').textContent=`${data.length} baris — ${ok} siap, ${data.length-ok} dilewati`;
+  $('importCoreInfo').textContent=`${data.length} baris — ${cntBaru} baru, ${cntUpdate} update, ${cntSkip+skipKary+skipTopik+skipTgl} dilewati`;
   $('importCoreStats').innerHTML=
-    `<span style="color:#059669;">✅ ${ok} valid</span>`+
-    (skipKary?`<span style="color:#e11d48;">❌ ${skipKary} perner tdk ada</span>`:'')  +
-    (skipTopik?`<span style="color:#d97706;">⚠️ ${skipTopik} topik tdk dikenal</span>`:'')  +
+    (cntBaru?`<span style="color:#059669;">✅ ${cntBaru} baru</span>`:'') +
+    (cntUpdate?`<span style="color:#2563eb;">🔵 ${cntUpdate} update tanggal</span>`:'') +
+    (cntSkip?`<span style="color:#d97706;">⚠️ ${cntSkip} tanggal sama</span>`:'') +
+    (skipKary?`<span style="color:#e11d48;">❌ ${skipKary} perner tdk ada</span>`:'') +
+    (skipTopik?`<span style="color:#d97706;">⚠️ ${skipTopik} topik tdk dikenal</span>`:'') +
     (skipTgl?`<span style="color:#e11d48;">❌ ${skipTgl} tanggal salah</span>`:'');
 
-  $('impCoreHead').innerHTML=`<tr><th>Perner</th><th>Nama</th><th>Topik Core</th><th>Tanggal</th><th>Keterangan</th><th>Status</th></tr>`;
-  $('impCoreBody').innerHTML=_impCoreRows.slice(0,10).map(r=>`
+  $('impCoreHead').innerHTML=`<tr><th>Perner</th><th>Nama</th><th>Topik Core</th><th>Tanggal Baru</th><th>Tgl Sebelumnya</th><th>Status</th></tr>`;
+  $('impCoreBody').innerHTML=_impCoreRows.slice(0,15).map(r=>`
     <tr class="${r.cls}">
       <td>${r.perner}</td>
       <td style="font-weight:700;">${r.kary?.nama_lengkap||'–'}</td>
       <td>${r.topik}</td>
-      <td>${r.tgl}</td>
-      <td class="td-m">${r.ket||'–'}</td>
+      <td style="font-weight:700;">${r.tgl}</td>
+      <td class="td-m" style="color:#94a3b8;">${r.lastExisting||'–'}</td>
       <td style="font-size:10px;font-weight:800;">${r.status}</td>
     </tr>`).join('');
-  if(_impCoreRows.length>10){
-    $('impCoreBody').innerHTML+=`<tr><td colspan="6" style="text-align:center;color:#94a3b8;font-size:10px;font-weight:800;padding:8px;">... dan ${_impCoreRows.length-10} baris lainnya</td></tr>`;
+  if(_impCoreRows.length>15){
+    $('impCoreBody').innerHTML+=`<tr><td colspan="6" style="text-align:center;color:#94a3b8;font-size:10px;font-weight:800;padding:8px;">... dan ${_impCoreRows.length-15} baris lainnya</td></tr>`;
   }
 
   $('importCorePreview').style.display='block';
@@ -1967,24 +2092,25 @@ $('btnDoImportCore')?.addEventListener('click',async()=>{
   $('impCorePW').style.display='block';
 
   try{
-    /* Group by topik+tanggal untuk membuat 1 dokumen pelatihan per grup */
+    /* Group by topik+tanggal — 1 dokumen per grup */
     const groups={};
     valid.forEach(r=>{
       const key=`${r.topik}|||${r.tgl}`;
-      if(!groups[key])groups[key]={topik:r.topik,tgl:r.tgl,ket:r.ket,perners:[]};
-      groups[key].perners.push(r.perner);
+      if(!groups[key])groups[key]={topik:r.topik,tgl:r.tgl,ket:r.ket,rows:[]};
+      groups[key].rows.push(r);
     });
 
-    let totalOk=0;
+    let totalOk=0,totalUpdate=0;
     const keys=Object.keys(groups);
+
     for(let gi=0;gi<keys.length;gi++){
       const g=groups[keys[gi]];
       const ds=g.tgl.replace(/-/g,'');
       const coreSlug=g.topik.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
-      const pltId=`EXT-${ds}-${coreSlug}`;
+      const newPltId=`EXT-${ds}-${coreSlug}`;
 
-      /* Buat/update dokumen pelatihan */
-      await setDoc(doc(db,'pelatihan',pltId),{
+      /* Buat/update dokumen pelatihan target */
+      await setDoc(doc(db,'pelatihan',newPltId),{
         topik:g.topik,
         unit_pembuat:s.unit||'',
         tanggal:g.tgl,
@@ -2001,30 +2127,57 @@ $('btnDoImportCore')?.addEventListener('click',async()=>{
         is_eksternal:true
       },{merge:true});
 
-      /* Cek peserta yang sudah ada */
-      const existSnap=await getDocs(query(collection(db,'peserta_pelatihan'),where('id_pelatihan','==',pltId)));
+      /* Cek peserta yang sudah ada di dokumen target */
+      const existSnap=await getDocs(query(collection(db,'peserta_pelatihan'),where('id_pelatihan','==',newPltId)));
       const existPerners=new Set(existSnap.docs.map(d=>d.data().perner));
 
-      /* Tambahkan peserta yang belum ada */
-      const batch=writeBatch(db);
-      let batchCount=0;
-      for(const perner of g.perners){
-        if(existPerners.has(perner))continue;
-        const r=doc(collection(db,'peserta_pelatihan'));
-        batch.set(r,{id_pelatihan:pltId,perner,ditambahkan_oleh:s.uid,tgl_ditambahkan:serverTimestamp(),hadir:true});
-        batchCount++;totalOk++;
-      }
-      if(batchCount>0)await batch.commit();
+      const batchAdd=writeBatch(db);
+      let addCount=0;
 
-      /* Update progress bar */
+      for(const r of g.rows){
+        /* Jika ini UPDATE — hapus perner dari dokumen pelatihan lama */
+        if(r.isUpdate&&r.lastExisting){
+          const oldDs=r.lastExisting.replace(/-/g,'');
+          const oldPltId=`EXT-${oldDs}-${coreSlug}`;
+          if(oldPltId!==newPltId){
+            /* Cari dan hapus record peserta lama */
+            try{
+              const oldPP=await getDocs(query(
+                collection(db,'peserta_pelatihan'),
+                where('id_pelatihan','==',oldPltId),
+                where('perner','==',r.perner)
+              ));
+              const bDel=writeBatch(db);
+              oldPP.docs.forEach(d=>bDel.delete(doc(db,'peserta_pelatihan',d.id)));
+              if(!oldPP.empty)await bDel.commit();
+            }catch(_){}
+          }
+          totalUpdate++;
+        }
+
+        /* Tambah ke dokumen baru jika belum ada */
+        if(!existPerners.has(r.perner)){
+          const ref=doc(collection(db,'peserta_pelatihan'));
+          batchAdd.set(ref,{
+            id_pelatihan:newPltId,
+            perner:r.perner,
+            ditambahkan_oleh:s.uid,
+            tgl_ditambahkan:serverTimestamp(),
+            hadir:true
+          });
+          addCount++;totalOk++;
+        }
+      }
+
+      if(addCount>0)await batchAdd.commit();
       $('impCorePF').style.width=Math.round(((gi+1)/keys.length)*100)+'%';
     }
 
-    await logAct('import_core_eksternal','',{total:valid.length,groups:keys.length});
-    $('impCoreResult').textContent=`✅ ${totalOk} data core berhasil diimport dalam ${keys.length} grup pelatihan.`;
+    await logAct('import_core_eksternal','',{total:valid.length,baru:totalOk-totalUpdate,update:totalUpdate,groups:keys.length});
+    $('impCoreResult').textContent=`✅ Selesai: ${totalOk-totalUpdate} data baru + ${totalUpdate} data diupdate tanggalnya, dalam ${keys.length} grup pelatihan.`;
     $('btnDoImportCore').style.display='none';
     await loadAllData();
-    toast(`Import core selesai: ${totalOk} karyawan, ${keys.length} grup pelatihan`);
+    toast(`Import core selesai: ${totalOk-totalUpdate} baru, ${totalUpdate} update tanggal`);
 
   }catch(e){
     toast('Gagal import: '+e.message,'error');
@@ -2044,6 +2197,131 @@ async function renderUsers(){
 }
 ['searchUser','filterUserLevel','filterUserStatus'].forEach(id=>{$(id)?.addEventListener('input',()=>{userPage=1;renderUsers();});$(id)?.addEventListener('change',()=>{userPage=1;renderUsers();});});
 $('btnKelolaLevel')?.addEventListener('click',()=>openModal('moLevel'));
+
+/* ═══ BERSIHKAN DUPLIKAT ═══ */
+let _dupGroups=[];
+
+$('btnBersihDuplikat')?.addEventListener('click',async()=>{
+  $('duplikatInfo').textContent='Menganalisis data duplikat…';
+  $('duplikatList').innerHTML='<div style="text-align:center;padding:20px;"><div class="spin-lg" style="margin:0 auto;"></div></div>';
+  $('btnHapusDuplikat').style.display='none';
+  $('duplikatResult').textContent='';
+  $('duplikatPW').style.display='none';
+  openModal('moBersihDuplikat');
+
+  try{
+    const snap=await getDocs(collection(db,'pelatihan'));
+    const semua=snap.docs.map(d=>({id:d.id,...d.data()}));
+
+    /* Kelompokkan berdasarkan topik+tanggal+unit */
+    const grupMap={};
+    semua.forEach(p=>{
+      const key=`${(p.topik||'').toLowerCase().trim()}|${p.tanggal||''}|${p.unit_pembuat||''}`;
+      if(!grupMap[key])grupMap[key]=[];
+      grupMap[key].push(p);
+    });
+
+    /* Cari yang lebih dari 1 dokumen per grup */
+    _dupGroups=Object.entries(grupMap)
+      .filter(([,docs])=>docs.length>1)
+      .map(([key,docs])=>{
+        /* Pertahankan yang paling banyak pesertanya, lalu paling baru */
+        docs.sort((a,b)=>{
+          const pa=(allPesertaMap[a.id]||[]).length;
+          const pb=(allPesertaMap[b.id]||[]).length;
+          if(pb!==pa)return pb-pa;
+          const ta=a.tgl_dibuat?.toDate?.()?.getTime()||0;
+          const tb=b.tgl_dibuat?.toDate?.()?.getTime()||0;
+          return tb-ta;
+        });
+        return{topik:docs[0].topik,tanggal:docs[0].tanggal,unit:docs[0].unit_pembuat,keep:docs[0],remove:docs.slice(1)};
+      });
+
+    if(!_dupGroups.length){
+      $('duplikatInfo').innerHTML='<span style="color:#059669;font-weight:800;">✅ Tidak ada duplikat ditemukan! Data sudah bersih.</span>';
+      $('duplikatList').innerHTML='';
+      return;
+    }
+
+    const totalDup=_dupGroups.reduce((s,g)=>s+g.remove.length,0);
+    $('duplikatInfo').innerHTML=`Ditemukan <strong style="color:#e11d48;">${_dupGroups.length} grup duplikat</strong> — `+
+      `<strong>${totalDup} dokumen</strong> akan dihapus, <strong>${_dupGroups.length}</strong> dipertahankan `+
+      `(dipilih yang paling banyak pesertanya).`;
+
+    $('duplikatList').innerHTML=`<div class="tw"><table>
+      <thead><tr>
+        <th>Topik</th><th>Tanggal</th><th>Unit</th>
+        <th style="color:#059669;">✅ Dipertahankan</th>
+        <th style="color:#e11d48;">🗑 Akan Dihapus</th>
+      </tr></thead>
+      <tbody>${_dupGroups.map(g=>`<tr>
+        <td style="font-weight:700;">${g.topik}</td>
+        <td class="td-m">${g.tanggal}</td>
+        <td class="td-m">${g.unit||'–'}</td>
+        <td style="font-size:11px;color:#059669;font-weight:700;">
+          ${g.keep.id}<br/>
+          <span style="color:#94a3b8;">${(allPesertaMap[g.keep.id]||[]).length} peserta</span>
+        </td>
+        <td style="font-size:11px;color:#e11d48;">
+          ${g.remove.map(r=>`${r.id} <span style="color:#94a3b8;">(${(allPesertaMap[r.id]||[]).length} peserta)</span>`).join('<br/>')}
+        </td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
+
+    $('btnHapusDuplikat').style.display='inline-flex';
+
+  }catch(e){
+    $('duplikatInfo').textContent='Gagal analisis: '+e.message;
+    $('duplikatList').innerHTML='';
+  }
+});
+
+$('btnHapusDuplikat')?.addEventListener('click',async()=>{
+  if(!_dupGroups.length)return;
+  const totalDel=_dupGroups.reduce((s,g)=>s+g.remove.length,0);
+  const ok=await new Promise(res=>{
+    confirm2('Hapus Duplikat?',
+      `${totalDel} dokumen duplikat akan dihapus permanen. Dokumen terbaik dipertahankan.`,
+      '🗑','Ya, Hapus','btn-r',()=>res(true));
+    $('confirmCancel').addEventListener('click',()=>res(false),{once:true});
+  });
+  if(!ok)return;
+
+  showLoad('Menghapus duplikat…');
+  $('duplikatPW').style.display='block';
+  $('btnHapusDuplikat').disabled=true;
+  let hapus=0;
+
+  try{
+    for(let gi=0;gi<_dupGroups.length;gi++){
+      const g=_dupGroups[gi];
+      for(const p of g.remove){
+        /* Hapus peserta dulu */
+        const pp=allPesertaMap[p.id]||[];
+        if(pp.length){
+          const b=writeBatch(db);
+          pp.forEach(pe=>b.delete(doc(db,'peserta_pelatihan',pe.id)));
+          await b.commit();
+        }
+        await deleteDoc(doc(db,'pelatihan',p.id));
+        hapus++;
+      }
+      $('duplikatPF').style.width=Math.round(((gi+1)/_dupGroups.length)*100)+'%';
+    }
+    await logAct('hapus_duplikat','',{hapus,grup:_dupGroups.length});
+    $('duplikatResult').textContent=`✅ Berhasil menghapus ${hapus} dokumen duplikat.`;
+    $('btnHapusDuplikat').style.display='none';
+    _dupGroups=[];
+    await loadAllData();
+    toast(`${hapus} data duplikat berhasil dihapus!`);
+  }catch(e){
+    toast('Gagal: '+e.message,'error');
+  }finally{
+    hideLoad();
+    $('duplikatPW').style.display='none';
+    $('btnHapusDuplikat').disabled=false;
+  }
+});
 $('btnTambahUser')?.addEventListener('click',()=>{editUserId=null;$('moUserTitle').textContent='Tambah User';['uNama','uPerner'].forEach(id=>$(id).value='');$('uUnit').selectedIndex=0;$('uLevel').selectedIndex=0;$('uLoadBar').style.display='none';$('btnSimpanUser').disabled=false;$('btnSimpanUser').innerHTML='<i class="fas fa-floppy-disk"></i> Buat Akun';openModal('moUser');});
 window.editUser=uid=>{editUserId=uid;const u=allUsers.find(u=>u.id===uid);if(!u)return;$('moUserTitle').textContent='Edit User';$('uNama').value=u.nama_lengkap||'';$('uPerner').value=u.perner||'';$('uUnit').value=u.unit||'';$('uLevel').value=u.role||'unit';$('btnSimpanUser').innerHTML='<i class="fas fa-floppy-disk"></i> Simpan';openModal('moUser');};
 $('btnSimpanUser')?.addEventListener('click',async()=>{
