@@ -1338,12 +1338,12 @@ function renderPelatihan(){
         </div>`).join('')}
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:5px;padding-top:10px;border-top:1px solid #f8fafc;" onclick="event.stopPropagation()">
-        <button class="btn btn-sm btn-b" onclick="openKiosk('${p.id}')"><i class="fas fa-tablet-screen-button"></i> Kiosk</button>
-        <button class="btn btn-sm btn-o" onclick="editPlt('${p.id}')"><i class="fas fa-pen"></i></button>
-        ${cp?`<button class="btn btn-sm btn-o" onclick="printPlt('${p.id}')"><i class="fas fa-print"></i></button>`:''}
-        ${p.is_core?`<button class="btn btn-sm" style="background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;" onclick="window.open('https://wa.me/?text=${waMsg}','_blank');event.stopPropagation();"><i class="fab fa-whatsapp"></i> Share</button>`:''}
-        ${cf&&p.status!=='selesai'?`<button class="btn btn-sm btn-a" onclick="tandaiSelesai('${p.id}')"><i class="fas fa-check"></i> Selesai</button>`:''}
-        ${cd?`<button class="btn btn-sm btn-r" onclick="hapusPlt('${p.id}')"><i class="fas fa-trash"></i></button>`:''}
+        <button class="btn btn-sm btn-b" onclick="event.stopPropagation();openKiosk('${p.id}')"><i class="fas fa-tablet-screen-button"></i> Kiosk</button>
+        <button class="btn btn-sm btn-o" onclick="event.stopPropagation();editPlt('${p.id}')"><i class="fas fa-pen"></i></button>
+        ${cp?`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();printPlt('${p.id}')"><i class="fas fa-print"></i></button>`:''}
+        ${p.is_core?`<button class="btn btn-sm" style="background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;" onclick="event.stopPropagation();window.open('https://wa.me/?text=${waMsg}','_blank')"><i class="fab fa-whatsapp"></i> Share</button>`:''}
+        ${cf&&p.status!=='selesai'?`<button class="btn btn-sm btn-a" onclick="event.stopPropagation();tandaiSelesai('${p.id}')"><i class="fas fa-check"></i> Selesai</button>`:''}
+        ${cd?`<button class="btn btn-sm btn-r" onclick="event.stopPropagation();hapusPlt('${p.id}')"><i class="fas fa-trash"></i></button>`:''}
       </div>
     </div>`;
   }).join('');
