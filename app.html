@@ -17,7 +17,7 @@
     body{font-family:'Plus Jakarta Sans',sans-serif;background:#f8fafc;color:#1e293b;-webkit-font-smoothing:antialiased;}
     .app{display:flex;min-height:100vh;}
 
-```
+
 /* ═══ SIDEBAR ═══ */
 .sidebar{width:var(--sw);flex-shrink:0;background:#fff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;}
 .sidebar::-webkit-scrollbar{width:3px;}
@@ -351,7 +351,7 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
 .ir-upd td{background:rgba(59,130,246,.05);}
 .ir-dup td{background:rgba(245,158,11,.05);}
 .ir-err td{background:rgba(225,29,72,.04);opacity:.7;}
-```
+
 
   </style>
 </head>
@@ -406,7 +406,7 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
 
   <div class="content" id="contentArea">
 
-```
+
 <!-- ── DASHBOARD ── -->
 <div class="page active" id="pageDashboard">
   <div class="pg-title">Dashboard</div>
@@ -589,7 +589,7 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
     <div class="pag" id="logPag" style="justify-content:center;margin-top:11px;"></div>
   </div>
 </div>
-```
+
 
   </div>
 </div>
@@ -1249,8 +1249,55 @@ function renderPelatihan(){
   if(q)data=data.filter(p=>(p.topik||'').toLowerCase().includes(q)||(p.instruktur||'').toLowerCase().includes(q));
   const grid=$('pltGrid');
   if(!data.length){grid.innerHTML='<div class="empty-st"><div class="empty-icon">📋</div><div class="empty-lbl">Tidak ada pelatihan ditemukan</div></div>';return;}
-  const cd=s.role!=='unit',cf=s.role!=='unit',cp=s.role!=='unit';
-  grid.innerHTML=data.map(p=>{const cnt=(allPesertaMap[p.id]||[]).length;return`<div class="plt-card" onclick="showDetailPlt('${p.id}')"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:7px;margin-bottom:9px;"><div style="font-size:14px;font-weight:800;color:#0f172a;line-height:1.3;">${p.topik||'–'}</div><div style="display:flex;gap:4px;flex-wrap:wrap;flex-shrink:0;">${p.is_core?'<span class="pill pill-core">Core</span>':''}<span class="pill ${p.status==='selesai'?'pill-selesai':'pill-proses'}">${p.status||'aktif'}</span></div></div><div style="display:flex;flex-direction:column;gap:4px;margin-bottom:11px;">${[['fa-calendar-day',p.tanggal?hariIndo(p.tanggal)+', '+p.tanggal:'–'],['fa-clock',(p.waktu_mulai||'–')+' – '+(p.waktu_selesai||'–')],['fa-location-dot',p.lokasi||'–'],['fa-user-tie',p.instruktur||'–'],['fa-users',cnt+' peserta']].map(([ic,v])=>`<div style="display:flex;align-items:center;gap:7px;font-size:11px;color:#64748b;font-weight:600;"><i class="fas ${ic}" style="width:13px;color:#94a3b8;font-size:11px;"></i>${v}</div>`).join('')}</div><div style="display:flex;flex-wrap:wrap;gap:5px;padding-top:10px;border-top:1px solid #f8fafc;" onclick="event.stopPropagation()"><button class="btn btn-sm btn-b" onclick="openKiosk('${p.id}')"><i class="fas fa-tablet-screen-button"></i> Kiosk</button><button class="btn btn-sm btn-o" onclick="editPlt('${p.id}')"><i class="fas fa-pen"></i></button>${cp?`<button class="btn btn-sm btn-o" onclick="printPlt('${p.id}')"><i class="fas fa-print"></i></button>`:''}${cf&&p.status!=='selesai'?`<button class="btn btn-sm btn-a" onclick="tandaiSelesai('${p.id}')"><i class="fas fa-check"></i> Selesai</button>`:''}${cd?`<button class="btn btn-sm btn-r" onclick="hapusPlt('${p.id}')"><i class="fas fa-trash"></i></button>`:''}</div></div>`;}).join('');
+  grid.innerHTML=data.map(p=>{
+    const cnt=(allPesertaMap[p.id]||[]).length;
+    const pesertaNames=(allPesertaMap[p.id]||[])
+      .map(pe=>allKaryawan.find(k=>k.perner===pe.perner)?.nama_lengkap||pe.perner)
+      .filter(Boolean);
+
+    /* Build WhatsApp message for core training */
+    const waMsg=encodeURIComponent(
+      `🎓 *Pemberitahuan Pelatihan Core*\n\n`+
+      `📋 *Topik:* ${p.topik}\n`+
+      `📅 *Hari/Tgl:* ${p.hari||hariIndo(p.tanggal||'')}, ${p.tanggal||'–'}\n`+
+      `⏰ *Waktu:* ${p.waktu_mulai||'–'} – ${p.waktu_selesai||'–'}\n`+
+      `📍 *Tempat:* ${p.lokasi||'–'}\n`+
+      `👤 *Instruktur:* ${p.instruktur||'–'}\n`+
+      `🏢 *Penyelenggara:* ${p.penyelenggara||p.unit_pembuat||'–'}\n\n`+
+      `👥 *Peserta (${pesertaNames.length}):*\n`+
+      pesertaNames.map((n,i)=>`${i+1}. ${n}`).join('\n')+
+      `\n\nMohon hadir tepat waktu. Terima kasih.`
+    );
+
+    return`<div class="plt-card" onclick="showDetailPlt('${p.id}')">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:7px;margin-bottom:9px;">
+        <div style="font-size:14px;font-weight:800;color:#0f172a;line-height:1.3;">${p.topik||'–'}</div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;flex-shrink:0;">
+          ${p.is_core?'<span class="pill pill-core">Core</span>':''}
+          <span class="pill ${p.status==='selesai'?'pill-selesai':'pill-proses'}">${p.status||'aktif'}</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:11px;">
+        ${[
+          ['fa-calendar-day', p.tanggal?hariIndo(p.tanggal)+', '+p.tanggal:'–'],
+          ['fa-clock', (p.waktu_mulai||'–')+' – '+(p.waktu_selesai||'–')],
+          ['fa-location-dot', p.lokasi||'–'],
+          ['fa-user-tie', p.instruktur||'–'],
+          ['fa-users', cnt+' peserta']
+        ].map(([ic,v])=>`<div style="display:flex;align-items:center;gap:7px;font-size:11px;color:#64748b;font-weight:600;">
+          <i class="fas ${ic}" style="width:13px;color:#94a3b8;font-size:11px;"></i>${v}
+        </div>`).join('')}
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;padding-top:10px;border-top:1px solid #f8fafc;" onclick="event.stopPropagation()">
+        <button class="btn btn-sm btn-b" onclick="openKiosk('${p.id}')"><i class="fas fa-tablet-screen-button"></i> Kiosk</button>
+        <button class="btn btn-sm btn-o" onclick="editPlt('${p.id}')"><i class="fas fa-pen"></i></button>
+        ${cp?`<button class="btn btn-sm btn-o" onclick="printPlt('${p.id}')"><i class="fas fa-print"></i></button>`:''}
+        ${p.is_core?`<button class="btn btn-sm" style="background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;" onclick="window.open('https://wa.me/?text=${waMsg}','_blank');event.stopPropagation();"><i class="fab fa-whatsapp"></i> Share</button>`:''}
+        ${cf&&p.status!=='selesai'?`<button class="btn btn-sm btn-a" onclick="tandaiSelesai('${p.id}')"><i class="fas fa-check"></i> Selesai</button>`:''}
+        ${cd?`<button class="btn btn-sm btn-r" onclick="hapusPlt('${p.id}')"><i class="fas fa-trash"></i></button>`:''}
+      </div>
+    </div>`;
+  }).join('');
 }
 ['searchPlt','filterPltUnit','filterPltStatus','filterPltTahun'].forEach(id=>{$(id)?.addEventListener('input',renderPelatihan);$(id)?.addEventListener('change',renderPelatihan);});
 
@@ -1297,7 +1344,28 @@ $('btnSimpanPlt')?.addEventListener('click',async()=>{
     const oldPP=allPesertaMap[pltId]||[];const bDel=writeBatch(db);oldPP.forEach(pe=>bDel.delete(doc(db,'peserta_pelatihan',pe.id)));await bDel.commit();
     const bAdd=writeBatch(db);[...selectedPeserta.values()].forEach(k=>{const r=doc(collection(db,'peserta_pelatihan'));bAdd.set(r,{id_pelatihan:pltId,perner:k.perner,ditambahkan_oleh:s.uid,tgl_ditambahkan:serverTimestamp()});});await bAdd.commit();
     closeModal('moPlt');await loadAllData();toast('Pelatihan berhasil disimpan!');
-    if(!editPltId){if(!isCore(topik))confirm2('Buka Kiosk?',`Pelatihan "${topik}" siap. Buka kiosk sekarang?`,'📱','Buka Kiosk','btn-b',()=>openKiosk(pltId));else confirm2('Bagikan via WhatsApp?',`Core "${topik}" siap. Bagikan ke peserta?`,'📲','Bagikan','btn-p',()=>{window.open('https://wa.me/?text='+encodeURIComponent(`🎓 *Pelatihan Core: ${topik}*\n📅 ${hariIndo(tgl)}, ${tgl}\n⏰ ${data.waktu_mulai}–${data.waktu_selesai}\n📍 ${data.lokasi}`),'_blank');});}
+    if(!editPltId){
+      if(!isCore(topik)){
+        confirm2('Buka Kiosk?',`Pelatihan "${topik}" siap. Buka kiosk sekarang?`,'📱','Buka Kiosk','btn-b',()=>openKiosk(pltId));
+      } else {
+        const namaList=[...selectedPeserta.values()].map((k,i)=>`${i+1}. ${k.nama_lengkap||k.perner}`).join('\n');
+        const waText=`🎓 *Pemberitahuan Pelatihan Core*\n\n`+
+          `📋 *Topik:* ${topik}\n`+
+          `📅 *Hari/Tgl:* ${hariIndo(tgl)}, ${tgl}\n`+
+          `⏰ *Waktu:* ${data.waktu_mulai} – ${data.waktu_selesai}\n`+
+          `📍 *Tempat:* ${data.lokasi}\n`+
+          `👤 *Instruktur:* ${data.instruktur}\n`+
+          `🏢 *Penyelenggara:* ${data.penyelenggara}\n\n`+
+          `👥 *Peserta (${selectedPeserta.size}):*\n`+namaList+
+          `\n\nMohon hadir tepat waktu. Terima kasih.`;
+        confirm2(
+          'Bagikan via WhatsApp?',
+          `Pelatihan Core "${topik}" berhasil disimpan dengan ${selectedPeserta.size} peserta. Bagikan sekarang?`,
+          '📲','Bagikan','btn-p',
+          ()=>window.open('https://wa.me/?text='+encodeURIComponent(waText),'_blank')
+        );
+      }
+    }
   }catch(e){toast('Gagal: '+e.message,'error');}finally{hideLoad();}
 });
 window.tandaiSelesai=id=>confirm2('Tandai Selesai?','Pelatihan akan ditandai selesai.','✅','Ya, Selesai','btn-p',async()=>{showLoad();try{await updateDoc(doc(db,'pelatihan',id),{status:'selesai'});await logAct('tandai_selesai','',{id});await loadAllData();toast('Pelatihan ditandai selesai');}catch(e){toast('Gagal: '+e.message,'error');}finally{hideLoad();}});
