@@ -1276,9 +1276,12 @@ async function loadAllData(){
     /* EXT- tidak didedup karena sudah punya ID unik */
     const seenPltKey=new Set();
     allPelatihan=rawPelatihan.filter(p=>{
-      if(p.id?.startsWith('EXT-'))return true; /* EXT selalu lolos */
-      const key=`${(p.topik||'').toLowerCase()}|${p.tanggal||''}|${p.unit_pembuat||''}`;
-      if(seenPltKey.has(key))return false; /* duplikat — buang */
+      /* Untuk core: key = topik+tanggal saja (unit bisa beda tapi tetap duplikat) */
+      /* Untuk non-core: key = topik+tanggal+unit */
+      const key=p.is_core
+        ?`${(p.topik||'').toLowerCase().trim()}|${p.tanggal||''}`
+        :`${(p.topik||'').toLowerCase().trim()}|${p.tanggal||''}|${p.unit_pembuat||''}`;
+      if(seenPltKey.has(key))return false; /* duplikat — buang dari tampilan */
       seenPltKey.add(key);
       return true;
     });
@@ -1341,6 +1344,13 @@ function getPelatihanByPerner(perner,bulan,tahun){
 }
 function renderRwyTable(plts){
   if(!plts.length)return'<div class="empty-st"><div class="empty-icon">📋</div><div class="empty-lbl">Tidak ada pelatihan</div></div>';
+  /* Deduplikasi: topik+tanggal yang sama hanya tampil sekali */
+  const seenRwy=new Set();
+  plts=plts.filter(p=>{
+    const k=`${(p.topik||'').toLowerCase()}|${p.tanggal||''}`;
+    if(seenRwy.has(k))return false;
+    seenRwy.add(k);return true;
+  });
   /* Group by year */
   const yrs={};plts.forEach(p=>{const y=p.tanggal?new Date(p.tanggal+'T00:00:00').getFullYear():'–';if(!yrs[y])yrs[y]=[];yrs[y].push(p);});
   return Object.keys(yrs).sort((a,b)=>b-a).map(y=>`
@@ -2216,7 +2226,10 @@ $('btnBersihDuplikat')?.addEventListener('click',async()=>{
     /* Kelompokkan berdasarkan topik+tanggal+unit */
     const grupMap={};
     semua.forEach(p=>{
-      const key=`${(p.topik||'').toLowerCase().trim()}|${p.tanggal||''}|${p.unit_pembuat||''}`;
+      /* Core: key tanpa unit agar duplikat beda unit tetap terdeteksi */
+      const key=p.is_core
+        ?`${(p.topik||'').toLowerCase().trim()}|${p.tanggal||''}`
+        :`${(p.topik||'').toLowerCase().trim()}|${p.tanggal||''}|${p.unit_pembuat||''}`;
       if(!grupMap[key])grupMap[key]=[];
       grupMap[key].push(p);
     });
@@ -2295,17 +2308,45 @@ $('btnHapusDuplikat')?.addEventListener('click',async()=>{
   try{
     for(let gi=0;gi<_dupGroups.length;gi++){
       const g=_dupGroups[gi];
+
+      /* Kumpulkan perner yang sudah ada di dokumen yang dipertahankan */
+      const keepPerners=new Set((allPesertaMap[g.keep.id]||[]).map(pe=>pe.perner));
+
       for(const p of g.remove){
-        /* Hapus peserta dulu */
+        /* Pindahkan peserta dari dokumen duplikat ke dokumen yang dipertahankan */
         const pp=allPesertaMap[p.id]||[];
         if(pp.length){
-          const b=writeBatch(db);
-          pp.forEach(pe=>b.delete(doc(db,'peserta_pelatihan',pe.id)));
-          await b.commit();
+          const bAdd=writeBatch(db);
+          const bDel=writeBatch(db);
+          let addCount=0;
+
+          pp.forEach(pe=>{
+            /* Hapus dari dokumen lama */
+            bDel.delete(doc(db,'peserta_pelatihan',pe.id));
+            /* Tambahkan ke dokumen yang dipertahankan jika belum ada */
+            if(!keepPerners.has(pe.perner)){
+              const ref=doc(collection(db,'peserta_pelatihan'));
+              bAdd.set(ref,{
+                id_pelatihan:g.keep.id,
+                perner:pe.perner,
+                ditambahkan_oleh:pe.ditambahkan_oleh||'system',
+                tgl_ditambahkan:pe.tgl_ditambahkan||serverTimestamp(),
+                hadir:true
+              });
+              keepPerners.add(pe.perner);
+              addCount++;
+            }
+          });
+
+          await bDel.commit();
+          if(addCount>0)await bAdd.commit();
         }
+
+        /* Hapus dokumen duplikat */
         await deleteDoc(doc(db,'pelatihan',p.id));
         hapus++;
       }
+
       $('duplikatPF').style.width=Math.round(((gi+1)/_dupGroups.length)*100)+'%';
     }
     await logAct('hapus_duplikat','',{hapus,grup:_dupGroups.length});
