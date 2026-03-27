@@ -987,8 +987,17 @@
   <div class="mo-box sm">
     <div class="mo-head"><div class="mo-title">Reset Password</div><button class="mo-close" onclick="closeModal('moResetPw')">✕</button></div>
     <div class="mo-body">
-      <p style="font-size:12px;color:#64748b;margin-bottom:13px;line-height:1.6;font-weight:600;">Minta pengguna <strong id="resetPwNama">–</strong> untuk mengetik password baru mereka sendiri di bawah ini.</p>
-      <div class="fg" style="position:relative;"><div class="fl">Password Baru</div>
+      <p style="font-size:12px;color:#64748b;margin-bottom:10px;line-height:1.6;font-weight:600;">Reset password untuk <strong id="resetPwNama">–</strong>.</p>
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:9px 12px;margin-bottom:14px;font-size:11px;font-weight:700;color:#92400e;line-height:1.6;">
+        <i class="fas fa-circle-info" style="margin-right:5px;"></i>
+        Password baru akan aktif saat pengguna login berikutnya. Pengguna akan diminta membuat password baru sendiri setelah login.
+      </div>
+      <!-- Opsi reset ke default -->
+      <div style="background:#f0fdf4;border:1px solid #a7f3d0;border-radius:10px;padding:9px 12px;margin-bottom:12px;font-size:11px;font-weight:700;color:#065f46;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <span><i class="fas fa-rotate-left" style="margin-right:5px;"></i>Reset ke password awal: <code id="resetPwDefault" style="font-weight:900;letter-spacing:.5px;">SM…@2024</code></span>
+        <button onclick="resetKeDefault()" style="padding:4px 10px;border-radius:7px;background:#064e3b;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;border:none;cursor:pointer;">Gunakan</button>
+      </div>
+      <div class="fg" style="position:relative;"><div class="fl">Atau masukkan password baru</div>
         <input type="password" id="resetPwInput" placeholder="Minimal 8 karakter" style="padding-right:42px;"/>
         <button type="button" onclick="toggleField('resetPwInput','resetEye')" style="position:absolute;right:11px;bottom:9px;background:none;border:none;cursor:pointer;color:#94a3b8;"><i id="resetEye" class="far fa-eye"></i></button>
       </div>
@@ -3111,6 +3120,8 @@ function updateTugasBadge(){
     return;
   }
   const pending=allPelatihan.filter(p=>{
+    /* EXT- (core eksternal) tidak perlu konfirmasi PDF/eKPI */
+    if(p.id?.startsWith('EXT-'))return false;
     const st=normStatus(p);
     return st==='absensi_ditutup'||st==='pdf_tercetak';
   }).length;
@@ -3144,6 +3155,8 @@ function renderTugasSaya(){
   $('tugasUserInfo').innerHTML=`<span style="font-weight:900;color:#0f172a;">${s.nama||s.uid}</span>&nbsp;<span style="background:#ede9fe;color:#5b21b6;font-size:8px;font-weight:900;border-radius:5px;padding:2px 7px;text-transform:uppercase;">${s.role==='superadmin'?'Superadmin':'Level 2+'}</span>`;
 
   const pending=allPelatihan.filter(p=>{
+    /* EXT- (core eksternal) tidak perlu konfirmasi PDF/eKPI */
+    if(p.id?.startsWith('EXT-'))return false;
     const st=normStatus(p);
     return st==='absensi_ditutup'||st==='pdf_tercetak';
   }).sort((a,b)=>(a.tanggal||'').localeCompare(b.tanggal||''));
@@ -3389,8 +3402,80 @@ $('btnSimpanUser')?.addEventListener('click',async()=>{
   finally{bar.style.display='none';$('btnSimpanUser').disabled=false;}
 });
 window.toggleUser=async uid=>{const u=allUsers.find(u=>u.id===uid);if(!u)return;const ns=(u.status||'aktif')==='aktif'?'nonaktif':'aktif';showLoad();try{await updateDoc(doc(db,'users',uid),{status:ns});await logAct('ubah_status_user',{},{uid,status:ns});allUsers=allUsers.map(x=>x.id===uid?{...x,status:ns}:x);renderUsers();toast(`User ${ns==='aktif'?'diaktifkan':'dinonaktifkan'}`);}catch(e){toast('Gagal: '+e.message,'error');}finally{hideLoad();}};
-window.openResetPw=(uid,nama)=>{$('resetPwNama').textContent=nama;$('resetPwInput').value='';$('btnSimpanResetPw').dataset.uid=uid;openModal('moResetPw');};
-$('btnSimpanResetPw')?.addEventListener('click',async()=>{const uid=$('btnSimpanResetPw').dataset.uid,pw=$('resetPwInput').value;if(!pw||pw.length<8){toast('Password minimal 8 karakter','error');return;}showLoad('Mereset password…');try{const fn=httpsCallable(funcs,'adminResetPassword');await fn({userId:uid,newPassword:pw});closeModal('moResetPw');toast('Password berhasil direset!');}catch(e){toast('Gagal: '+e.message,'error');}finally{hideLoad();}});
+window.openResetPw=(uid,nama)=>{
+  $('resetPwNama').textContent=nama;
+  $('resetPwInput').value='';
+  $('btnSimpanResetPw').dataset.uid=uid;
+  /* Tampilkan password default berdasarkan perner user */
+  const u=allUsers.find(u=>u.id===uid);
+  const perner=u?.perner||'';
+  const defaultPw=perner?`SM${perner}@2024`:'SM…@2024';
+  $('resetPwDefault').textContent=defaultPw;
+  $('btnSimpanResetPw').dataset.defaultpw=defaultPw;
+  openModal('moResetPw');
+};
+window.resetKeDefault=()=>{
+  const defaultPw=$('btnSimpanResetPw').dataset.defaultpw||'';
+  if(defaultPw){
+    $('resetPwInput').type='text'; /* tampilkan sementara */
+    $('resetPwInput').value=defaultPw;
+    setTimeout(()=>$('resetPwInput').type='password',1500);
+  }
+};
+$('btnSimpanResetPw')?.addEventListener('click',async()=>{
+  const uid=$('btnSimpanResetPw').dataset.uid;
+  const pw=$('resetPwInput').value;
+  if(!pw||pw.length<8){toast('Password minimal 8 karakter','error');return;}
+
+  showLoad('Mereset password…');
+  try{
+    /* Gunakan Firebase Auth REST API — update password user lain via Identity Toolkit */
+    const apiKey='AIzaSyDTVdA6QD_FsHeHVMm4l67NJP5_rpL_JmI';
+
+    /* Dapatkan email user dari Firestore dulu */
+    const uSnap=await getDoc(doc(db,'users',uid));
+    if(!uSnap.exists()){toast('User tidak ditemukan','error');hideLoad();return;}
+    const uData=uSnap.data();
+    const perner=uData.perner||uid;
+    const email=`${perner}@absensipelatihan.com`;
+
+    /* Superadmin perlu autentikasi sebagai dirinya untuk dapat ID token */
+    const currentUser=auth.currentUser;
+    if(!currentUser){toast('Sesi expired, login ulang','error');hideLoad();return;}
+    const idToken=await currentUser.getIdToken(true);
+
+    /* Gunakan Firebase Auth REST API — lookup UID ke email dulu tidak perlu, langsung update via lookup */
+    /* Cari user by email untuk mendapat localId */
+    const lookupRes=await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${apiKey}`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({idToken})
+    });
+
+    /* Update password menggunakan Admin SDK via REST — ini butuh admin token */
+    /* Alternatif: update via signIn lama + updatePassword */
+    /* Simpan password baru ke Firestore sebagai temp, lalu user login sendiri dan system update */
+
+    /* Cara paling reliable: update password via REST API dengan idToken superadmin */
+    /* Firebase tidak mengizinkan update password user lain via client SDK */
+    /* Solusi: simpan password baru sebagai pendingReset di Firestore */
+    /* User akan diminta update saat login berikutnya */
+    const now=new Date().toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    await updateDoc(doc(db,'users',uid),{
+      pending_password:btoa(pw), /* encode sederhana, bukan enkripsi kuat */
+      pending_password_at:now,
+      pending_password_by:S().nama||S().uid,
+      first_login:true /* flag agar user diminta ganti password saat login */
+    });
+
+    await logAct('reset_password','',{uid,nama:uData.nama_lengkap});
+    closeModal('moResetPw');
+    toast(`Password pending untuk ${uData.nama_lengkap||perner}. User akan diminta update saat login berikutnya.`,'warn');
+
+  }catch(e){
+    toast('Gagal: '+e.message,'error');
+  }finally{hideLoad();}
+});
 
 /* Profile modal — save name */
 $('btnSimpanNama')?.addEventListener('click',async()=>{
