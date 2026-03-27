@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="id">
 <head>
   <meta charset="UTF-8"/>
@@ -22,147 +21,144 @@
       overflow-x: hidden;
     }
 
-```
-.bg-pattern {
-  position: fixed; inset: 0; z-index: -1;
-  background-image: radial-gradient(#059669 0.5px, transparent 0.5px);
-  background-size: 24px 24px;
-  opacity: 0.05;
-}
+    .bg-pattern {
+      position: fixed; inset: 0; z-index: -1;
+      background-image: radial-gradient(#059669 0.5px, transparent 0.5px);
+      background-size: 24px 24px;
+      opacity: 0.05;
+    }
 
-.login-card {
-  width: 100%; max-width: 440px;
-  background: white;
-  border-radius: 40px;
-  padding: 48px;
-  box-shadow: 0 25px 50px -12px rgba(6, 78, 59, 0.08);
-  border: 1px solid #f1f5f9;
-  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+    .login-card {
+      width: 100%; max-width: 440px;
+      background: white;
+      border-radius: 40px;
+      padding: 48px;
+      box-shadow: 0 25px 50px -12px rgba(6, 78, 59, 0.08);
+      border: 1px solid #f1f5f9;
+      animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-.input-group { position: relative; margin-bottom: 20px; }
-.input-field {
-  width: 100%;
-  background-color: #f8fafc;
-  border: 2px solid transparent;
-  padding: 16px 16px 16px 52px;
-  border-radius: 20px;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 14px; font-weight: 600;
-  transition: all 0.3s; outline: none;
-  color: #1e293b;
-}
-.input-field::placeholder { color: #94a3b8; font-weight: 500; }
-.input-field:focus {
-  background-color: white;
-  border-color: #059669;
-  box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.1);
-}
-.input-icon {
-  position: absolute; left: 20px; top: 50%;
-  transform: translateY(-50%);
-  color: #94a3b8; transition: all 0.3s; font-size: 16px;
-}
-.input-field:focus ~ .input-icon { color: #059669; }
+    .input-group { position: relative; margin-bottom: 20px; }
+    .input-field {
+      width: 100%;
+      background-color: #f8fafc;
+      border: 2px solid transparent;
+      padding: 16px 16px 16px 52px;
+      border-radius: 20px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 14px; font-weight: 600;
+      transition: all 0.3s; outline: none;
+      color: #1e293b;
+    }
+    .input-field::placeholder { color: #94a3b8; font-weight: 500; }
+    .input-field:focus {
+      background-color: white;
+      border-color: #059669;
+      box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.1);
+    }
+    .input-icon {
+      position: absolute; left: 20px; top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8; transition: all 0.3s; font-size: 16px;
+    }
+    .input-field:focus ~ .input-icon { color: #059669; }
 
-.input-toggle {
-  position: absolute; right: 20px; top: 50%;
-  transform: translateY(-50%);
-  color: #94a3b8; cursor: pointer;
-  background: none; border: none; font-size: 15px;
-  transition: color 0.2s;
-}
-.input-toggle:hover { color: #059669; }
+    .input-toggle {
+      position: absolute; right: 20px; top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8; cursor: pointer;
+      background: none; border: none; font-size: 15px;
+      transition: color 0.2s;
+    }
+    .input-toggle:hover { color: #059669; }
 
-.btn-login {
-  width: 100%;
-  background-color: #064e3b;
-  color: white;
-  padding: 18px;
-  border-radius: 20px;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  font-weight: 800; font-size: 13px;
-  text-transform: uppercase; letter-spacing: 1.5px;
-  border: none; cursor: pointer;
-  transition: all 0.3s;
-  box-shadow: 0 10px 20px -5px rgba(6, 78, 59, 0.3);
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  margin-top: 12px;
-}
-.btn-login:hover:not(:disabled) {
-  background-color: #059669;
-  transform: translateY(-2px);
-  box-shadow: 0 15px 25px -5px rgba(6, 78, 59, 0.4);
-}
-.btn-login:active { transform: translateY(0); }
-.btn-login:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+    .btn-login {
+      width: 100%;
+      background-color: #064e3b;
+      color: white;
+      padding: 18px;
+      border-radius: 20px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800; font-size: 13px;
+      text-transform: uppercase; letter-spacing: 1.5px;
+      border: none; cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 10px 20px -5px rgba(6, 78, 59, 0.3);
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      margin-top: 12px;
+    }
+    .btn-login:hover:not(:disabled) {
+      background-color: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 15px 25px -5px rgba(6, 78, 59, 0.4);
+    }
+    .btn-login:active { transform: translateY(0); }
+    .btn-login:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
 
-.logo-circle {
-  width: 72px; height: 72px;
-  background: #064e3b;
-  border-radius: 24px;
-  display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 24px;
-  color: white; font-size: 32px;
-  box-shadow: 0 15px 30px -10px rgba(6, 78, 59, 0.4);
-}
+    .logo-circle {
+      width: 72px; height: 72px;
+      background: #064e3b;
+      border-radius: 24px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px;
+      color: white; font-size: 32px;
+      box-shadow: 0 15px 30px -10px rgba(6, 78, 59, 0.4);
+    }
 
-.msg-box {
-  padding: 12px 16px; border-radius: 16px;
-  font-size: 12px; font-weight: 700;
-  margin-bottom: 20px; text-align: center;
-}
-.msg-error { background: #fff1f2; color: #e11d48; border: 1px solid #ffe4e6; }
-.msg-success { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+    .msg-box {
+      padding: 12px 16px; border-radius: 16px;
+      font-size: 12px; font-weight: 700;
+      margin-bottom: 20px; text-align: center;
+    }
+    .msg-error { background: #fff1f2; color: #e11d48; border: 1px solid #ffe4e6; }
+    .msg-success { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
 
-.spinner {
-  width: 18px; height: 18px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-  display: none;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-/* Modal ganti password */
-.modal-bg {
-  display: none; position: fixed; inset: 0; z-index: 50;
-  background: rgba(6, 78, 59, 0.5);
-  backdrop-filter: blur(4px);
-  align-items: center; justify-content: center; padding: 1rem;
-}
-.modal-bg.open { display: flex; }
-.modal-card-pw {
-  background: white; border-radius: 32px;
-  width: 100%; max-width: 420px; padding: 40px;
-  box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
+    /* Modal ganti password */
+    .modal-bg {
+      display: none; position: fixed; inset: 0; z-index: 50;
+      background: rgba(6, 78, 59, 0.5);
+      backdrop-filter: blur(4px);
+      align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal-bg.open { display: flex; }
+    .modal-card-pw {
+      background: white; border-radius: 32px;
+      width: 100%; max-width: 420px; padding: 40px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+      animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
 
-.pw-bar { height: 4px; border-radius: 99px; transition: width 0.3s, background 0.3s; }
+    .pw-bar { height: 4px; border-radius: 99px; transition: width 0.3s, background 0.3s; }
 
-@keyframes shake {
-  10%, 90% { transform: translate3d(-1px, 0, 0); }
-  20%, 80% { transform: translate3d(2px, 0, 0); }
-  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-  40%, 60% { transform: translate3d(4px, 0, 0); }
-}
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-1px, 0, 0); }
+      20%, 80% { transform: translate3d(2px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+      40%, 60% { transform: translate3d(4px, 0, 0); }
+    }
 
-@media (max-width: 480px) {
-  .login-card {
-    padding: 32px 24px; border-radius: 0;
-    height: 100vh; max-width: none;
-    display: flex; flex-direction: column; justify-content: center;
-    border: none;
-  }
-}
-```
-
+    @media (max-width: 480px) {
+      .login-card {
+        padding: 32px 24px; border-radius: 0;
+        height: 100vh; max-width: none;
+        display: flex; flex-direction: column; justify-content: center;
+        border: none;
+      }
+    }
   </style>
 </head>
 <body>
@@ -177,47 +173,43 @@
       <p class="text-[10px] font-extrabold text-emerald-600 uppercase tracking-[4px] mt-2">PT Sido Muncul</p>
     </div>
 
-```
-<!-- Error / Success message -->
-<div id="msgBox" style="display:none" class="msg-box msg-error" id="msgBox">
-  <span id="msgText"></span>
-</div>
+    <!-- Error / Success message -->
+    <div id="msgBox" style="display:none" class="msg-box msg-error" id="msgBox">
+      <span id="msgText"></span>
+    </div>
 
-<!-- Form -->
-<form id="loginForm" class="space-y-2" novalidate>
-  <div class="input-group">
-    <input type="text" id="inputPerner" class="input-field" placeholder="Masukkan Nomor Perner" autocomplete="username"/>
-    <i class="fas fa-id-card input-icon"></i>
-  </div>
+    <!-- Form -->
+    <form id="loginForm" class="space-y-2" novalidate>
+      <div class="input-group">
+        <input type="text" id="inputPerner" class="input-field" placeholder="Masukkan Nomor Perner" autocomplete="username"/>
+        <i class="fas fa-id-card input-icon"></i>
+      </div>
 
-  <div class="input-group" style="margin-bottom:8px">
-    <input type="password" id="inputPassword" class="input-field" style="padding-right:52px" placeholder="Masukkan Password" autocomplete="current-password"/>
-    <i class="fas fa-lock input-icon"></i>
-    <button type="button" id="togglePw" class="input-toggle">
-      <i id="eyeIcon" class="far fa-eye"></i>
-    </button>
-  </div>
+      <div class="input-group" style="margin-bottom:8px">
+        <input type="password" id="inputPassword" class="input-field" style="padding-right:52px" placeholder="Masukkan Password" autocomplete="current-password"/>
+        <i class="fas fa-lock input-icon"></i>
+        <button type="button" id="togglePw" class="input-toggle">
+          <i id="eyeIcon" class="far fa-eye"></i>
+        </button>
+      </div>
 
-  <button type="submit" id="submitBtn" class="btn-login">
-    <span id="btnLabel">Masuk ke Sistem</span>
-    <div id="btnLoader" class="spinner"></div>
-    <i id="btnArrow" class="fas fa-arrow-right"></i>
-  </button>
-</form>
+      <button type="submit" id="submitBtn" class="btn-login">
+        <span id="btnLabel">Masuk ke Sistem</span>
+        <div id="btnLoader" class="spinner"></div>
+        <i id="btnArrow" class="fas fa-arrow-right"></i>
+      </button>
+    </form>
 
-<!-- Footer -->
-<div class="mt-10 pt-8 border-t border-slate-100 text-center">
-  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
-    Digital Attendance &amp; Training Management<br/>
-    <span class="text-slate-300">© 2026 PT Industri Jamu dan Farmasi Sido Muncul Tbk.</span>
-  </p>
-</div>
-```
-
+    <!-- Footer -->
+    <div class="mt-10 pt-8 border-t border-slate-100 text-center">
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
+        Digital Attendance &amp; Training Management<br/>
+        <span class="text-slate-300">© 2026 PT Industri Jamu dan Farmasi Sido Muncul Tbk.</span>
+      </p>
+    </div>
   </div>
 
   <!-- Modal: Ganti Password (first_login) -->
-
   <div class="modal-bg" id="modalChangePw">
     <div class="modal-card-pw">
       <div class="text-center mb-8">
@@ -228,35 +220,31 @@
         <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-2">Ganti password default sebelum melanjutkan</p>
       </div>
 
-```
-  <div class="input-group">
-    <input type="password" id="newPw1" class="input-field" placeholder="Minimal 8 karakter"/>
-    <i class="fas fa-lock input-icon"></i>
-    <button type="button" onclick="toggleField('newPw1','eye1')" class="input-toggle"><i id="eye1" class="far fa-eye"></i></button>
-  </div>
-  <div class="bg-slate-100 rounded-full h-1.5 overflow-hidden mb-1">
-    <div id="pwStrBar" class="pw-bar h-full w-0"></div>
-  </div>
-  <p id="pwStrHint" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-4 min-h-[14px]"></p>
+      <div class="input-group">
+        <input type="password" id="newPw1" class="input-field" placeholder="Minimal 8 karakter"/>
+        <i class="fas fa-lock input-icon"></i>
+        <button type="button" onclick="toggleField('newPw1','eye1')" class="input-toggle"><i id="eye1" class="far fa-eye"></i></button>
+      </div>
+      <div class="bg-slate-100 rounded-full h-1.5 overflow-hidden mb-1">
+        <div id="pwStrBar" class="pw-bar h-full w-0"></div>
+      </div>
+      <p id="pwStrHint" class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-4 min-h-[14px]"></p>
 
-  <div class="input-group">
-    <input type="password" id="newPw2" class="input-field" placeholder="Ulangi password baru"/>
-    <i class="fas fa-lock input-icon"></i>
-    <button type="button" onclick="toggleField('newPw2','eye2')" class="input-toggle"><i id="eye2" class="far fa-eye"></i></button>
-  </div>
-  <p id="pwMatchHint" class="text-[10px] font-bold uppercase tracking-wider mb-4 min-h-[14px]"></p>
+      <div class="input-group">
+        <input type="password" id="newPw2" class="input-field" placeholder="Ulangi password baru"/>
+        <i class="fas fa-lock input-icon"></i>
+        <button type="button" onclick="toggleField('newPw2','eye2')" class="input-toggle"><i id="eye2" class="far fa-eye"></i></button>
+      </div>
+      <p id="pwMatchHint" class="text-[10px] font-bold uppercase tracking-wider mb-4 min-h-[14px]"></p>
 
-  <button id="btnSaveNewPw" disabled class="btn-login" style="margin-top:4px">
-    <span id="savePwLabel">Simpan &amp; Lanjutkan</span>
-    <div id="savePwLoader" class="spinner"></div>
-  </button>
-</div>
-```
-
+      <button id="btnSaveNewPw" disabled class="btn-login" style="margin-top:4px">
+        <span id="savePwLabel">Simpan &amp; Lanjutkan</span>
+        <div id="savePwLoader" class="spinner"></div>
+      </button>
+    </div>
   </div>
 
   <!-- Toast -->
-
   <div id="toastCont" class="fixed top-4 right-4 z-[9999] flex flex-col gap-2 pointer-events-none"></div>
 
   <script type="module">
@@ -351,6 +339,21 @@
 
         await addDoc(collection(db,'log_aktivitas'),{aksi:'login_berhasil',user_id:uid,role:data.role,timestamp:serverTimestamp(),detail_sesudah:JSON.stringify({perner,nama:data.nama_lengkap})});
 
+        /* Jika ada pending_password dari reset oleh Superadmin — terapkan langsung */
+        if(data.pending_password){
+          try{
+            const newPw=atob(data.pending_password);
+            await updatePassword(auth.currentUser,newPw);
+            await updateDoc(doc(db,'users',uid),{
+              pending_password:null,
+              pending_password_at:null,
+              pending_password_by:null,
+              first_login:true /* tampilkan modal ganti password setelah ini */
+            });
+            localStorage.setItem('__ap',btoa(newPw));
+          }catch(_){/* gagal apply pending pw — lanjut saja */}
+        }
+
         if(data.first_login===true){
           btn.disabled=false;
           document.getElementById('btnLabel').textContent='Masuk ke Sistem';
@@ -425,6 +428,5 @@
     window.onerror=(msg,src,line,col,err)=>{addDoc(collection(db,'log_aktivitas'),{aksi:'system_error',timestamp:serverTimestamp(),user_id:localStorage.getItem('uid')||'unknown',detail_sesudah:JSON.stringify({message:msg,source:src,line,col,stack:err?.stack})}).catch(()=>{});};
     window.onunhandledrejection=(e)=>{addDoc(collection(db,'log_aktivitas'),{aksi:'system_error',timestamp:serverTimestamp(),user_id:localStorage.getItem('uid')||'unknown',detail_sesudah:JSON.stringify({message:e.reason?.message,stack:e.reason?.stack})}).catch(()=>{});};
   </script>
-
 </body>
 </html>
