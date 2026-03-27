@@ -12,7 +12,7 @@
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <style>
-    :root{--green:#064e3b;--green2:#059669;--green3:#d1fae5;--sw:230px;}
+    :root{--green:#064e3b;--green2:#059669;--green3:#d1fae5;--sw:210px;}
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Plus Jakarta Sans',sans-serif;background:#f8fafc;color:#1e293b;-webkit-font-smoothing:antialiased;}
     .app{display:flex;min-height:100vh;}
@@ -543,7 +543,10 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
     </div>
   </div>
   <!-- Info bar: jumlah data tampil -->
-  <div id="pltInfoBar" style="font-size:10px;font-weight:700;color:#94a3b8;margin-bottom:10px;display:flex;align-items:center;gap:12px;"></div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+    <div id="pltInfoBar" style="font-size:10px;font-weight:700;color:#94a3b8;display:flex;align-items:center;gap:12px;"></div>
+    <button onclick="resetFilterPlt()" style="font-size:9px;font-weight:800;color:#94a3b8;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:3px 8px;cursor:pointer;white-space:nowrap;"><i class="fas fa-rotate-left"></i> Reset</button>
+  </div>
   <!-- Grid/Table container -->
   <div id="pltGrid"><div class="empty-st"><div class="empty-icon">📋</div><div class="empty-lbl">Memuat…</div></div></div>
   <!-- Pagination -->
@@ -580,6 +583,7 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
       <div class="fl-group"><div class="fl-lbl">Unit</div><select id="filterKaryUnit" style="min-width:115px;"></select></div>
       <div class="fl-group"><div class="fl-lbl">Bagian</div><select id="filterKaryBagian" style="min-width:125px;"></select></div>
       <div class="fl-group"><div class="fl-lbl">Status</div><select id="filterKaryStatus"><option value="">Semua</option><option value="aktif">Aktif</option><option value="nonaktif">Nonaktif</option></select></div>
+      <div class="fl-group" style="align-self:flex-end;"><button onclick="resetFilterKary()" style="font-size:9px;font-weight:800;color:#94a3b8;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:5px 9px;cursor:pointer;"><i class="fas fa-rotate-left"></i> Reset</button></div>
     </div>
     <div class="card">
       <div class="tw">
@@ -615,26 +619,6 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
   </div>
 </div>
 
-<!-- ── TUGAS SAYA ── -->
-<div class="page" id="pageTugasSaya">
-  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:2px;">
-    <div class="pg-title">Tugas Saya</div>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <div id="tugasUserInfo" style="font-size:11px;font-weight:700;color:#94a3b8;"></div>
-      <button onclick="renderTugasSaya()" style="background:#f0fdf4;border:1px solid #a7f3d0;color:#064e3b;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;cursor:pointer;"><i class="fas fa-rotate-right"></i> Refresh</button>
-    </div>
-  </div>
-  <div class="pg-sub">Pelatihan yang membutuhkan konfirmasi PDF atau eKPI</div>
-  <!-- Pending -->
-  <div style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;margin:16px 0 10px;">Menunggu Tindakan <span id="tugasPendingCount" style="background:#e11d48;color:#fff;border-radius:99px;padding:1px 7px;font-size:8px;margin-left:4px;"></span></div>
-  <div id="tugasPendingList"></div>
-  <!-- Selesai -->
-  <div style="display:flex;align-items:center;justify-content:space-between;margin:20px 0 10px;">
-    <div style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;">Sudah Selesai</div>
-    <button id="btnToggleTugasSelesai" onclick="toggleTugasSelesai()" style="font-size:9px;font-weight:800;color:#94a3b8;background:none;border:none;cursor:pointer;"><i class="fas fa-chevron-down" id="iconToggleTugas"></i> Tampilkan</button>
-  </div>
-  <div id="tugasSelesaiList" style="display:none;"></div>
-</div>
 
 <!-- ── REKAP CORE ── -->
 <div class="page" id="pageRekapCore">
@@ -655,6 +639,7 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
     <div class="fl-group"><div class="fl-lbl">Core</div><select id="filterRekapCore" style="min-width:165px;"></select></div>
     <div class="fl-group"><div class="fl-lbl">Status</div><select id="filterRekapStatus"><option value="">Semua</option><option value="lunas">Sudah Ikut (Valid)</option><option value="refresh">Sudah Ikut (Perlu Diperbarui)</option><option value="belum">Belum Pernah</option></select></div>
     <div class="fl-group"><div class="fl-lbl">Tahun</div><select id="filterRekapTahun" style="min-width:88px;"></select></div>
+    <div class="fl-group" style="align-self:flex-end;"><button onclick="resetFilterRekap()" style="font-size:9px;font-weight:800;color:#94a3b8;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:5px 9px;cursor:pointer;"><i class="fas fa-rotate-left"></i> Reset</button></div>
   </div>
   <div class="card">
     <div class="tw">
@@ -870,7 +855,7 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
       <div class="fr fr-full" style="margin-bottom:12px;"><div class="fg">
         <div class="fl">Topik Pelatihan</div>
         <div class="ac-wrap">
-          <input type="text" id="pltTopik" placeholder="Ketik topik pelatihan…" autocomplete="off"/>
+          <input type="text" id="pltTopik" placeholder="Ketik topik pelatihan…" style="width:100%;" autocomplete="off"/>
           <div class="ac-list" id="pltAC"></div>
         </div>
         <div class="core-hint" id="coreHint"><i class="fas fa-circle-info"></i> Terdeteksi Core: <strong id="coreHintName"></strong></div>
@@ -1380,7 +1365,7 @@ function buildNav(){
     {id:'Dashboard',icon:'fa-house',lbl:'Dashboard',roles:['superadmin','admin','admin_plus','unit']},
     {id:'Pelatihan',icon:'fa-clipboard-list',lbl:'Pelatihan',roles:['superadmin','admin','admin_plus','unit']},
     {id:'Karyawan',icon:'fa-users',lbl:'Data Karyawan',roles:['superadmin','admin','admin_plus','unit']},
-    {id:'TugasSaya',icon:'fa-list-check',lbl:'Tugas Saya',roles:['superadmin','admin_plus'],badge:'tugasBadge'},
+
     {id:'RekapCore',icon:'fa-file-invoice',lbl:'Rekap Core',roles:['superadmin','admin','admin_plus','unit']},
     {id:'ManajemenUser',icon:'fa-user-shield',lbl:'Manajemen User',roles:['superadmin']},
     {id:'Log',icon:'fa-terminal',lbl:'Log Aktivitas',roles:['superadmin']},
@@ -1398,7 +1383,7 @@ function buildNav(){
   const bnInner=$('bnInner'); bnInner.innerHTML='';
   /* Mobile bottom nav: pilih 4 item prioritas sesuai role */
   /* Prioritas: Dashboard, Pelatihan, Tugas Saya (jika ada), Rekap Core — sisanya tersembunyi */
-  const bnPriority=['Dashboard','Pelatihan','TugasSaya','RekapCore','Karyawan'];
+  const bnPriority=['Dashboard','Pelatihan','RekapCore','Karyawan'];
   const bnItems=bnPriority
     .map(pid=>allowed.find(it=>it.id===pid))
     .filter(Boolean)
@@ -1528,19 +1513,8 @@ async function loadAllData(){
         return tb-ta;
       });
 
-    /* Deduplikasi PLT reguler: topik+tanggal+unit yang sama → simpan hanya yang pertama (terbaru) */
-    /* EXT- tidak didedup karena sudah punya ID unik */
-    const seenPltKey=new Set();
-    allPelatihan=rawPelatihan.filter(p=>{
-      /* Untuk core: key = topik+tanggal saja (unit bisa beda tapi tetap duplikat) */
-      /* Untuk non-core: key = topik+tanggal+unit */
-      const key=p.is_core
-        ?`${(p.topik||'').toLowerCase().trim()}|${p.tanggal||''}`
-        :`${(p.topik||'').toLowerCase().trim()}|${p.tanggal||''}|${p.unit_pembuat||''}`;
-      if(seenPltKey.has(key))return false; /* duplikat — buang dari tampilan */
-      seenPltKey.add(key);
-      return true;
-    });
+    /* Satu dokumen = satu pelatihan, tidak ada deduplication */
+    allPelatihan=rawPelatihan;
 
     allPesertaMap={};
     pps.docs.forEach(d=>{
@@ -1579,7 +1553,6 @@ async function loadAllData(){
   if(ap==='pagePelatihan')renderPelatihan();
   else if(ap==='pageKaryawan')renderKaryawan();
   else if(ap==='pageRekapCore')renderRekap();
-  else if(ap==='pageTugasSaya')renderTugasSaya();
   else renderDashboard();
 
   /* Update badge Tugas Saya di sidebar */
@@ -1622,13 +1595,7 @@ function getPelatihanByPerner(perner,bulan,tahun){
 }
 function renderRwyTable(plts){
   if(!plts.length)return'<div class="empty-st"><div class="empty-icon">📋</div><div class="empty-lbl">Tidak ada pelatihan</div></div>';
-  /* Deduplikasi: topik+tanggal yang sama hanya tampil sekali */
-  const seenRwy=new Set();
-  plts=plts.filter(p=>{
-    const k=`${(p.topik||'').toLowerCase()}|${p.tanggal||''}`;
-    if(seenRwy.has(k))return false;
-    seenRwy.add(k);return true;
-  });
+  /* Tidak ada deduplication — setiap dokumen tampil apa adanya */
   /* Group by year */
   const yrs={};plts.forEach(p=>{const y=p.tanggal?new Date(p.tanggal+'T00:00:00').getFullYear():'–';if(!yrs[y])yrs[y]=[];yrs[y].push(p);});
   return Object.keys(yrs).sort((a,b)=>b-a).map(y=>`
@@ -1886,15 +1853,18 @@ function canConfirm(){
 /* Apakah user bisa edit pelatihan ini */
 function canEditPlt(p){
   const s=S();
-  if(s.role==='superadmin'||s.role==='admin'||s.role==='admin_plus')return true;
-  if(s.role==='unit')return p.dibuat_oleh===s.uid; /* Level 3 hanya buatan sendiri */
-  return false;
+  if(s.role==='superadmin')return true; /* Superadmin bisa edit semua */
+  /* Level 2, 2+, 3 hanya bisa edit pelatihan yang dibuat sendiri */
+  return p.dibuat_oleh===s.uid;
 }
 
 /* Apakah user bisa hapus pelatihan */
-function canDeletePlt(){
+function canDeletePlt(p){
   const s=S();
-  return s.role==='superadmin'||s.role==='admin'||s.role==='admin_plus';
+  if(s.role==='superadmin')return true;
+  /* Level 2, 2+, 3 hanya bisa hapus pelatihan buatan sendiri */
+  if(!p)return false;
+  return p.dibuat_oleh===s.uid;
 }
 
 /* Tombol aksi card berdasarkan status dan level */
@@ -1904,7 +1874,7 @@ function buildCardActions(p,waMsg){
   const isUnit=s.role==='unit';
   const confirm=canConfirm();
   const canEdit=canEditPlt(p);
-  const canDel=canDeletePlt();
+  const canDel=canDeletePlt(p);
   const isCore=p.is_core;
   const id=p.id;
 
@@ -1916,7 +1886,8 @@ function buildCardActions(p,waMsg){
     return[btnK,btnE].filter(Boolean).join('');
   }
 
-  const btnKiosk=`<button class="btn btn-sm btn-b" onclick="event.stopPropagation();openKiosk('${id}')"><i class="fas fa-tablet-screen-button"></i> Daftar Hadir</button>`;
+  const canKiosk=s.role==='superadmin'||!p.dibuat_oleh||p.dibuat_oleh===s.uid;
+  const btnKiosk=canKiosk?`<button class="btn btn-sm btn-b" onclick="event.stopPropagation();openKiosk('${id}')"><i class="fas fa-tablet-screen-button"></i> Daftar Hadir</button>`:''  ;
   const btnEdit=canEdit?`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();editPlt('${id}')"><i class="fas fa-pen"></i></button>`:'';
   const btnCetak=`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();printPlt('${id}')"><i class="fas fa-print"></i></button>`;
   const btnShare=isCore?`<button class="btn btn-sm" style="background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;" onclick="event.stopPropagation();window.open('https://wa.me/?text=${waMsg}','_blank')"><i class="fab fa-whatsapp"></i> Share</button>`:'';
@@ -1952,7 +1923,7 @@ function buildTableActions(p){
   const isUnit=s.role==='unit';
   const confirm=canConfirm();
   const canEdit=canEditPlt(p);
-  const canDel=canDeletePlt();
+  const canDel=canDeletePlt(p);
   const id=p.id;
 
   /* Level 3: hanya Daftar Hadir (jika aktif) + Edit milik sendiri */
@@ -1962,7 +1933,8 @@ function buildTableActions(p){
     return[bK,bE].filter(Boolean).join('');
   }
 
-  const bKiosk=`<button class="btn btn-sm btn-b" onclick="event.stopPropagation();openKiosk('${id}')" title="Daftar Hadir"><i class="fas fa-tablet-screen-button"></i></button>`;
+  const canKiosk=s.role==='superadmin'||!p.dibuat_oleh||p.dibuat_oleh===s.uid;
+  const bKiosk=canKiosk?`<button class="btn btn-sm btn-b" onclick="event.stopPropagation();openKiosk('${id}')" title="Daftar Hadir"><i class="fas fa-tablet-screen-button"></i></button>`:''  ;
   const bEdit=canEdit?`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();editPlt('${id}')" title="Edit"><i class="fas fa-pen"></i></button>`:'';
   const bCetak=`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();printPlt('${id}')" title="Cetak PDF"><i class="fas fa-print"></i></button>`;
   const bHapus=canDel?`<button class="btn btn-sm btn-r" onclick="event.stopPropagation();hapusPlt('${id}')" title="Hapus"><i class="fas fa-trash"></i></button>`:'';
@@ -2252,6 +2224,15 @@ function renderPelatihan(){
   $(id)?.addEventListener('input',()=>{pltPage=1;renderPelatihan();});
   $(id)?.addEventListener('change',()=>{pltPage=1;renderPelatihan();});
 });
+window.resetFilterPlt=()=>{
+  ['searchPlt'].forEach(id=>{const el=$(id);if(el)el.value='';});
+  const s=S();
+  /* Unit: reset ke unit sendiri jika Level 3, atau ke semua */
+  const unitEl=$('filterPltUnit');
+  if(unitEl){unitEl.value=s.role==='unit'?s.unit:'';if(s.role==='unit')unitEl.disabled=true;}
+  ['filterPltStatus','filterPltTahun'].forEach(id=>{const el=$(id);if(el)el.value='';});
+  pltPage=1;renderPelatihan();
+};
 $('btnViewCard')?.addEventListener('click',()=>setPltView('card'));
 $('btnViewTable')?.addEventListener('click',()=>setPltView('table'));
 $('btnToggleExt')?.addEventListener('click',()=>setPltExt(!pltShowExt));
@@ -2319,21 +2300,30 @@ $('btnSimpanPlt')?.addEventListener('click',async()=>{
     let pltId;
     if(editPltId){await updateDoc(doc(db,'pelatihan',editPltId),data);pltId=editPltId;await logAct('edit_pelatihan','',{topik});}
     else{
-      /* Cek duplikat: topik + tanggal + unit yang sama */
-      const dupCheck=allPelatihan.find(p=>
-        p.topik?.toLowerCase()===topik.toLowerCase()&&
-        p.tanggal===tgl&&
-        p.unit_pembuat===(data.unit_pembuat)&&
-        !p.id?.startsWith('EXT-')
-      );
+      /* Cek duplikat sejati: topik+tanggal+instruktur+jam+lokasi+penyelenggara+peserta semua sama */
+      const newPerners=[...selectedPeserta.keys()].sort().join(',');
+      const dupCheck=!editPltId&&allPelatihan.find(p=>{
+        if(p.id?.startsWith('EXT-'))return false;
+        const samaDasar=
+          (p.topik||'').toLowerCase().trim()===(topik||'').toLowerCase().trim()&&
+          p.tanggal===tgl&&
+          (p.instruktur||'').toLowerCase().trim()===(data.instruktur||'').toLowerCase().trim()&&
+          (p.waktu_mulai||'')===(data.waktu_mulai||'')&&
+          (p.waktu_selesai||'')===(data.waktu_selesai||'')&&
+          (p.lokasi||'').toLowerCase().trim()===(data.lokasi||'').toLowerCase().trim()&&
+          (p.penyelenggara||'').toLowerCase().trim()===(data.penyelenggara||'').toLowerCase().trim();
+        if(!samaDasar)return false;
+        /* Cek peserta — harus sama persis */
+        const existPerners=(allPesertaMap[p.id]||[]).map(pe=>pe.perner).sort().join(',');
+        return existPerners===newPerners;
+      });
       if(dupCheck){
-        /* Sudah ada — tanya user apakah mau edit yang sudah ada atau buat baru */
         hideLoad();
         const lanjut=await new Promise(res=>{
           confirm2(
-            'Pelatihan Sudah Ada',
-            `Pelatihan "${topik}" pada ${tgl} di unit ${data.unit_pembuat} sudah ada. Lanjutkan buat baru?`,
-            '⚠️','Ya, Buat Baru','btn-a',()=>res(true)
+            '⚠️ Pelatihan Ini Sudah Ada!',
+            `Pelatihan "${topik}" pada ${tgl} dengan instruktur, jam, lokasi, dan peserta yang sama sudah pernah dibuat. Ini kemungkinan double input. Tetap lanjutkan?`,
+            '⚠️','Ya, Tetap Buat','btn-r',()=>res(true)
           );
           $('confirmCancel').addEventListener('click',()=>res(false),{once:true});
         });
@@ -2454,8 +2444,25 @@ window.bukaUlangAbsensi=id=>{
     }
   );
 };
-window.hapusPlt=id=>{const p=allPelatihan.find(x=>x.id===id);confirm2('Hapus Pelatihan?',`"${p?.topik}" dan semua pesertanya akan dihapus permanen.`,'🗑','Ya, Hapus','btn-r',async()=>{showLoad();try{const pp=allPesertaMap[id]||[],b=writeBatch(db);pp.forEach(pe=>b.delete(doc(db,'peserta_pelatihan',pe.id)));b.delete(doc(db,'pelatihan',id));await b.commit();await logAct('hapus_pelatihan',{id,topik:p?.topik},'');await loadAllData();toast('Pelatihan dihapus');}catch(e){toast('Gagal: '+e.message,'error');}finally{hideLoad();}});};
-window.openKiosk=id=>{window.open(`kiosk.html?id=${id}`,'_blank');logAct('buka_kiosk','',{id});};
+window.hapusPlt=id=>{
+  const s=S();
+  const p=allPelatihan.find(x=>x.id===id);
+  if(p&&s.role!=='superadmin'&&p.dibuat_oleh&&p.dibuat_oleh!==s.uid){
+    toast('Hanya pembuat pelatihan yang bisa menghapus ini','error');return;
+  }
+  confirm2('Hapus Pelatihan?',`"${p?.topik}" dan semua pesertanya akan dihapus permanen.`,'🗑','Ya, Hapus','btn-r',async()=>{showLoad();try{const pp=allPesertaMap[id]||[],b=writeBatch(db);pp.forEach(pe=>b.delete(doc(db,'peserta_pelatihan',pe.id)));b.delete(doc(db,'pelatihan',id));await b.commit();await logAct('hapus_pelatihan',{id,topik:p?.topik},'');await loadAllData();toast('Pelatihan dihapus');}catch(e){toast('Gagal: '+e.message,'error');}finally{hideLoad();}});
+};
+window.openKiosk=id=>{
+  const s=S();
+  const p=allPelatihan.find(x=>x.id===id);
+  /* Hanya pembuat atau superadmin yang bisa buka Daftar Hadir */
+  if(p&&s.role!=='superadmin'&&p.dibuat_oleh&&p.dibuat_oleh!==s.uid){
+    toast('Hanya pembuat pelatihan yang bisa membuka Daftar Hadir ini','error');
+    return;
+  }
+  window.open(`kiosk.html?id=${id}`,'_blank');
+  logAct('buka_kiosk','',{id});
+};
 window.printPlt=id=>{window.open(`print.html?id=${id}`,'_blank');logAct('cetak_pdf','',{id});};
 
 /* ═══ KARYAWAN ═══ */
@@ -2481,6 +2488,14 @@ function renderKaryawan(){
   renderPag('karyPag',total,karyPage,p=>{karyPage=p;renderKaryawan();});
 }
 ['searchKary','filterKaryUnit','filterKaryBagian','filterKaryStatus'].forEach(id=>{$(id)?.addEventListener('input',()=>{karyPage=1;renderKaryawan();});$(id)?.addEventListener('change',()=>{karyPage=1;renderKaryawan();});});
+window.resetFilterKary=()=>{
+  ['searchKary','filterKaryBagian'].forEach(id=>{const el=$(id);if(el)el.value='';});
+  const s=S();
+  const unitEl=$('filterKaryUnit');
+  if(unitEl){unitEl.value=s.role==='unit'?s.unit:'';if(s.role==='unit')unitEl.disabled=true;}
+  $('filterKaryStatus').value='';
+  karyPage=1;renderKaryawan();
+};
 $('btnTambahKary')?.addEventListener('click',()=>{editKaryId=null;$('moKaryTitle').textContent='Tambah Karyawan';['karyNama','karyPerner','karyBagian','karyJabatan'].forEach(id=>{const el=$(id);if(el)el.value='';});$('karyUnit').selectedIndex=0;$('karyStatus').value='aktif';openModal('moKary');});
 
 /* ─── Tab Karyawan / PKH ─── */
@@ -2797,6 +2812,13 @@ $('btnExportRekap')?.addEventListener('click',()=>{
   const wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet(wsData);ws['!cols']=[{wch:28},{wch:12},{wch:10},{wch:18},{wch:30},{wch:14},{wch:10}];XLSX.utils.book_append_sheet(wb,ws,'Rekap Core');XLSX.writeFile(wb,`Rekap_Core_${unit}_${tahun}.xlsx`);logAct('export_rekap','',{unit,tahun,rows:rekapData.length});
 });
 $('btnUpdateCoreExt')?.addEventListener('click',()=>{setupUcPernerRows();openModal('moUpdateCore');});
+window.resetFilterRekap=()=>{
+  const s=S();
+  ['searchRekap','filterRekapBagian','filterRekapCore','filterRekapStatus','filterRekapTahun'].forEach(id=>{const el=$(id);if(el)el.value='';});
+  const unitEl=$('filterRekapUnit');
+  if(unitEl){unitEl.value=s.role==='unit'?s.unit:'';if(s.role==='unit')unitEl.disabled=true;}
+  rekapPage=1;renderRekap();
+};
 
 /* Multi-perner Update Core */
 function setupUcPernerRows(){
@@ -3211,257 +3233,6 @@ async function renderUsers(){
 ['searchUser','filterUserLevel','filterUserStatus'].forEach(id=>{$(id)?.addEventListener('input',()=>{userPage=1;renderUsers();});$(id)?.addEventListener('change',()=>{userPage=1;renderUsers();});});
 $('btnKelolaLevel')?.addEventListener('click',()=>openModal('moLevel'));
 
-/* ═══ TUGAS SAYA ═══ */
-let tugasSelesaiVisible=false;
-
-function updateTugasBadge(count){
-  const badge=$('tugasBadge');
-  const badgeMobile=$('tugasBadgeMobile');
-  const s=S();
-  if(s.role!=='superadmin'&&s.role!=='admin_plus'){
-    if(badge)badge.style.display='none';
-    if(badgeMobile)badgeMobile.style.display='none';
-    document.querySelectorAll('.nav-item').forEach(n=>{if(n.dataset.page==='TugasSaya'){n.style.background='';n.style.color='';}});
-    return;
-  }
-  /* Jika count tidak diberikan, hitung dari allPelatihan */
-  const pending=count!==undefined?count:allPelatihan.filter(p=>{
-    if(p.id?.startsWith('EXT-'))return false;
-    const st=normStatus(p);
-    return st==='absensi_ditutup'||st==='pdf_tercetak';
-  }).length;
-  if(badge){badge.style.display=pending>0?'inline-block':'none';badge.textContent=pending;}
-  if(badgeMobile){badgeMobile.style.display=pending>0?'inline-block':'none';badgeMobile.textContent=pending;}
-  document.querySelectorAll('.nav-item').forEach(n=>{
-    if(n.dataset.page==='TugasSaya'){n.style.background=pending>0?'#fff7ed':'';n.style.color=pending>0?'#ea580c':'';}
-  });
-  document.querySelectorAll('.bn-item').forEach(n=>{
-    if(n.dataset.page==='TugasSaya')n.style.color=pending>0?'#ea580c':'';
-  });
-}
-
-window.renderTugasSaya=async function renderTugasSaya(){
-  const s=S();
-  $('tugasUserInfo').innerHTML=`<span style="font-weight:900;color:#0f172a;">${s.nama||s.uid}</span>&nbsp;<span style="background:#ede9fe;color:#5b21b6;font-size:8px;font-weight:900;border-radius:5px;padding:2px 7px;text-transform:uppercase;">${s.role==='superadmin'?'Superadmin':'Level 2+'}</span>`;
-  $('tugasPendingList').innerHTML=`<div style="text-align:center;padding:28px;font-size:12px;font-weight:700;color:#94a3b8;"><i class="fas fa-circle-notch fa-spin" style="margin-right:8px;"></i>Memuat data...</div>`;
-
-  try{
-    /* Baca dari koleksi tugas_pending — koleksi kecil, cepat, tidak perlu filter kompleks */
-    const snap=await getDocs(collection(db,'tugas_pending'));
-    const semuaTugas=snap.docs.map(d=>({id:d.id,...d.data()}));
-
-    /* Pending: menunggu_pdf atau menunggu_ekpi */
-    const pending=semuaTugas
-      .filter(t=>t.status_tugas==='menunggu_pdf'||t.status_tugas==='menunggu_ekpi')
-      .sort((a,b)=>(b.tanggal||'').localeCompare(a.tanggal||''));
-
-    /* Selesai: sudah_selesai */
-    const selesai=semuaTugas
-      .filter(t=>t.status_tugas==='sudah_selesai')
-      .sort((a,b)=>(b.tanggal||'').localeCompare(a.tanggal||''))
-      .slice(0,20);
-
-    /* Update badge */
-    const pc=$('tugasPendingCount');
-    if(pc)pc.textContent=pending.length>0?pending.length:'';
-    updateTugasBadge(pending.length);
-
-    /* Render pending */
-    $('tugasPendingList').innerHTML=pending.length===0
-      ?`<div class="empty-st" style="padding:28px;"><div class="empty-icon">✅</div><div class="empty-lbl">Tidak ada tugas yang menunggu!</div></div>`
-      :pending.map(t=>tugasCardFromPending(t)).join('');
-
-    /* Render selesai */
-    $('tugasSelesaiList').innerHTML=selesai.length===0
-      ?`<div style="text-align:center;padding:16px;font-size:11px;font-weight:700;color:#94a3b8;">Belum ada pelatihan yang selesai sepenuhnya</div>`
-      :selesai.map(t=>tugasCardFromPending(t,true)).join('');
-
-  }catch(e){
-    $('tugasPendingList').innerHTML=`<div class="empty-st" style="padding:28px;"><div class="empty-icon">⚠️</div><div class="empty-lbl">Gagal memuat: ${e.message}</div><button class="btn btn-p" style="margin-top:12px;" onclick="renderTugasSaya()"><i class="fas fa-rotate-right"></i> Coba Lagi</button></div>`;
-  }
-}
-
-/* Card khusus dari koleksi tugas_pending */
-function tugasCardFromPending(t,isDone=false){
-  const id=t.id_pelatihan||t.id;
-  const cnt=(allPesertaMap[id]||[]).length||t.peserta_hadir||0;
-  const fmtAt=v=>{if(!v)return'';if(typeof v==='string')return v;if(v?.seconds)return new Date(v.seconds*1000).toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});return String(v);};
-
-  let borderColor,bgColor,iconBg,iconColor,icon,label,byInfo,actionBtn='';
-
-  if(t.status_tugas==='menunggu_pdf'){
-    borderColor='#fde68a';bgColor='#fffbeb';iconBg='#f59e0b';iconColor='#fff';
-    icon='fa-print';label='Menunggu cetak &amp; konfirmasi PDF';
-    byInfo=`Absensi ditutup${t.ditutup_at?' '+t.ditutup_at:''} oleh ${t.ditutup_oleh_nama||'–'}`;
-    actionBtn=`<button class="btn btn-sm btn-a" onclick="konfirmasiPDFdanUpdateTugas('${id}','${t.id}')" style="background:#fffbeb;border:1.5px solid #fde68a;color:#b45309;flex-shrink:0;"><i class="fas fa-print"></i> Cetak PDF</button>`;
-  }else if(t.status_tugas==='menunggu_ekpi'){
-    borderColor='#bbf7d0';bgColor='#f0fdf4';iconBg='#059669';iconColor='#fff';
-    icon='fa-desktop';label='Menunggu konfirmasi eKPI';
-    byInfo=`PDF dicetak${t.pdf_at?' '+t.pdf_at:''} oleh ${t.pdf_oleh||'–'}`;
-    actionBtn=`<button class="btn btn-sm btn-p" onclick="konfirmasiEKPIdanUpdateTugas('${id}','${t.id}')" style="flex-shrink:0;"><i class="fas fa-desktop"></i> Konfirmasi eKPI</button>`;
-  }else{
-    borderColor='#f1f5f9';bgColor='#f8fafc';iconBg='#e2e8f0';iconColor='#64748b';
-    icon='fa-circle-check';label='Selesai semua';
-    byInfo=`eKPI diinput${t.ekpi_at?' '+t.ekpi_at:''} oleh ${t.ekpi_oleh||'–'}`;
-  }
-
-  return`<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;border-radius:14px;border:1.5px solid ${borderColor};background:${bgColor};margin-bottom:8px;opacity:${isDone?.7:1};">
-    <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;">
-      <div style="width:40px;height:40px;border-radius:12px;background:${iconBg};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <i class="fas ${icon}" style="color:${iconColor};font-size:15px;"></i>
-      </div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:13px;font-weight:800;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-          ${t.topik||'–'}${t.is_core?'<span class="pill pill-core" style="font-size:7px;margin-left:5px;">Core</span>':''} — ${t.unit||'–'}
-        </div>
-        <div style="font-size:10px;font-weight:600;color:#64748b;margin-top:2px;">
-          ${t.tanggal||'–'} · ${cnt} peserta · ${label}
-        </div>
-        <div style="font-size:10px;font-weight:700;color:#94a3b8;margin-top:1px;">${byInfo}</div>
-      </div>
-    </div>
-    ${actionBtn}
-  </div>`;
-}
-
-/* Konfirmasi PDF lalu update tugas_pending ke menunggu_ekpi */
-window.konfirmasiPDFdanUpdateTugas=(pltId,tugasId)=>{
-  const p=allPelatihan.find(x=>x.id===pltId)||{id:pltId,topik:'Pelatihan'};
-  confirm2(
-    'Cetak & Konfirmasi PDF?',
-    `PDF daftar hadir "${p.topik}" akan dicetak dan status berubah ke "PDF Tercetak".`,
-    '🖨','Ya, Cetak & Konfirmasi','btn-p',
-    async()=>{
-      printPlt(pltId);
-      const s=S();
-      const now=new Date().toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
-      showLoad();
-      try{
-        /* Update pelatihan dan tugas_pending secara paralel */
-        await Promise.all([
-          updateDoc(doc(db,'pelatihan',pltId),{
-            status:'pdf_tercetak',status_pdf:true,
-            status_pdf_by:s.nama||s.uid,status_pdf_at:now,status_pdf_uid:s.uid
-          }),
-          updateDoc(doc(db,'tugas_pending',tugasId||pltId),{
-            status_tugas:'menunggu_ekpi',
-            pdf_oleh:s.nama||s.uid,
-            pdf_at:now,
-            updated_at:serverTimestamp()
-          })
-        ]);
-        await logAct('konfirmasi_pdf','',{id:pltId,topik:p.topik});
-        toast('PDF dikonfirmasi — status berubah ke menunggu eKPI');
-        loadAllData().catch(()=>{});
-      }catch(e){toast('Gagal: '+e.message,'error');}
-      finally{hideLoad();}
-    }
-  );
-};
-
-/* Konfirmasi eKPI lalu update tugas_pending ke sudah_selesai */
-window.konfirmasiEKPIdanUpdateTugas=(pltId,tugasId)=>{
-  const p=allPelatihan.find(x=>x.id===pltId)||{id:pltId,topik:'Pelatihan'};
-  confirm2(
-    'Konfirmasi eKPI?',
-    `Pelatihan "${p.topik}" sudah diinput di eKPI? Status akan berubah ke "eKPI Selesai".`,
-    '✅','Ya, Konfirmasi','btn-p',
-    async()=>{
-      const s=S();
-      const now=new Date().toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
-      showLoad();
-      try{
-        /* Update pelatihan dan tugas_pending secara paralel */
-        await Promise.all([
-          updateDoc(doc(db,'pelatihan',pltId),{
-            status:'ekpi_selesai',status_ekpi:true,
-            status_ekpi_by:s.nama||s.uid,status_ekpi_at:now,status_ekpi_uid:s.uid
-          }),
-          updateDoc(doc(db,'tugas_pending',tugasId||pltId),{
-            status_tugas:'sudah_selesai',
-            ekpi_oleh:s.nama||s.uid,
-            ekpi_at:now,
-            updated_at:serverTimestamp()
-          })
-        ]);
-        await logAct('konfirmasi_ekpi','',{id:pltId,topik:p.topik});
-        toast('eKPI dikonfirmasi — pelatihan selesai sepenuhnya ✓');
-        /* Tampilkan bagian Sudah Selesai otomatis */
-        if(!tugasSelesaiVisible){
-          tugasSelesaiVisible=true;
-          const sl=$('tugasSelesaiList');
-          if(sl)sl.style.display='block';
-          const btn=$('btnToggleTugasSelesai');
-          if(btn)btn.innerHTML=`<i class="fas fa-chevron-up" id="iconToggleTugas"></i> Sembunyikan`;
-        }
-        /* loadAllData di background tanpa blocking UI */
-        loadAllData().catch(()=>{});
-      }catch(e){toast('Gagal: '+e.message,'error');}
-      finally{hideLoad();}
-    }
-  );
-};
-
-function tugasCard(p,isDone){
-  const st=normStatus(p);
-  const cnt=(allPesertaMap[p.id]||[]).length;
-  const id=p.id;
-
-  /* Helper: format timestamp — bisa string atau Firestore Timestamp */
-  const fmtAt=v=>{
-    if(!v)return'';
-    if(typeof v==='string')return v;
-    if(v?.toDate)return v.toDate().toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
-    return String(v);
-  };
-
-  let borderColor,bgColor,iconBg,iconColor,icon,label,byInfo,actionBtn='';
-  if(st==='absensi_ditutup'){
-    borderColor='#fde68a';bgColor='#fffbeb';iconBg='#f59e0b';iconColor='#fff';
-    icon='fa-print';label='Menunggu cetak &amp; konfirmasi PDF';
-    const by=p.absensi_ditutup_nama||p.absensi_ditutup_oleh||'–';
-    const at=fmtAt(p.absensi_ditutup_at);
-    byInfo=`Absensi ditutup${at?' '+at:''} oleh ${by}`;
-    actionBtn=`<button class="btn btn-sm btn-a" onclick="konfirmasiPDF('${id}');setTimeout(renderTugasSaya,800);" style="background:#fffbeb;border:1.5px solid #fde68a;color:#b45309;flex-shrink:0;"><i class="fas fa-print"></i> Cetak PDF</button>`;
-  }else if(st==='pdf_tercetak'){
-    borderColor='#bbf7d0';bgColor='#f0fdf4';iconBg='#059669';iconColor='#fff';
-    icon='fa-desktop';label='Menunggu konfirmasi eKPI';
-    const by=p.status_pdf_by||'–'; const at=fmtAt(p.status_pdf_at);
-    byInfo=`PDF dicetak${at?' '+at:''} oleh ${by}`;
-    actionBtn=`<button class="btn btn-sm btn-p" onclick="konfirmasiEKPI('${id}');setTimeout(renderTugasSaya,800);" style="flex-shrink:0;"><i class="fas fa-desktop"></i> Konfirmasi eKPI</button>`;
-  }else{
-    borderColor='#f1f5f9';bgColor='#f8fafc';iconBg='#e2e8f0';iconColor='#64748b';
-    icon='fa-circle-check';label='Selesai semua';
-    const by=p.status_ekpi_by||'–'; const at=fmtAt(p.status_ekpi_at);
-    byInfo=`eKPI diinput${at?' '+at:''} oleh ${by}`;
-  }
-
-  return`<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;border-radius:14px;border:1.5px solid ${borderColor};background:${bgColor};margin-bottom:8px;opacity:${isDone?.7:1};">
-    <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;">
-      <div style="width:40px;height:40px;border-radius:12px;background:${iconBg};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <i class="fas ${icon}" style="color:${iconColor};font-size:15px;"></i>
-      </div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:13px;font-weight:800;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-          ${p.topik||'–'}${p.is_core?'<span class="pill pill-core" style="font-size:7px;margin-left:5px;">Core</span>':''} — ${p.unit_pembuat||'–'}
-        </div>
-        <div style="font-size:10px;font-weight:600;color:#64748b;margin-top:2px;">
-          ${p.tanggal||'–'} · ${cnt} peserta · ${label}
-        </div>
-        <div style="font-size:10px;font-weight:700;color:#94a3b8;margin-top:1px;">${byInfo}</div>
-      </div>
-    </div>
-    ${actionBtn}
-  </div>`;
-}
-
-window.toggleTugasSelesai=()=>{
-  tugasSelesaiVisible=!tugasSelesaiVisible;
-  $('tugasSelesaiList').style.display=tugasSelesaiVisible?'block':'none';
-  $('iconToggleTugas').className=`fas fa-chevron-${tugasSelesaiVisible?'up':'down'}`;
-  $('btnToggleTugasSelesai').innerHTML=`<i class="fas fa-chevron-${tugasSelesaiVisible?'up':'down'}" id="iconToggleTugas"></i> ${tugasSelesaiVisible?'Sembunyikan':'Tampilkan'}`;
-};
-
 /* ═══ BERSIHKAN DUPLIKAT ═══ */
 let _dupGroups=[];
 
@@ -3477,13 +3248,15 @@ $('btnBersihDuplikat')?.addEventListener('click',async()=>{
     const snap=await getDocs(collection(db,'pelatihan'));
     const semua=snap.docs.map(d=>({id:d.id,...d.data()}));
 
-    /* Kelompokkan berdasarkan topik+tanggal+unit */
+    /* Kelompokkan berdasarkan 7 kriteria + peserta */
     const grupMap={};
     semua.forEach(p=>{
-      /* Core: key tanpa unit agar duplikat beda unit tetap terdeteksi */
-      const key=p.is_core
-        ?`${(p.topik||'').toLowerCase().trim()}|${p.tanggal||''}`
-        :`${(p.topik||'').toLowerCase().trim()}|${p.tanggal||''}|${p.unit_pembuat||''}`;
+      if(p.id?.startsWith('EXT-'))return;
+      /* Key: topik+tanggal+instruktur+jam_mulai+jam_selesai+lokasi+penyelenggara */
+      const baseKey=`${(p.topik||'').toLowerCase().trim()}|${p.tanggal||''}|${(p.instruktur||'').toLowerCase().trim()}|${p.waktu_mulai||''}|${p.waktu_selesai||''}|${(p.lokasi||'').toLowerCase().trim()}|${(p.penyelenggara||'').toLowerCase().trim()}`;
+      /* Tambahkan daftar peserta ke key */
+      const perners=(allPesertaMap[p.id]||[]).map(pe=>pe.perner).sort().join(',');
+      const key=`${baseKey}|peserta:${perners}`;
       if(!grupMap[key])grupMap[key]=[];
       grupMap[key].push(p);
     });
@@ -3625,7 +3398,7 @@ $('btnSimpanUser')?.addEventListener('click',async()=>{
   if(editUserId){showLoad();try{await updateDoc(doc(db,'users',editUserId),{nama_lengkap:nama,unit,role:level});await logAct('edit_user','',{uid:editUserId,nama});allUsers=[];closeModal('moUser');renderUsers();toast('User diperbarui!');}catch(e){toast('Gagal: '+e.message,'error');}finally{hideLoad();}return;}
   const bar=$('uLoadBar'),txt=$('uLoadTxt');bar.style.display='block';$('btnSimpanUser').disabled=true;
   const ae=LS.get('__ae'),ap=LS.get('__ap'),sEmail=atob(ae||btoa('')),sPw=atob(ap||btoa(''));
-  try{txt.textContent='Menyiapkan akun baru…';const nEmail=`${perner}@absensipelatihan.com`,defPw=`SM${perner}@2024`;const{getAuth:ga,createUserWithEmailAndPassword:cu,signOut:so,signInWithEmailAndPassword:si}=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");const aI=ga();txt.textContent='Keluar sebentar…';await so(aI);txt.textContent='Membuat akun…';const cred=await cu(aI,nEmail,defPw);const newUid=cred.user.uid;txt.textContent='Menyimpan data…';await setDoc(doc(db,'users',newUid),{perner,nama_lengkap:nama,unit,role:level,status:'aktif',first_login:true});txt.textContent='Masuk kembali…';await so(aI);await si(aI,sEmail,sPw);await logAct('buat_user','',{perner,nama,role:level});allUsers=[];closeModal('moUser');renderUsers();toast(`Akun ${nama} berhasil! Password default: SM${perner}@2024`);}
+  try{txt.textContent='Menyiapkan akun baru…';const nEmail=`${perner}@absensipelatihan.com`,defPw=perner;const{getAuth:ga,createUserWithEmailAndPassword:cu,signOut:so,signInWithEmailAndPassword:si}=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");const aI=ga();txt.textContent='Keluar sebentar…';await so(aI);txt.textContent='Membuat akun…';const cred=await cu(aI,nEmail,defPw);const newUid=cred.user.uid;txt.textContent='Menyimpan data…';await setDoc(doc(db,'users',newUid),{perner,nama_lengkap:nama,unit,role:level,status:'aktif',first_login:true});txt.textContent='Masuk kembali…';await so(aI);await si(aI,sEmail,sPw);await logAct('buat_user','',{perner,nama,role:level});allUsers=[];closeModal('moUser');renderUsers();toast(`Akun ${nama} berhasil! Password default: ${perner}`);}
   catch(e){try{const{getAuth:ga2,signInWithEmailAndPassword:si2}=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");await si2(ga2(),sEmail,sPw);}catch(_){}toast('Gagal: '+(e.code==='auth/email-already-in-use'?'Perner sudah terdaftar':e.message),'error');}
   finally{bar.style.display='none';$('btnSimpanUser').disabled=false;}
 });
@@ -3637,7 +3410,7 @@ window.openResetPw=(uid,nama)=>{
   /* Tampilkan password default berdasarkan perner user */
   const u=allUsers.find(u=>u.id===uid);
   const perner=u?.perner||'';
-  const defaultPw=perner?`SM${perner}@2024`:'SM…@2024';
+  const defaultPw=perner?perner:'(perner)';
   $('resetPwDefault').textContent=defaultPw;
   $('btnSimpanResetPw').dataset.defaultpw=defaultPw;
   openModal('moResetPw');
@@ -3736,11 +3509,11 @@ async function renderLog(){
 ['searchLog','filterLogAksi','filterLogDate'].forEach(id=>{$(id)?.addEventListener('input',()=>{logPage=1;allLogs=[];renderLog();});$(id)?.addEventListener('change',()=>{logPage=1;allLogs=[];renderLog();});});
 
 /* ═══ REALTIME LISTENERS ═══ */
-let _unsubPlt=null,_unsubPst=null,_unsubKary=null,_unsubTugas=null;
+let _unsubPlt=null,_unsubPst=null,_unsubKary=null;
 let _realtimeReady=false;
 
 function startRealtimeListeners(){
-  _unsubPlt?.();_unsubPst?.();_unsubKary?.();_unsubTugas?.();
+  _unsubPlt?.();_unsubPst?.();_unsubKary?.();
 
   _unsubPlt=onSnapshot(collection(db,'pelatihan'),snap=>{
     if(!_realtimeReady)return;
@@ -3767,22 +3540,6 @@ function startRealtimeListeners(){
     _refreshView();
   });
 
-  /* Realtime listener tugas_pending — update badge dan halaman Tugas Saya otomatis */
-  const s=S();
-  if(s.role==='superadmin'||s.role==='admin_plus'){
-    _unsubTugas=onSnapshot(collection(db,'tugas_pending'),snap=>{
-      if(!_realtimeReady)return;
-      /* Hitung pending untuk badge */
-      const pendingCount=snap.docs.filter(d=>{
-        const st=d.data().status_tugas;
-        return st==='menunggu_pdf'||st==='menunggu_ekpi';
-      }).length;
-      updateTugasBadge(pendingCount);
-      /* Jika halaman Tugas Saya sedang aktif, refresh otomatis */
-      const ap=document.querySelector('.page.active')?.id||'';
-      if(ap==='pageTugasSaya')renderTugasSaya();
-    });
-  }
 }
 
 function _refreshView(){
