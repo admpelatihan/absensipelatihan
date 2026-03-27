@@ -1045,7 +1045,7 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
         <div style="background:#f8fafc;border-radius:11px;padding:13px;border:1px solid #f1f5f9;"><div style="font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Level 1 — Superadmin</div><div style="font-size:12px;font-weight:600;color:#334155;">Akses penuh ke seluruh sistem termasuk manajemen user dan log aktivitas.</div></div>
         <div style="background:#ede9fe;border-radius:11px;padding:13px;border:1px solid #c4b5fd;"><div style="font-size:10px;font-weight:900;color:#5b21b6;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Level 2+ — Admin Plus</div><div style="font-size:12px;font-weight:600;color:#334155;">Sama dengan Level 2 ditambah: konfirmasi PDF, konfirmasi eKPI, buka ulang absensi, dan halaman Tugas Saya.</div></div>
         <div style="background:#f8fafc;border-radius:11px;padding:13px;border:1px solid #f1f5f9;"><div style="font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Level 2 — Admin</div><div style="font-size:12px;font-weight:600;color:#334155;">Akses dashboard, pelatihan (semua fitur), karyawan, rekap core. Tidak bisa konfirmasi PDF/eKPI.</div></div>
-        <div style="background:#f8fafc;border-radius:11px;padding:13px;border:1px solid #f1f5f9;"><div style="font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Level 3 — Unit</div><div style="font-size:12px;font-weight:600;color:#334155;">Buat &amp; edit pelatihan unit sendiri, buka kiosk, lihat karyawan &amp; rekap core (view only).</div></div>
+        <div style="background:#f8fafc;border-radius:11px;padding:13px;border:1px solid #f1f5f9;"><div style="font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Level 3 — Unit</div><div style="font-size:12px;font-weight:600;color:#334155;">Buat &amp; edit pelatihan unit sendiri, buka daftar hadir, lihat karyawan &amp; rekap core (view only).</div></div>
       </div>
     </div>
   </div>
@@ -1908,14 +1908,15 @@ function buildCardActions(p,waMsg){
   const isCore=p.is_core;
   const id=p.id;
 
-  /* Level 3: hanya Kiosk + Edit (jika pelatihan milik sendiri) */
+  /* Level 3: hanya Daftar Hadir (jika aktif) + Edit milik sendiri */
   if(isUnit){
-    const btnK=`<button class="btn btn-sm btn-b" onclick="event.stopPropagation();openKiosk('${id}')"><i class="fas fa-tablet-screen-button"></i> Kiosk</button>`;
+    /* Jika absensi sudah ditutup, Level 3 tidak bisa buka daftar hadir lagi */
+    const btnK=st==='aktif'?`<button class="btn btn-sm btn-b" onclick="event.stopPropagation();openKiosk('${id}')"><i class="fas fa-tablet-screen-button"></i> Daftar Hadir</button>`:'';
     const btnE=canEdit?`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();editPlt('${id}')"><i class="fas fa-pen"></i></button>`:'';
     return[btnK,btnE].filter(Boolean).join('');
   }
 
-  const btnKiosk=`<button class="btn btn-sm btn-b" onclick="event.stopPropagation();openKiosk('${id}')"><i class="fas fa-tablet-screen-button"></i> Kiosk</button>`;
+  const btnKiosk=`<button class="btn btn-sm btn-b" onclick="event.stopPropagation();openKiosk('${id}')"><i class="fas fa-tablet-screen-button"></i> Daftar Hadir</button>`;
   const btnEdit=canEdit?`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();editPlt('${id}')"><i class="fas fa-pen"></i></button>`:'';
   const btnCetak=`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();printPlt('${id}')"><i class="fas fa-print"></i></button>`;
   const btnShare=isCore?`<button class="btn btn-sm" style="background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;" onclick="event.stopPropagation();window.open('https://wa.me/?text=${waMsg}','_blank')"><i class="fab fa-whatsapp"></i> Share</button>`:'';
@@ -1954,14 +1955,14 @@ function buildTableActions(p){
   const canDel=canDeletePlt();
   const id=p.id;
 
-  /* Level 3: hanya Kiosk + Edit milik sendiri */
+  /* Level 3: hanya Daftar Hadir (jika aktif) + Edit milik sendiri */
   if(isUnit){
-    const bK=`<button class="btn btn-sm btn-b" onclick="event.stopPropagation();openKiosk('${id}')" title="Kiosk"><i class="fas fa-tablet-screen-button"></i></button>`;
+    const bK=st==='aktif'?`<button class="btn btn-sm btn-b" onclick="event.stopPropagation();openKiosk('${id}')" title="Daftar Hadir"><i class="fas fa-tablet-screen-button"></i></button>`:'';
     const bE=canEdit?`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();editPlt('${id}')" title="Edit"><i class="fas fa-pen"></i></button>`:'';
     return[bK,bE].filter(Boolean).join('');
   }
 
-  const bKiosk=`<button class="btn btn-sm btn-b" onclick="event.stopPropagation();openKiosk('${id}')" title="Kiosk"><i class="fas fa-tablet-screen-button"></i></button>`;
+  const bKiosk=`<button class="btn btn-sm btn-b" onclick="event.stopPropagation();openKiosk('${id}')" title="Daftar Hadir"><i class="fas fa-tablet-screen-button"></i></button>`;
   const bEdit=canEdit?`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();editPlt('${id}')" title="Edit"><i class="fas fa-pen"></i></button>`:'';
   const bCetak=`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();printPlt('${id}')" title="Cetak PDF"><i class="fas fa-print"></i></button>`;
   const bHapus=canDel?`<button class="btn btn-sm btn-r" onclick="event.stopPropagation();hapusPlt('${id}')" title="Hapus"><i class="fas fa-trash"></i></button>`:'';
@@ -2350,7 +2351,7 @@ $('btnSimpanPlt')?.addEventListener('click',async()=>{
     closeModal('moPlt');await loadAllData();toast('Pelatihan berhasil disimpan!');
     if(!editPltId){
       if(!isCore(topik)){
-        confirm2('Buka Kiosk?',`Pelatihan "${topik}" siap. Buka kiosk sekarang?`,'📱','Buka Kiosk','btn-b',()=>openKiosk(pltId));
+        confirm2('Buka Daftar Hadir?',`Pelatihan "${topik}" siap. Buka daftar hadir sekarang?`,'📱','Buka Daftar Hadir','btn-b',()=>openKiosk(pltId));
       } else {
         const namaList=[...selectedPeserta.values()].map((k,i)=>`${i+1}. ${k.nama_lengkap||k.perner}`).join('\n');
         const waText=`🎓 *Pemberitahuan Pelatihan Core*\n\n`+
@@ -2435,7 +2436,7 @@ window.bukaUlangAbsensi=id=>{
   const p=allPelatihan.find(x=>x.id===id);
   confirm2(
     'Buka Ulang Absensi?',
-    `Absensi "${p?.topik}" akan dibuka kembali. Status kembali ke "Aktif" dan kiosk bisa digunakan lagi.`,
+    `Absensi "${p?.topik}" akan dibuka kembali. Status kembali ke "Aktif" dan daftar hadir bisa digunakan lagi.`,
     '🔓','Ya, Buka Ulang','btn-a',
     async()=>{
       showLoad();
@@ -3245,49 +3246,22 @@ async function renderTugasSaya(){
   $('tugasPendingList').innerHTML=`<div style="text-align:center;padding:28px;font-size:12px;font-weight:700;color:#94a3b8;"><i class="fas fa-circle-notch fa-spin" style="margin-right:8px;"></i>Memuat data...</div>`;
 
   try{
-    /* Query langsung ke Firestore dengan filter status */
-    const [snapAbs, snapPdf] = await Promise.all([
-      getDocs(query(collection(db,'pelatihan'), where('status','==','absensi_ditutup'))),
-      getDocs(query(collection(db,'pelatihan'), where('status','==','pdf_tercetak')))
-    ]);
+    /* Baca dari koleksi tugas_pending — koleksi kecil, cepat, tidak perlu filter kompleks */
+    const snap=await getDocs(collection(db,'tugas_pending'));
+    const semuaTugas=snap.docs.map(d=>({id:d.id,...d.data()}));
 
-    /* Gabung hasil, exclude EXT- */
-    const pendingRaw=[
-      ...snapAbs.docs.map(d=>({id:d.id,...d.data()})),
-      ...snapPdf.docs.map(d=>({id:d.id,...d.data()}))
-    ].filter(p=>!p.id.startsWith('EXT-'))
-     .sort((a,b)=>(b.tanggal||'').localeCompare(a.tanggal||''));
-
-    /* Juga cek status 'aktif' yang sebenarnya sudah ditutup (fallback data lama) */
-    const snapAktif=await getDocs(query(collection(db,'pelatihan'), where('status','==','aktif')));
-    const fallback=snapAktif.docs
-      .map(d=>({id:d.id,...d.data()}))
-      .filter(p=>!p.id.startsWith('EXT-')&&(p.absensi_ditutup_at||p.peserta_hadir!==undefined));
-
-    const pending=[...pendingRaw,...fallback]
+    /* Pending: menunggu_pdf atau menunggu_ekpi */
+    const pending=semuaTugas
+      .filter(t=>t.status_tugas==='menunggu_pdf'||t.status_tugas==='menunggu_ekpi')
       .sort((a,b)=>(b.tanggal||'').localeCompare(a.tanggal||''));
 
-    /* Selesai: status ekpi_selesai */
-    const snapEkpi=await getDocs(query(collection(db,'pelatihan'), where('status','==','ekpi_selesai')));
-    const selesai=snapEkpi.docs
-      .map(d=>({id:d.id,...d.data()}))
-      .filter(p=>!p.id.startsWith('EXT-'))
+    /* Selesai: sudah_selesai */
+    const selesai=semuaTugas
+      .filter(t=>t.status_tugas==='sudah_selesai')
       .sort((a,b)=>(b.tanggal||'').localeCompare(a.tanggal||''))
       .slice(0,20);
 
-    /* Juga masukkan legacy 'selesai' ke selesai */
-    const snapLegacy=await getDocs(query(collection(db,'pelatihan'), where('status','==','selesai')));
-    const selesaiLegacy=snapLegacy.docs
-      .map(d=>({id:d.id,...d.data()}))
-      .filter(p=>!p.id.startsWith('EXT-'))
-      .sort((a,b)=>(b.tanggal||'').localeCompare(a.tanggal||''))
-      .slice(0,10);
-
-    const selesaiAll=[...selesai,...selesaiLegacy]
-      .sort((a,b)=>(b.tanggal||'').localeCompare(a.tanggal||''))
-      .slice(0,20);
-
-    /* Update badge count */
+    /* Update badge */
     const pc=$('tugasPendingCount');
     if(pc)pc.textContent=pending.length>0?pending.length:'';
     updateTugasBadge(pending.length);
@@ -3295,17 +3269,125 @@ async function renderTugasSaya(){
     /* Render pending */
     $('tugasPendingList').innerHTML=pending.length===0
       ?`<div class="empty-st" style="padding:28px;"><div class="empty-icon">✅</div><div class="empty-lbl">Tidak ada tugas yang menunggu!</div></div>`
-      :pending.map(p=>tugasCard(p,false)).join('');
+      :pending.map(t=>tugasCardFromPending(t)).join('');
 
     /* Render selesai */
-    $('tugasSelesaiList').innerHTML=selesaiAll.length===0
+    $('tugasSelesaiList').innerHTML=selesai.length===0
       ?`<div style="text-align:center;padding:16px;font-size:11px;font-weight:700;color:#94a3b8;">Belum ada pelatihan yang selesai sepenuhnya</div>`
-      :selesaiAll.map(p=>tugasCard(p,true)).join('');
+      :selesai.map(t=>tugasCardFromPending(t,true)).join('');
 
   }catch(e){
     $('tugasPendingList').innerHTML=`<div class="empty-st" style="padding:28px;"><div class="empty-icon">⚠️</div><div class="empty-lbl">Gagal memuat: ${e.message}</div><button class="btn btn-p" style="margin-top:12px;" onclick="renderTugasSaya()"><i class="fas fa-rotate-right"></i> Coba Lagi</button></div>`;
   }
 }
+
+/* Card khusus dari koleksi tugas_pending */
+function tugasCardFromPending(t,isDone=false){
+  const id=t.id_pelatihan||t.id;
+  const cnt=(allPesertaMap[id]||[]).length||t.peserta_hadir||0;
+  const fmtAt=v=>{if(!v)return'';if(typeof v==='string')return v;if(v?.seconds)return new Date(v.seconds*1000).toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});return String(v);};
+
+  let borderColor,bgColor,iconBg,iconColor,icon,label,byInfo,actionBtn='';
+
+  if(t.status_tugas==='menunggu_pdf'){
+    borderColor='#fde68a';bgColor='#fffbeb';iconBg='#f59e0b';iconColor='#fff';
+    icon='fa-print';label='Menunggu cetak &amp; konfirmasi PDF';
+    byInfo=`Absensi ditutup${t.ditutup_at?' '+t.ditutup_at:''} oleh ${t.ditutup_oleh_nama||'–'}`;
+    actionBtn=`<button class="btn btn-sm btn-a" onclick="konfirmasiPDFdanUpdateTugas('${id}','${t.id}');setTimeout(renderTugasSaya,1200);" style="background:#fffbeb;border:1.5px solid #fde68a;color:#b45309;flex-shrink:0;"><i class="fas fa-print"></i> Cetak PDF</button>`;
+  }else if(t.status_tugas==='menunggu_ekpi'){
+    borderColor='#bbf7d0';bgColor='#f0fdf4';iconBg='#059669';iconColor='#fff';
+    icon='fa-desktop';label='Menunggu konfirmasi eKPI';
+    byInfo=`PDF dicetak${t.pdf_at?' '+t.pdf_at:''} oleh ${t.pdf_oleh||'–'}`;
+    actionBtn=`<button class="btn btn-sm btn-p" onclick="konfirmasiEKPIdanUpdateTugas('${id}','${t.id}');setTimeout(renderTugasSaya,1200);" style="flex-shrink:0;"><i class="fas fa-desktop"></i> Konfirmasi eKPI</button>`;
+  }else{
+    borderColor='#f1f5f9';bgColor='#f8fafc';iconBg='#e2e8f0';iconColor='#64748b';
+    icon='fa-circle-check';label='Selesai semua';
+    byInfo=`eKPI diinput${t.ekpi_at?' '+t.ekpi_at:''} oleh ${t.ekpi_oleh||'–'}`;
+  }
+
+  return`<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;border-radius:14px;border:1.5px solid ${borderColor};background:${bgColor};margin-bottom:8px;opacity:${isDone?.7:1};">
+    <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;">
+      <div style="width:40px;height:40px;border-radius:12px;background:${iconBg};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="fas ${icon}" style="color:${iconColor};font-size:15px;"></i>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:800;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+          ${t.topik||'–'}${t.is_core?'<span class="pill pill-core" style="font-size:7px;margin-left:5px;">Core</span>':''} — ${t.unit||'–'}
+        </div>
+        <div style="font-size:10px;font-weight:600;color:#64748b;margin-top:2px;">
+          ${t.tanggal||'–'} · ${cnt} peserta · ${label}
+        </div>
+        <div style="font-size:10px;font-weight:700;color:#94a3b8;margin-top:1px;">${byInfo}</div>
+      </div>
+    </div>
+    ${actionBtn}
+  </div>`;
+}
+
+/* Konfirmasi PDF lalu update tugas_pending ke menunggu_ekpi */
+window.konfirmasiPDFdanUpdateTugas=(pltId,tugasId)=>{
+  const p=allPelatihan.find(x=>x.id===pltId)||{id:pltId,topik:'Pelatihan'};
+  confirm2(
+    'Cetak & Konfirmasi PDF?',
+    `PDF daftar hadir "${p.topik}" akan dicetak dan status berubah ke "PDF Tercetak".`,
+    '🖨','Ya, Cetak & Konfirmasi','btn-p',
+    async()=>{
+      printPlt(pltId);
+      const s=S();
+      const now=new Date().toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+      showLoad();
+      try{
+        await updateDoc(doc(db,'pelatihan',pltId),{
+          status:'pdf_tercetak',status_pdf:true,
+          status_pdf_by:s.nama||s.uid,status_pdf_at:now,status_pdf_uid:s.uid
+        });
+        /* Update tugas_pending ke menunggu_ekpi */
+        await updateDoc(doc(db,'tugas_pending',tugasId||pltId),{
+          status_tugas:'menunggu_ekpi',
+          pdf_oleh:s.nama||s.uid,
+          pdf_at:now,
+          updated_at:serverTimestamp()
+        });
+        await logAct('konfirmasi_pdf','',{id:pltId,topik:p.topik});
+        await loadAllData();
+        toast('PDF dikonfirmasi — status berubah ke PDF Tercetak');
+      }catch(e){toast('Gagal: '+e.message,'error');}
+      finally{hideLoad();}
+    }
+  );
+};
+
+/* Konfirmasi eKPI lalu update tugas_pending ke sudah_selesai */
+window.konfirmasiEKPIdanUpdateTugas=(pltId,tugasId)=>{
+  const p=allPelatihan.find(x=>x.id===pltId)||{id:pltId,topik:'Pelatihan'};
+  confirm2(
+    'Konfirmasi eKPI?',
+    `Pelatihan "${p.topik}" sudah diinput di eKPI? Status akan berubah ke "eKPI Selesai".`,
+    '✅','Ya, Konfirmasi','btn-p',
+    async()=>{
+      const s=S();
+      const now=new Date().toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+      showLoad();
+      try{
+        await updateDoc(doc(db,'pelatihan',pltId),{
+          status:'ekpi_selesai',status_ekpi:true,
+          status_ekpi_by:s.nama||s.uid,status_ekpi_at:now,status_ekpi_uid:s.uid
+        });
+        /* Update tugas_pending ke sudah_selesai */
+        await updateDoc(doc(db,'tugas_pending',tugasId||pltId),{
+          status_tugas:'sudah_selesai',
+          ekpi_oleh:s.nama||s.uid,
+          ekpi_at:now,
+          updated_at:serverTimestamp()
+        });
+        await logAct('konfirmasi_ekpi','',{id:pltId,topik:p.topik});
+        await loadAllData();
+        toast('eKPI dikonfirmasi — pelatihan selesai sepenuhnya ✓');
+      }catch(e){toast('Gagal: '+e.message,'error');}
+      finally{hideLoad();}
+    }
+  );
+};
 
 function tugasCard(p,isDone){
   const st=normStatus(p);
