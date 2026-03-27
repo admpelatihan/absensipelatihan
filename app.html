@@ -594,6 +594,24 @@
       </div>
     </div>
 
+    <!-- ── TUGAS SAYA ── -->
+    <div class="page" id="pageTugasSaya">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:2px;">
+        <div class="pg-title">Tugas Saya</div>
+        <div id="tugasUserInfo" style="font-size:11px;font-weight:700;color:#94a3b8;"></div>
+      </div>
+      <div class="pg-sub">Pelatihan yang membutuhkan konfirmasi PDF atau eKPI</div>
+      <!-- Pending -->
+      <div style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;margin:16px 0 10px;">Menunggu Tindakan <span id="tugasPendingCount" style="background:#e11d48;color:#fff;border-radius:99px;padding:1px 7px;font-size:8px;margin-left:4px;"></span></div>
+      <div id="tugasPendingList"></div>
+      <!-- Selesai -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin:20px 0 10px;">
+        <div style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;">Sudah Selesai</div>
+        <button id="btnToggleTugasSelesai" onclick="toggleTugasSelesai()" style="font-size:9px;font-weight:800;color:#94a3b8;background:none;border:none;cursor:pointer;"><i class="fas fa-chevron-down" id="iconToggleTugas"></i> Tampilkan</button>
+      </div>
+      <div id="tugasSelesaiList" style="display:none;"></div>
+    </div>
+
     <!-- ── REKAP CORE ── -->
     <div class="page" id="pageRekapCore">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:2px;">
@@ -643,7 +661,7 @@
       <div class="pg-sub">Kelola Akun Pengguna Sistem</div>
       <div class="filters">
         <div class="fl-group"><div class="fl-lbl">Cari</div><div class="sw"><span class="si"><i class="fas fa-search"></i></span><input type="search" id="searchUser" placeholder="Nama / perner…" style="width:185px;"/></div></div>
-        <div class="fl-group"><div class="fl-lbl">Level</div><select id="filterUserLevel"><option value="">Semua Level</option><option value="superadmin">Level 1</option><option value="admin">Level 2</option><option value="unit">Level 3</option></select></div>
+        <div class="fl-group"><div class="fl-lbl">Level</div><select id="filterUserLevel"><option value="">Semua Level</option><option value="superadmin">Level 1</option><option value="admin_plus">Level 2+</option><option value="admin">Level 2</option><option value="unit">Level 3</option></select></div>
         <div class="fl-group"><div class="fl-lbl">Status</div><select id="filterUserStatus"><option value="">Semua</option><option value="aktif">Aktif</option><option value="nonaktif">Nonaktif</option></select></div>
       </div>
       <div class="card">
@@ -920,7 +938,7 @@
     <div class="mo-head"><div class="mo-title" id="moUserTitle">Tambah User</div><button class="mo-close" onclick="closeModal('moUser')">✕</button></div>
     <div class="mo-body">
       <div class="fr"><div class="fg"><div class="fl">Nama Lengkap</div><input type="text" id="uNama" placeholder="Nama lengkap"/></div><div class="fg"><div class="fl">Perner</div><input type="text" id="uPerner" placeholder="Nomor perner"/></div></div>
-      <div class="fr"><div class="fg"><div class="fl">Unit</div><select id="uUnit"></select></div><div class="fg"><div class="fl">Level Akses</div><select id="uLevel"><option value="">Pilih Level</option><option value="admin">Level 2 (Admin)</option><option value="unit">Level 3 (Unit)</option></select></div></div>
+      <div class="fr"><div class="fg"><div class="fl">Unit</div><select id="uUnit"></select></div><div class="fg"><div class="fl">Level Akses</div><select id="uLevel"><option value="">Pilih Level</option><option value="admin_plus">Level 2+ (Admin Plus)</option><option value="admin">Level 2 (Admin)</option><option value="unit">Level 3 (Unit)</option></select></div></div>
       <div id="uLoadBar" style="display:none;"><div class="pw"><div class="pf" style="width:100%;animation:progA 1.2s ease infinite alternate;"></div></div><p id="uLoadTxt" style="font-size:10px;color:#94a3b8;text-align:center;margin-top:3px;font-weight:800;text-transform:uppercase;letter-spacing:1px;">Membuat akun…</p><style>@keyframes progA{from{opacity:.4}to{opacity:1}}</style></div>
     </div>
     <div class="mo-foot">
@@ -955,8 +973,9 @@
     <div class="mo-body">
       <div style="display:flex;flex-direction:column;gap:9px;">
         <div style="background:#f8fafc;border-radius:11px;padding:13px;border:1px solid #f1f5f9;"><div style="font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Level 1 — Superadmin</div><div style="font-size:12px;font-weight:600;color:#334155;">Akses penuh ke seluruh sistem termasuk manajemen user dan log aktivitas.</div></div>
-        <div style="background:#f8fafc;border-radius:11px;padding:13px;border:1px solid #f1f5f9;"><div style="font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Level 2 — Admin</div><div style="font-size:12px;font-weight:600;color:#334155;">Akses dashboard, pelatihan (semua fitur), karyawan, dan rekap core.</div></div>
-        <div style="background:#f8fafc;border-radius:11px;padding:13px;border:1px solid #f1f5f9;"><div style="font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Level 3 — Unit</div><div style="font-size:12px;font-weight:600;color:#334155;">Akses terbatas: dashboard unit sendiri, buat pelatihan, lihat rekap core unit sendiri.</div></div>
+        <div style="background:#ede9fe;border-radius:11px;padding:13px;border:1px solid #c4b5fd;"><div style="font-size:10px;font-weight:900;color:#5b21b6;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Level 2+ — Admin Plus</div><div style="font-size:12px;font-weight:600;color:#334155;">Sama dengan Level 2 ditambah: konfirmasi PDF, konfirmasi eKPI, buka ulang absensi, dan halaman Tugas Saya.</div></div>
+        <div style="background:#f8fafc;border-radius:11px;padding:13px;border:1px solid #f1f5f9;"><div style="font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Level 2 — Admin</div><div style="font-size:12px;font-weight:600;color:#334155;">Akses dashboard, pelatihan (semua fitur), karyawan, rekap core. Tidak bisa konfirmasi PDF/eKPI.</div></div>
+        <div style="background:#f8fafc;border-radius:11px;padding:13px;border:1px solid #f1f5f9;"><div style="font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Level 3 — Unit</div><div style="font-size:12px;font-weight:600;color:#334155;">Buat &amp; edit pelatihan unit sendiri, buka kiosk, lihat karyawan &amp; rekap core (view only).</div></div>
       </div>
     </div>
   </div>
@@ -1181,7 +1200,7 @@ function hariIndo(ds){const d=new Date(ds+'T00:00:00');return DAYS[d.getDay()];}
 function initials(n=''){return n.split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?';}
 function isCore(t){return MASTER_CORE.some(c=>t?.toLowerCase().includes(c.toLowerCase()));}
 function getCoreMatch(t){return MASTER_CORE.find(c=>t?.toLowerCase().includes(c.toLowerCase()))||null;}
-function roleLbl(r){return{superadmin:'Level 1',admin:'Level 2',unit:'Level 3'}[r]||r;}
+function roleLbl(r){return{superadmin:'Level 1 (Superadmin)',admin:'Level 2 (Admin)',admin_plus:'Level 2+ (Admin Plus)',unit:'Level 3 (Unit)'}[r]||r;}
 function calcJam(pelatihan){let m=0;pelatihan.forEach(p=>{if(p.waktu_mulai&&p.waktu_selesai){const[h1,m1]=p.waktu_mulai.split(':').map(Number),[h2,m2]=p.waktu_selesai.split(':').map(Number);m+=Math.max(0,(h2*60+m2)-(h1*60+m1));}});return(m/60).toFixed(1);}
 window.toggleField=(id,iid)=>{const e=$(id),i=$(iid),h=e.type==='password';e.type=h?'text':'password';i.className=h?'far fa-eye-slash':'far fa-eye';};
 async function logAct(aksi,before='',after=''){try{const s=S();await addDoc(collection(db,'log_aktivitas'),{aksi,user_id:s.uid,role:s.role,timestamp:serverTimestamp(),detail_sebelum:typeof before==='object'?JSON.stringify(before):before,detail_sesudah:typeof after==='object'?JSON.stringify(after):after});}catch(_){}}
@@ -1258,10 +1277,11 @@ async function initApp(){
 function buildNav(){
   const s=S();
   const items=[
-    {id:'Dashboard',icon:'fa-house',lbl:'Dashboard',roles:['superadmin','admin','unit']},
-    {id:'Pelatihan',icon:'fa-clipboard-list',lbl:'Pelatihan',roles:['superadmin','admin','unit']},
-    {id:'Karyawan',icon:'fa-users',lbl:'Data Karyawan',roles:['superadmin','admin']},
-    {id:'RekapCore',icon:'fa-file-invoice',lbl:'Rekap Core',roles:['superadmin','admin','unit']},
+    {id:'Dashboard',icon:'fa-house',lbl:'Dashboard',roles:['superadmin','admin','admin_plus','unit']},
+    {id:'Pelatihan',icon:'fa-clipboard-list',lbl:'Pelatihan',roles:['superadmin','admin','admin_plus','unit']},
+    {id:'Karyawan',icon:'fa-users',lbl:'Data Karyawan',roles:['superadmin','admin','admin_plus','unit']},
+    {id:'TugasSaya',icon:'fa-list-check',lbl:'Tugas Saya',roles:['superadmin','admin_plus'],badge:'tugasBadge'},
+    {id:'RekapCore',icon:'fa-file-invoice',lbl:'Rekap Core',roles:['superadmin','admin','admin_plus','unit']},
     {id:'ManajemenUser',icon:'fa-user-shield',lbl:'Manajemen User',roles:['superadmin']},
     {id:'Log',icon:'fa-terminal',lbl:'Log Aktivitas',roles:['superadmin']},
   ];
@@ -1270,16 +1290,24 @@ function buildNav(){
   allowed.forEach((it,idx)=>{
     if(idx===4){const sep=document.createElement('div');sep.style.cssText='height:1px;background:#f1f5f9;margin:7px 10px;';sbNav.appendChild(sep);}
     const d=document.createElement('div');d.className='nav-item';d.dataset.page=it.id;
-    d.innerHTML=`<i class="fas ${it.icon}"></i><span>${it.lbl}</span>`;
+    const badgeHtml=it.badge?`<span id="${it.badge}" style="display:none;background:#e11d48;color:#fff;font-size:8px;font-weight:900;border-radius:99px;padding:2px 6px;margin-left:auto;min-width:18px;text-align:center;">0</span>`:'';
+    d.innerHTML=`<i class="fas ${it.icon}"></i><span style="flex:1;">${it.lbl}</span>${badgeHtml}`;
     d.addEventListener('click',()=>showPage(it.id)); sbNav.appendChild(d);
   });
   sbNav.querySelector('.nav-item')?.classList.add('active');
   const bnInner=$('bnInner'); bnInner.innerHTML='';
-  /* Mobile bottom nav: show up to 4 page items + 1 profile/logout item */
-  const bnItems=allowed.slice(0,4);
+  /* Mobile bottom nav: pilih 4 item prioritas sesuai role */
+  /* Prioritas: Dashboard, Pelatihan, Tugas Saya (jika ada), Rekap Core — sisanya tersembunyi */
+  const bnPriority=['Dashboard','Pelatihan','TugasSaya','RekapCore','Karyawan'];
+  const bnItems=bnPriority
+    .map(pid=>allowed.find(it=>it.id===pid))
+    .filter(Boolean)
+    .slice(0,4);
   bnItems.forEach(it=>{
     const btn=document.createElement('button');btn.className='bn-item';btn.dataset.page=it.id;
-    btn.innerHTML=`<i class="fas ${it.icon}"></i><span>${it.lbl.split(' ')[0]}</span>`;
+    const badgeMobile=it.badge?`<span id="${it.badge}Mobile" style="display:none;position:absolute;top:2px;right:2px;background:#e11d48;color:#fff;font-size:7px;font-weight:900;border-radius:99px;padding:1px 4px;min-width:14px;text-align:center;"></span>`:'';
+    btn.style.position='relative';
+    btn.innerHTML=`<i class="fas ${it.icon}"></i><span>${it.lbl.split(' ')[0]}</span>${badgeMobile}`;
     btn.addEventListener('click',()=>showPage(it.id)); bnInner.appendChild(btn);
   });
   /* Always add profile/logout button at end of bottom nav */
@@ -1451,7 +1479,11 @@ async function loadAllData(){
   if(ap==='pagePelatihan')renderPelatihan();
   else if(ap==='pageKaryawan')renderKaryawan();
   else if(ap==='pageRekapCore')renderRekap();
+  else if(ap==='pageTugasSaya')renderTugasSaya();
   else renderDashboard();
+
+  /* Update badge Tugas Saya di sidebar */
+  updateTugasBadge();
 
   /* Aktifkan realtime listener setelah data pertama berhasil dimuat */
   if(!_realtimeReady){
@@ -2919,6 +2951,129 @@ async function renderUsers(){
 }
 ['searchUser','filterUserLevel','filterUserStatus'].forEach(id=>{$(id)?.addEventListener('input',()=>{userPage=1;renderUsers();});$(id)?.addEventListener('change',()=>{userPage=1;renderUsers();});});
 $('btnKelolaLevel')?.addEventListener('click',()=>openModal('moLevel'));
+
+/* ═══ TUGAS SAYA ═══ */
+let tugasSelesaiVisible=false;
+
+function updateTugasBadge(){
+  const badge=$('tugasBadge');
+  const badgeMobile=$('tugasBadgeMobile');
+  const s=S();
+  if(s.role!=='superadmin'&&s.role!=='admin_plus'){
+    if(badge)badge.style.display='none';
+    if(badgeMobile)badgeMobile.style.display='none';
+    return;
+  }
+  const pending=allPelatihan.filter(p=>{
+    const st=normStatus(p);
+    return st==='absensi_ditutup'||st==='pdf_tercetak';
+  }).length;
+  /* Sidebar badge */
+  if(badge){
+    badge.style.display=pending>0?'inline-block':'none';
+    badge.textContent=pending;
+  }
+  /* Mobile badge */
+  if(badgeMobile){
+    badgeMobile.style.display=pending>0?'inline-block':'none';
+    badgeMobile.textContent=pending;
+  }
+  /* Highlight nav item di sidebar */
+  document.querySelectorAll('.nav-item').forEach(n=>{
+    if(n.dataset.page==='TugasSaya'){
+      n.style.background=pending>0?'#fff7ed':'';
+      n.style.color=pending>0?'#ea580c':'';
+    }
+  });
+  /* Highlight bottom nav item */
+  document.querySelectorAll('.bn-item').forEach(n=>{
+    if(n.dataset.page==='TugasSaya'){
+      n.style.color=pending>0?'#ea580c':'';
+    }
+  });
+}
+
+function renderTugasSaya(){
+  const s=S();
+  $('tugasUserInfo').innerHTML=`<span style="font-weight:900;color:#0f172a;">${s.nama||s.uid}</span>&nbsp;<span style="background:#ede9fe;color:#5b21b6;font-size:8px;font-weight:900;border-radius:5px;padding:2px 7px;text-transform:uppercase;">${s.role==='superadmin'?'Superadmin':'Level 2+'}</span>`;
+
+  const pending=allPelatihan.filter(p=>{
+    const st=normStatus(p);
+    return st==='absensi_ditutup'||st==='pdf_tercetak';
+  }).sort((a,b)=>(a.tanggal||'').localeCompare(b.tanggal||''));
+
+  const selesai=allPelatihan.filter(p=>normStatus(p)==='ekpi_selesai')
+    .sort((a,b)=>(b.tanggal||'').localeCompare(a.tanggal||''))
+    .slice(0,20);
+
+  /* Badge count */
+  const pc=$('tugasPendingCount');
+  if(pc)pc.textContent=pending.length>0?pending.length:'';
+
+  /* Render pending */
+  $('tugasPendingList').innerHTML=pending.length===0
+    ?`<div class="empty-st" style="padding:28px;"><div class="empty-icon">✅</div><div class="empty-lbl">Tidak ada tugas yang menunggu!</div></div>`
+    :pending.map(p=>tugasCard(p,false)).join('');
+
+  /* Render selesai */
+  $('tugasSelesaiList').innerHTML=selesai.length===0
+    ?`<div style="text-align:center;padding:16px;font-size:11px;font-weight:700;color:#94a3b8;">Belum ada pelatihan yang selesai sepenuhnya</div>`
+    :selesai.map(p=>tugasCard(p,true)).join('');
+
+  updateTugasBadge();
+}
+
+function tugasCard(p,isDone){
+  const st=normStatus(p);
+  const cnt=(allPesertaMap[p.id]||[]).length;
+  const id=p.id;
+
+  let borderColor,bgColor,iconBg,iconColor,icon,label,byInfo,actionBtn='';
+  if(st==='absensi_ditutup'){
+    borderColor='#fde68a';bgColor='#fffbeb';iconBg='#f59e0b';iconColor='#fff';
+    icon='fa-print';label='Menunggu cetak &amp; konfirmasi PDF';
+    const by=p.absensi_ditutup_nama||p.absensi_ditutup_oleh||'–';
+    const at=p.absensi_ditutup_at||'';
+    byInfo=`Absensi ditutup${at?' '+at:''} oleh ${by}`;
+    actionBtn=`<button class="btn btn-sm btn-a" onclick="konfirmasiPDF('${id}');renderTugasSaya();" style="background:#fffbeb;border:1.5px solid #fde68a;color:#b45309;flex-shrink:0;"><i class="fas fa-print"></i> Cetak PDF</button>`;
+  }else if(st==='pdf_tercetak'){
+    borderColor='#bbf7d0';bgColor='#f0fdf4';iconBg='#059669';iconColor='#fff';
+    icon='fa-desktop';label='Menunggu konfirmasi eKPI';
+    const by=p.status_pdf_by||'–'; const at=p.status_pdf_at||'';
+    byInfo=`PDF dicetak${at?' '+at:''} oleh ${by}`;
+    actionBtn=`<button class="btn btn-sm btn-p" onclick="konfirmasiEKPI('${id}');renderTugasSaya();" style="flex-shrink:0;"><i class="fas fa-desktop"></i> Konfirmasi eKPI</button>`;
+  }else{
+    borderColor='#f1f5f9';bgColor='#f8fafc';iconBg='#e2e8f0';iconColor='#64748b';
+    icon='fa-circle-check';label='Selesai semua';
+    const by=p.status_ekpi_by||'–'; const at=p.status_ekpi_at||'';
+    byInfo=`eKPI diinput${at?' '+at:''} oleh ${by}`;
+  }
+
+  return`<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;border-radius:14px;border:1.5px solid ${borderColor};background:${bgColor};margin-bottom:8px;opacity:${isDone?.7:1};">
+    <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:0;">
+      <div style="width:40px;height:40px;border-radius:12px;background:${iconBg};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="fas ${icon}" style="color:${iconColor};font-size:15px;"></i>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:800;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+          ${p.topik||'–'}${p.is_core?'<span class="pill pill-core" style="font-size:7px;margin-left:5px;">Core</span>':''} — ${p.unit_pembuat||'–'}
+        </div>
+        <div style="font-size:10px;font-weight:600;color:#64748b;margin-top:2px;">
+          ${p.tanggal||'–'} · ${cnt} peserta · ${label}
+        </div>
+        <div style="font-size:10px;font-weight:700;color:#94a3b8;margin-top:1px;">${byInfo}</div>
+      </div>
+    </div>
+    ${actionBtn}
+  </div>`;
+}
+
+window.toggleTugasSelesai=()=>{
+  tugasSelesaiVisible=!tugasSelesaiVisible;
+  $('tugasSelesaiList').style.display=tugasSelesaiVisible?'block':'none';
+  $('iconToggleTugas').className=`fas fa-chevron-${tugasSelesaiVisible?'up':'down'}`;
+  $('btnToggleTugasSelesai').innerHTML=`<i class="fas fa-chevron-${tugasSelesaiVisible?'up':'down'}" id="iconToggleTugas"></i> ${tugasSelesaiVisible?'Sembunyikan':'Tampilkan'}`;
+};
 
 /* ═══ BERSIHKAN DUPLIKAT ═══ */
 let _dupGroups=[];
