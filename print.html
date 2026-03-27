@@ -131,6 +131,10 @@ border-right:1px solid #3a4a6a;
 .re td{background:#eef0f5!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
 .fn{font-size:7pt;font-style:italic;color:#64748b;margin-top:8px;}
 
+/* Multi-page */
+.form-page{margin-bottom:14mm;}
+.page-break{page-break-after:always;}
+
 /* PRINT */
 @media print{
 @page{size:215mm 330mm;margin:8mm 10mm;}
@@ -139,6 +143,8 @@ body{background:#fff!important;}
 .paper-wrap{padding:0!important;background:#fff!important;display:block;}
 .paper{box-shadow:none!important;width:100%!important;padding:0!important;min-height:unset;}
 .loading{display:none!important;}
+.form-page{margin-bottom:0!important;}
+.page-break{page-break-after:always!important;margin-bottom:0!important;}
 .pt th{background:#1e2a4a!important;color:#fff!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
 .re td{background:#eef0f5!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
 }
@@ -233,7 +239,9 @@ async function init(){
     const abSnap=await getDocs(query(collection(db,'absensi'),where('id_pelatihan','==',pltId)));
     const abMap={};abSnap.docs.forEach(d=>{const x=d.data();abMap[x.perner]=x.ttd_base64;});
 
-    const peserta=perners.map(p=>({perner:p,kary:kMap[p]||{nama_lengkap:p,unit:'–',jabatan:'–'}}));
+    const peserta=perners
+      .map(p=>({perner:p,kary:kMap[p]||{nama_lengkap:p,unit:'–',jabatan:'–'}}))
+      .sort((a,b)=>(a.kary.nama_lengkap||a.perner).localeCompare(b.kary.nama_lengkap||b.perner,'id'));
 
     document.getElementById('screenInfo').textContent=`${plt.topik} — ${peserta.length} Peserta`;
     document.title=`Daftar Hadir – ${plt.topik}`;
@@ -247,41 +255,17 @@ async function init(){
 }
 
 function renderForm(plt,pesertaList,abMap){
-  const TOTAL=35;
+  const ROWS_PER_PAGE=35;
   const waktu=`${plt.waktu_mulai||'–'} - ${plt.waktu_selesai||'–'}`;
+  const totalPeserta=pesertaList.length;
+  /* Always at least 1 page, even if 0 peserta */
+  const totalPages=Math.max(1,Math.ceil(totalPeserta/ROWS_PER_PAGE));
+  const printedAt=new Date().toLocaleString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
 
-  let rows='';
-  for(let i=0;i<TOTAL;i++){
-    const pe=pesertaList[i];
-    const even=i%2===1;
-    const n=i+1;
-    const nama=pe?.kary?.nama_lengkap||'';
-    const perner=pe?.perner||'';
-    const unit=pe?.kary?.unit||'';
-    const jabatan=pe?.kary?.jabatan||'';
-    const ttd=pe?(abMap[perner]||''):'';  
-
-    let parafCell='';
-    const imgTag=ttd?`<img class="sig-img" src="${ttd}" alt="TTD"/>`:'';
-    if(!even){
-      parafCell=`<div class="so"><span class="sn">${n}.</span>${imgTag}</div>`;
-    }else{
-      parafCell=`<div class="se"><span class="sn">${n}.</span>${imgTag}</div>`;
-    }
-
-    rows+=`<tr${even?' class="re"':''}>
-      <td class="dn">${n}</td>
-      <td class="dna">${nama}</td>
-      <td class="di">${perner}</td>
-      <td class="du">${unit}</td>
-      <td class="dj">${jabatan}</td>
-      <td class="dp">${parafCell}</td>
-    </tr>`;
-  }
-
-  document.getElementById('formPaper').innerHTML=`
-  <div class="outer">
-
+  /* Build header HTML — reused on every page */
+  function buildHeader(pageNum){
+    const pageInfo=totalPages>1?` (Halaman ${pageNum} / ${totalPages})`:'';
+    return`
     <table class="ht">
       <tr>
         <td class="c-logo">
@@ -295,7 +279,7 @@ function renderForm(plt,pesertaList,abMap){
         </td>
         <td class="c-title">
           <span class="t1">DAFTAR HADIR</span>
-          <span class="t2">PESERTA PELATIHAN</span>
+          <span class="t2">PESERTA PELATIHAN${pageInfo}</span>
         </td>
         <td class="c-fi">
           <div class="fi-line"><span class="fi-lbl">No. Form</span><span>:</span><span style="font-weight:700;">FM-082020-01-00-003</span></div>
@@ -304,7 +288,6 @@ function renderForm(plt,pesertaList,abMap){
         </td>
       </tr>
     </table>
-
     <table class="it">
       <tr>
         <td class="il">Hari / Tanggal</td><td class="is">:</td><td class="iv">${fmtTgl(plt.tanggal)}</td>
@@ -319,25 +302,66 @@ function renderForm(plt,pesertaList,abMap){
         <td class="il">Tempat</td><td class="is">:</td><td class="iv">${plt.lokasi||'–'}</td>
         <td class="il imb">Penyelenggara</td><td class="is">:</td><td class="iv">${plt.penyelenggara||plt.unit_pembuat||'–'}</td>
       </tr>
-    </table>
+    </table>`;
+  }
 
-    <table class="pt">
-      <thead>
-        <tr>
-          <th class="cn">No.</th>
-          <th class="cna" style="text-align:left;padding-left:6px;">Nama Lengkap</th>
-          <th class="ci">No. Induk</th>
-          <th class="cu">Unit</th>
-          <th class="cj">Jabatan</th>
-          <th class="cp">Paraf</th>
-        </tr>
-      </thead>
-      <tbody>${rows}</tbody>
-    </table>
+  /* Build rows for one page */
+  function buildRows(pageIndex){
+    const startIdx=pageIndex*ROWS_PER_PAGE; /* 0-based peserta index */
+    let rows='';
+    for(let r=0;r<ROWS_PER_PAGE;r++){
+      const peIdx=startIdx+r;
+      const pe=pesertaList[peIdx];
+      const even=r%2===1;
+      const rowNum=peIdx+1; /* global row number across pages */
+      const nama=pe?.kary?.nama_lengkap||'';
+      const perner=pe?.perner||'';
+      const unit=pe?.kary?.unit||'';
+      const jabatan=pe?.kary?.jabatan||'';
+      const ttd=pe?(abMap[perner]||''):'';
+      const imgTag=ttd?`<img class="sig-img" src="${ttd}" alt="TTD"/>`:'';
+      const parafCell=!even
+        ?`<div class="so"><span class="sn">${pe?rowNum+'.' : ''}</span>${imgTag}</div>`
+        :`<div class="se"><span class="sn">${pe?rowNum+'.' : ''}</span>${imgTag}</div>`;
+      rows+=`<tr${even?' class="re"':''}>
+        <td class="dn">${pe?rowNum:''}</td>
+        <td class="dna">${nama}</td>
+        <td class="di">${perner}</td>
+        <td class="du">${unit}</td>
+        <td class="dj">${jabatan}</td>
+        <td class="dp">${parafCell}</td>
+      </tr>`;
+    }
+    return rows;
+  }
 
-  </div>
-  <div class="fn">* Dicetak melalui E-Attendance System PT Sido Muncul pada ${new Date().toLocaleString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
-  `;
+  /* Assemble all pages */
+  let allPages='';
+  for(let pg=0;pg<totalPages;pg++){
+    const isLast=pg===totalPages-1;
+    allPages+=`
+    <div class="form-page${isLast?'':' page-break'}">
+      <div class="outer">
+        ${buildHeader(pg+1)}
+        <table class="pt">
+          <thead>
+            <tr>
+              <th class="cn">No.</th>
+              <th class="cna" style="text-align:left;padding-left:6px;">Nama Lengkap</th>
+              <th class="ci">No. Induk</th>
+              <th class="cu">Unit</th>
+              <th class="cj">Jabatan</th>
+              <th class="cp">Paraf</th>
+            </tr>
+          </thead>
+          <tbody>${buildRows(pg)}</tbody>
+        </table>
+      </div>
+      <div class="fn">* Halaman ${pg+1}/${totalPages} · Total ${totalPeserta} peserta · Dicetak: ${printedAt}</div>
+    </div>`;
+  }
+
+  document.getElementById('formPaper').innerHTML=allPages;
 }
 
 init();
