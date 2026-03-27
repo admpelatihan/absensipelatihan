@@ -640,7 +640,7 @@
         <div class="fl-group"><div class="fl-lbl">Unit</div><select id="filterRekapUnit" style="min-width:115px;"></select></div>
         <div class="fl-group"><div class="fl-lbl">Bagian</div><select id="filterRekapBagian" style="min-width:125px;"></select></div>
         <div class="fl-group"><div class="fl-lbl">Core</div><select id="filterRekapCore" style="min-width:165px;"></select></div>
-        <div class="fl-group"><div class="fl-lbl">Status</div><select id="filterRekapStatus"><option value="">Semua</option><option value="lunas">Lunas</option><option value="refresh">Refresh</option><option value="belum">Belum</option></select></div>
+        <div class="fl-group"><div class="fl-lbl">Status</div><select id="filterRekapStatus"><option value="">Semua</option><option value="lunas">Sudah Ikut (Valid)</option><option value="refresh">Sudah Ikut (Perlu Diperbarui)</option><option value="belum">Belum Pernah</option></select></div>
         <div class="fl-group"><div class="fl-lbl">Tahun</div><select id="filterRekapTahun" style="min-width:88px;"></select></div>
       </div>
       <div class="card">
@@ -1667,10 +1667,12 @@ window.renderRiwayatSaya=()=>{
   const filteredCore=filtered.filter(p=>p.is_core);
   const filteredNonCore=filtered.filter(p=>!p.is_core);
 
-  /* Stats — semua mengikuti filter */
+  /* Stats — Total Pelatihan dan Total Jam mengikuti filter */
   const totalPlt=filtered.length;
   const totalJam=calcJam(filtered);
-  const uniqueCoreFil=new Set(filteredCore.map(p=>p.topik)).size;
+  /* Total Core SELALU dari semua data tanpa filter (histori seumur hidup) */
+  const allCore=allPlts.filter(p=>p.is_core);
+  const uniqueCoreFil=new Set(allCore.map(p=>p.topik)).size;
 
   /* Label filter */
   const bulanNama=['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
@@ -1724,21 +1726,23 @@ function renderCorePanelList(which,perner,allPlts){
     let status='belum',stCls='core-st-belum',stLbl='Belum';
     if(lastDate){
       const diff=(today-new Date(lastDate+'T00:00:00'))/(1000*60*60*24*365);
-      if(diff<=1){status='lunas';stCls='core-st-lunas';stLbl='Lunas';}
-      else{status='refresh';stCls='core-st-refresh';stLbl='Refresh';}
+      if(diff<=1){status='lunas';stCls='core-st-lunas';stLbl='Sudah Ikut';}
+      else{status='refresh';stCls='core-st-refresh';stLbl='Sudah Ikut';}
     }
     return{topik,lastDate,status,stCls,stLbl};
   });
 
-  /* Urutkan: lunas dulu, lalu refresh, lalu belum */
-  const order={lunas:0,refresh:1,belum:2};
-  items.sort((a,b)=>order[a.status]-order[b.status]||(a.topik.localeCompare(b.topik)));
+  /* Urutkan: sudah ikut dulu (lunas & refresh), lalu belum */
+  const order={lunas:0,refresh:0,belum:1};
+  items.sort((a,b)=>order[a.status]-order[b.status]||(b.lastDate||'').localeCompare(a.lastDate||'')||(a.topik.localeCompare(b.topik)));
 
   listEl.innerHTML=items.map(it=>`
     <div class="core-item">
       <div>
         <div class="core-item-name">${it.topik}</div>
-        <div class="core-item-date">${it.lastDate?'Terakhir: '+it.lastDate:'Belum pernah mengikuti'}</div>
+        <div class="core-item-date">${it.lastDate
+          ?`Terakhir: ${it.lastDate}${it.status==='refresh'?' · <span style="color:#d97706;">Perlu diperbarui</span>':''}`
+          :'Belum pernah mengikuti'}</div>
       </div>
       <span class="pill ${it.stCls}" style="font-size:8px;">${it.stLbl}</span>
     </div>`).join('');
@@ -1759,8 +1763,10 @@ window.toggleCorePanel=which=>{
 /* Normalise legacy status values */
 function normStatus(p){
   const st=p.status||'aktif';
-  /* Legacy: 'selesai' → anggap ekpi_selesai (data lama sudah selesai sepenuhnya) */
+  /* Legacy: 'selesai' → ekpi_selesai */
   if(st==='selesai')return 'ekpi_selesai';
+  /* Jika status masih aktif tapi absensi sudah ditutup via kiosk */
+  if(st==='aktif'&&p.absensi_ditutup_at)return 'absensi_ditutup';
   return st;
 }
 
@@ -2555,7 +2561,9 @@ function renderRiwayatKary(){
 
   $('rwyKaryTotalPlt').textContent=filtered.length;
   $('rwyKaryTotalJam').textContent=calcJam(filtered)+'h';
-  $('rwyKaryTotalCore').textContent=new Set(filteredCore.map(p=>p.topik)).size;
+  /* Total Core selalu dari semua data tanpa filter */
+  const allCoreKary=allPlts.filter(p=>p.is_core);
+  $('rwyKaryTotalCore').textContent=new Set(allCoreKary.map(p=>p.topik)).size;
   $('rwyKaryFilterLbl').textContent=(bulan||tahun)?filterLbl:'';
 
   /* Core sub-panel */
@@ -2679,7 +2687,7 @@ function renderRekap(){
   $('rekapSelCnt').textContent=selRekapIdx.size;
   const tbody=$('rekapBody');
   if(!paged.length){tbody.innerHTML=`<tr><td colspan="6" class="empty-st"><div class="empty-lbl">Tidak ada data</div></td></tr>`;renderPag('rekapPag',total,rekapPage,p=>{rekapPage=p;renderRekap();});return;}
-  tbody.innerHTML=paged.map((r,i)=>`<tr><td style="display:${s.role==='unit'?'none':''}"><input type="checkbox" ${selRekapIdx.has(start+i)?'checked':''} onchange="toggleRekap(${start+i})"/></td><td><div style="font-size:13px;font-weight:700;">${r.k.nama_lengkap||'–'}</div><div class="td-sub">${r.k.perner||'–'}</div></td><td class="td-m">${r.k.unit||'–'} / ${r.k.bagian||'–'}</td><td style="font-weight:600;font-size:12px;">${r.topik}</td><td class="td-m">${r.lastDate||'–'}</td><td><span class="pill pill-${r.status}"><span class="pill-dot"></span>${r.status==='lunas'?'Lunas':r.status==='refresh'?'Refresh':'Belum'}</span></td></tr>`).join('');
+  tbody.innerHTML=paged.map((r,i)=>`<tr><td style="display:${s.role==='unit'?'none':''}"><input type="checkbox" ${selRekapIdx.has(start+i)?'checked':''} onchange="toggleRekap(${start+i})"/></td><td><div style="font-size:13px;font-weight:700;">${r.k.nama_lengkap||'–'}</div><div class="td-sub">${r.k.perner||'–'}</div></td><td class="td-m">${r.k.unit||'–'} / ${r.k.bagian||'–'}</td><td style="font-weight:600;font-size:12px;">${r.topik}</td><td class="td-m">${r.lastDate||'–'}</td><td><span class="pill pill-${r.status}"><span class="pill-dot"></span>${r.status==='lunas'?'Sudah Ikut':r.status==='refresh'?'Sudah Ikut*':'Belum'}</span></td></tr>`).join('');
   renderPag('rekapPag',total,rekapPage,p=>{rekapPage=p;renderRekap();});
 }
 ['searchRekap','filterRekapUnit','filterRekapBagian','filterRekapCore','filterRekapStatus','filterRekapTahun'].forEach(id=>{$(id)?.addEventListener('input',()=>{rekapPage=1;renderRekap();});$(id)?.addEventListener('change',()=>{rekapPage=1;renderRekap();});});
@@ -2689,7 +2697,7 @@ $('chkAllRekap')?.addEventListener('change',e=>{const start=(rekapPage-1)*PAGE,p
 $('btnBuatDariRekap')?.addEventListener('click',()=>{selectedPeserta=new Map();[...selRekapIdx].forEach(i=>{const r=rekapData[i];if(r)selectedPeserta.set(r.k.perner,r.k);});clearRekapSel();editPltId=null;$('moPltTitle').textContent='Buat Pelatihan Baru';clearPltForm();renderChips();loadPesertaSearch('','','');showPage('Pelatihan');openModal('moPlt');});
 $('btnExportRekap')?.addEventListener('click',()=>{
   const unit=$('filterRekapUnit')?.value||'Semua',tahun=$('filterRekapTahun')?.value||new Date().getFullYear();
-  const wsData=[['Nama Lengkap','Perner','Unit','Bagian','Topik Core','Tgl Terakhir','Status'],...rekapData.map(r=>[r.k.nama_lengkap,r.k.perner,r.k.unit,r.k.bagian,r.topik,r.lastDate||'',r.status==='lunas'?'Lunas':r.status==='refresh'?'Refresh':'Belum'])];
+  const wsData=[['Nama Lengkap','Perner','Unit','Bagian','Topik Core','Tgl Terakhir','Status'],...rekapData.map(r=>[r.k.nama_lengkap,r.k.perner,r.k.unit,r.k.bagian,r.topik,r.lastDate||'',r.status==='lunas'?'Sudah Ikut':r.status==='refresh'?'Sudah Ikut (Perlu Diperbarui)':'Belum'])];
   const wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet(wsData);ws['!cols']=[{wch:28},{wch:12},{wch:10},{wch:18},{wch:30},{wch:14},{wch:10}];XLSX.utils.book_append_sheet(wb,ws,'Rekap Core');XLSX.writeFile(wb,`Rekap_Core_${unit}_${tahun}.xlsx`);logAct('export_rekap','',{unit,tahun,rows:rekapData.length});
 });
 $('btnUpdateCoreExt')?.addEventListener('click',()=>{setupUcPernerRows();openModal('moUpdateCore');});
