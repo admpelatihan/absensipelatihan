@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="id">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Kiosk Presensi — E-Attendance Sido Muncul</title>
+  <title>Daftar Hadir Presensi — E-Attendance Sido Muncul</title>
   <link rel="icon" href="favicon.png" type="image/png"/>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -57,9 +58,9 @@
     <div class="flex justify-between items-start mb-5">
       <div>
         <h1 id="headerTopik" class="text-2xl font-black leading-tight">Memuat…</h1>
-        <p class="text-emerald-100 font-bold opacity-70 uppercase tracking-widest text-[10px] mt-1">Sido Muncul · Kiosk Presensi Digital</p>
+        <p class="text-emerald-100 font-bold opacity-70 uppercase tracking-widest text-[10px] mt-1">Sido Muncul · Daftar Hadir Presensi Digital</p>
       </div>
-      <button onclick="requestExit()" class="w-11 h-11 rounded-2xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all text-white" title="Keluar dari Kiosk">
+      <button onclick="requestExit()" class="w-11 h-11 rounded-2xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all text-white" title="Keluar dari Daftar Hadir">
         <i class="fas fa-right-from-bracket"></i>
       </button>
     </div>
@@ -89,29 +90,32 @@
     <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-4 px-2">Sudah Absen</h3>
     <div id="signedList"></div>
 
-    <!-- Susulan dari database -->
-    <div id="susulanSection" style="display:none;margin-top:18px;">
-      <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-4 px-2">Tambah dari Database</h3>
-      <div id="susulanList"></div>
-    </div>
+```
+<!-- Susulan dari database -->
+<div id="susulanSection" style="display:none;margin-top:18px;">
+  <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-4 px-2">Tambah dari Database</h3>
+  <div id="susulanList"></div>
+</div>
 
-    <!-- Tidak ditemukan — opsi peserta sementara -->
-    <div id="notFoundSection" style="display:none;margin-top:16px;">
-      <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:18px;padding:18px;">
-        <p style="font-size:10px;font-weight:900;color:#92400e;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">
-          <i class="fas fa-triangle-exclamation" style="margin-right:6px;"></i>Tidak ditemukan di database
-        </p>
-        <p style="font-size:13px;font-weight:600;color:#475569;margin-bottom:14px;line-height:1.5;">Peserta belum terdaftar? Pilih kategori yang sesuai:</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-          <button onclick="openFormSementara('baru')" style="padding:14px;border-radius:16px;background:#064e3b;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;border:none;transition:all .2s;">
-            <i class="fas fa-user-plus" style="display:block;font-size:20px;margin-bottom:6px;"></i>Karyawan Baru<br/>Belum Punya Perner
-          </button>
-          <button onclick="openFormSementara('tamu')" style="padding:14px;border-radius:16px;background:#d97706;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;border:none;transition:all .2s;">
-            <i class="fas fa-building-user" style="display:block;font-size:20px;margin-bottom:6px;"></i>Peserta Tamu<br/>Dari Luar Unit
-          </button>
-        </div>
-      </div>
+<!-- Tidak ditemukan — opsi peserta sementara -->
+<div id="notFoundSection" style="display:none;margin-top:16px;">
+  <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:18px;padding:18px;">
+    <p style="font-size:10px;font-weight:900;color:#92400e;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">
+      <i class="fas fa-triangle-exclamation" style="margin-right:6px;"></i>Tidak ditemukan di database
+    </p>
+    <p style="font-size:13px;font-weight:600;color:#475569;margin-bottom:14px;line-height:1.5;">Peserta belum terdaftar? Pilih kategori yang sesuai:</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <button onclick="openFormSementara('baru')" style="padding:14px;border-radius:16px;background:#064e3b;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;border:none;transition:all .2s;">
+        <i class="fas fa-user-plus" style="display:block;font-size:20px;margin-bottom:6px;"></i>Karyawan Baru<br/>Belum Punya Perner
+      </button>
+      <button onclick="openFormSementara('tamu')" style="padding:14px;border-radius:16px;background:#d97706;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;border:none;transition:all .2s;">
+        <i class="fas fa-building-user" style="display:block;font-size:20px;margin-bottom:6px;"></i>Peserta Tamu<br/>Dari Luar Unit
+      </button>
     </div>
+  </div>
+</div>
+```
+
   </div>
 
   <div class="flex justify-between items-center px-6 py-4 bg-slate-50 border-t border-slate-100 flex-shrink:0;">
@@ -128,6 +132,7 @@
 </div>
 
 <!-- ═══ SIGNATURE OVERLAY ═══ -->
+
 <div id="signatureOverlay" class="signature-overlay">
   <div class="sig-pad-wrap">
     <h2 class="text-2xl font-black text-slate-800 mb-1" id="signerName">–</h2>
@@ -147,6 +152,7 @@
 </div>
 
 <!-- ═══ FORM PESERTA SEMENTARA ═══ -->
+
 <div id="formSementaraOverlay" class="dark-overlay">
   <div style="background:#fff;width:100%;max-width:460px;border-radius:28px;padding:28px;animation:slideUp .22s cubic-bezier(.4,0,.2,1);">
     <h2 id="fsTitle" style="font-size:18px;font-weight:900;color:#0f172a;margin-bottom:4px;">Tambah Peserta</h2>
@@ -180,6 +186,7 @@
 </div>
 
 <!-- ═══ MODAL PASSWORD TAMBAH PESERTA ═══ -->
+
 <div id="tambahPesertaOverlay" class="lock-overlay">
   <div style="width:100%;max-width:380px;padding:36px;text-align:center;">
     <div style="width:64px;height:64px;background:#f0fdf4;color:#059669;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 18px;">
@@ -197,6 +204,7 @@
 </div>
 
 <!-- ═══ PANEL PILIHAN TAMBAH PESERTA (setelah password verified) ═══ -->
+
 <div id="pilihTambahOverlay" class="lock-overlay">
   <div style="width:100%;max-width:420px;padding:32px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
@@ -204,79 +212,86 @@
       <button onclick="cancelPilihTambah()" style="width:32px;height:32px;border-radius:9px;border:1px solid #e2e8f0;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:13px;">✕</button>
     </div>
 
-    <!-- Pencarian dari database -->
-    <div style="margin-bottom:16px;">
-      <label style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;margin-bottom:7px;display:block;">Cari di Database Karyawan</label>
-      <div style="position:relative;">
-        <i class="fas fa-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:13px;pointer-events:none;"></i>
-        <input type="search" id="tambahCari" oninput="cariUntukTambah()" style="width:100%;padding:13px 13px 13px 40px;border:2px solid #e2e8f0;border-radius:14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;color:#1e293b;outline:none;transition:all .2s;box-sizing:border-box;" placeholder="Nama atau nomor perner…"/>
-      </div>
-      <div id="tambahCariResult" style="margin-top:8px;max-height:200px;overflow-y:auto;"></div>
-    </div>
+```
+<!-- Pencarian dari database -->
+<div style="margin-bottom:16px;">
+  <label style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;margin-bottom:7px;display:block;">Cari di Database Karyawan</label>
+  <div style="position:relative;">
+    <i class="fas fa-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:13px;pointer-events:none;"></i>
+    <input type="search" id="tambahCari" oninput="cariUntukTambah()" style="width:100%;padding:13px 13px 13px 40px;border:2px solid #e2e8f0;border-radius:14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;color:#1e293b;outline:none;transition:all .2s;box-sizing:border-box;" placeholder="Nama atau nomor perner…"/>
+  </div>
+  <div id="tambahCariResult" style="margin-top:8px;max-height:200px;overflow-y:auto;"></div>
+</div>
 
-    <!-- Pemisah -->
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-      <div style="flex:1;height:1px;background:#e2e8f0;"></div>
-      <span style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">Atau</span>
-      <div style="flex:1;height:1px;background:#e2e8f0;"></div>
-    </div>
+<!-- Pemisah -->
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+  <div style="flex:1;height:1px;background:#e2e8f0;"></div>
+  <span style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">Atau</span>
+  <div style="flex:1;height:1px;background:#e2e8f0;"></div>
+</div>
 
-    <!-- Dua pilihan untuk yang tidak ada di database -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-      <button onclick="cancelPilihTambah();openFormSementara('baru')" style="padding:14px;border-radius:16px;background:#064e3b;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.3px;cursor:pointer;border:none;line-height:1.4;">
-        <i class="fas fa-user-plus" style="display:block;font-size:18px;margin-bottom:6px;"></i>Karyawan Baru<br/>Belum Punya Perner
-      </button>
-      <button onclick="cancelPilihTambah();openFormSementara('tamu')" style="padding:14px;border-radius:16px;background:#d97706;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.3px;cursor:pointer;border:none;line-height:1.4;">
-        <i class="fas fa-building-user" style="display:block;font-size:18px;margin-bottom:6px;"></i>Peserta Tamu<br/>Dari Luar Unit
-      </button>
-    </div>
+<!-- Dua pilihan untuk yang tidak ada di database -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+  <button onclick="cancelPilihTambah();openFormSementara('baru')" style="padding:14px;border-radius:16px;background:#064e3b;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.3px;cursor:pointer;border:none;line-height:1.4;">
+    <i class="fas fa-user-plus" style="display:block;font-size:18px;margin-bottom:6px;"></i>Karyawan Baru<br/>Belum Punya Perner
+  </button>
+  <button onclick="cancelPilihTambah();openFormSementara('tamu')" style="padding:14px;border-radius:16px;background:#d97706;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.3px;cursor:pointer;border:none;line-height:1.4;">
+    <i class="fas fa-building-user" style="display:block;font-size:18px;margin-bottom:6px;"></i>Peserta Tamu<br/>Dari Luar Unit
+  </button>
+</div>
+```
+
   </div>
 </div>
 
 <!-- ═══ EXIT MODAL ═══ -->
+
 <div id="lockOverlay" class="lock-overlay">
   <div style="width:100%;max-width:380px;padding:36px;text-align:center;">
     <div style="width:72px;height:72px;background:#f0fdf4;color:#059669;border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 20px;">
       <i class="fas fa-shield-halved"></i>
     </div>
-    <h2 style="font-size:18px;font-weight:900;color:#0f172a;margin-bottom:6px;text-transform:uppercase;letter-spacing:-.3px;">Keluar dari Kiosk?</h2>
+    <h2 style="font-size:18px;font-weight:900;color:#0f172a;margin-bottom:6px;text-transform:uppercase;letter-spacing:-.3px;">Keluar dari Daftar Hadir?</h2>
     <p style="font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:22px;">Masukkan Kode Exit atau Password Pembuat Form</p>
     <input type="password" id="lockPass" style="width:100%;padding:18px;background:#f8fafc;border:2px solid #e2e8f0;border-radius:18px;text-align:center;font-size:22px;letter-spacing:10px;outline:none;font-family:'Plus Jakarta Sans',sans-serif;font-weight:900;margin-bottom:12px;box-sizing:border-box;" placeholder="••••••"/>
     <div id="lockError" class="hidden" style="color:#e11d48;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Password Salah!</div>
 
-    <!-- Step 1: Tombol verifikasi -->
-    <div id="lockStep1" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-      <button onclick="cancelExit()" style="padding:15px;border-radius:16px;background:#f1f5f9;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;color:#475569;cursor:pointer;">Batal</button>
-      <button onclick="verifyPassword()" style="padding:15px;border-radius:16px;background:#1e293b;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;color:#fff;cursor:pointer;">Lanjut</button>
-    </div>
+```
+<!-- Step 1: Tombol verifikasi -->
+<div id="lockStep1" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+  <button onclick="cancelExit()" style="padding:15px;border-radius:16px;background:#f1f5f9;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;color:#475569;cursor:pointer;">Batal</button>
+  <button onclick="verifyPassword()" style="padding:15px;border-radius:16px;background:#1e293b;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;color:#fff;cursor:pointer;">Lanjut</button>
+</div>
 
-    <!-- Step 2: Dua pilihan keluar -->
-    <div id="lockStep2" style="display:none;">
-      <p style="font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;">Pilih tindakan:</p>
-      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
-        <!-- Keluar saja -->
-        <button onclick="doExit(false)" class="exit-choice" style="background:#fff;border-color:#e2e8f0;color:#475569;">
-          <div style="width:42px;height:42px;border-radius:13px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <i class="fas fa-door-open" style="color:#64748b;font-size:17px;"></i>
-          </div>
-          <div style="text-align:left;">
-            <div style="font-weight:900;color:#0f172a;font-size:12px;">Keluar Saja</div>
-            <div style="font-size:9px;color:#94a3b8;font-weight:600;text-transform:none;margin-top:2px;letter-spacing:0;">Absensi tetap terbuka · Kiosk bisa dibuka kembali</div>
-          </div>
-        </button>
-        <!-- Keluar dan tutup absensi -->
-        <button onclick="doExit(true)" class="exit-choice" style="background:#f0fdf4;border-color:#a7f3d0;color:#064e3b;">
-          <div style="width:42px;height:42px;border-radius:13px;background:#064e3b;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <i class="fas fa-clipboard-check" style="color:#fff;font-size:17px;"></i>
-          </div>
-          <div style="text-align:left;">
-            <div style="font-weight:900;color:#064e3b;font-size:12px;">Keluar &amp; Tutup Absensi</div>
-            <div style="font-size:9px;color:#059669;font-weight:600;text-transform:none;margin-top:2px;letter-spacing:0;">Peserta tanpa TTD dihapus · Status → "Absensi Ditutup"</div>
-          </div>
-        </button>
+<!-- Step 2: Dua pilihan keluar -->
+<div id="lockStep2" style="display:none;">
+  <p style="font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;">Pilih tindakan:</p>
+  <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
+    <!-- Keluar saja -->
+    <button onclick="doExit(false)" class="exit-choice" style="background:#fff;border-color:#e2e8f0;color:#475569;">
+      <div style="width:42px;height:42px;border-radius:13px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="fas fa-door-open" style="color:#64748b;font-size:17px;"></i>
       </div>
-      <button onclick="cancelExit()" style="background:none;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;">Batal</button>
-    </div>
+      <div style="text-align:left;">
+        <div style="font-weight:900;color:#0f172a;font-size:12px;">Keluar Saja</div>
+        <div style="font-size:9px;color:#94a3b8;font-weight:600;text-transform:none;margin-top:2px;letter-spacing:0;">Absensi tetap terbuka · Daftar Hadir bisa dibuka kembali</div>
+      </div>
+    </button>
+    <!-- Keluar dan tutup absensi -->
+    <button onclick="doExit(true)" class="exit-choice" style="background:#f0fdf4;border-color:#a7f3d0;color:#064e3b;">
+      <div style="width:42px;height:42px;border-radius:13px;background:#064e3b;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i class="fas fa-clipboard-check" style="color:#fff;font-size:17px;"></i>
+      </div>
+      <div style="text-align:left;">
+        <div style="font-weight:900;color:#064e3b;font-size:12px;">Keluar &amp; Tutup Absensi</div>
+        <div style="font-size:9px;color:#059669;font-weight:600;text-transform:none;margin-top:2px;letter-spacing:0;">Peserta tanpa TTD dihapus · Status → "Absensi Ditutup"</div>
+      </div>
+    </button>
+  </div>
+  <button onclick="cancelExit()" style="background:none;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;">Batal</button>
+</div>
+```
+
   </div>
 </div>
 
@@ -361,7 +376,7 @@ async function init(){
     $('headerTime').textContent=plt.waktu_mulai&&plt.waktu_selesai?plt.waktu_mulai+'–'+plt.waktu_selesai:'–';
     $('headerInstr').textContent=plt.instruktur||'–';
     $('headerUnit').textContent=plt.penyelenggara||plt.unit_pembuat||'–';
-    document.title=`Kiosk – ${plt.topik}`;
+    document.title=`Daftar Hadir – ${plt.topik}`;
 
     const ks=await getDocs(collection(db,'karyawan'));
     allKary=ks.docs.map(d=>({id:d.id,...d.data()}));
@@ -601,7 +616,7 @@ window.saveAbsen=async()=>{
   finally{$('absenSpinner').style.display='none';$('absenLabel').textContent='Simpan Absensi';$('btnSimpanAbsen').disabled=false;}
 };
 
-/* ── Tambah Peserta langsung dari kiosk (dengan password) ── */
+/* ── Tambah Peserta langsung dari daftar hadir ── */
 window.requestTambahPeserta=()=>{
   $('tambahPass').value='';
   $('tambahPassError').classList.add('hidden');
@@ -719,10 +734,29 @@ window.doExit=async(tutupAbsensi)=>{
         status:'absensi_ditutup',
         absensi_ditutup_oleh:uid,
         absensi_ditutup_nama:nama,
-        absensi_ditutup_at:now, /* string agar mudah ditampilkan */
+        absensi_ditutup_at:now,
         peserta_hadir:Object.keys(absensiMap).length,
         peserta_tidak_hadir_dihapus:hapusCount
       });
+
+      /* Tulis ke koleksi tugas_pending agar Tugas Saya di app.html bisa membacanya */
+      const pltSnap=await getDoc(doc(db,'pelatihan',pltId));
+      const pltData=pltSnap.data()||{};
+      await setDoc(doc(db,'tugas_pending',pltId),{
+        id_pelatihan:pltId,
+        topik:pltData.topik||'–',
+        tanggal:pltData.tanggal||'',
+        unit:pltData.unit_pembuat||'',
+        instruktur:pltData.instruktur||'',
+        is_core:pltData.is_core||false,
+        status_tugas:'menunggu_pdf',
+        ditutup_oleh_nama:nama,
+        ditutup_oleh_uid:uid,
+        ditutup_at:now,
+        peserta_hadir:Object.keys(absensiMap).length,
+        updated_at:serverTimestamp()
+      });
+
       toast(`Absensi ditutup · ${Object.keys(absensiMap).length} hadir · ${hapusCount} tidak hadir dihapus`,'warn');
     }catch(e){toast('Gagal tutup absensi: '+e.message,'error');}
     finally{hideLoad();}
@@ -739,5 +773,6 @@ window.doExit=async(tutupAbsensi)=>{
 
 init();
 </script>
+
 </body>
 </html>
