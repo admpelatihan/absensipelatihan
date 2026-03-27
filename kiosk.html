@@ -713,10 +713,13 @@ window.doExit=async(tutupAbsensi)=>{
 
       /* Update status pelatihan */
       const uid=localStorage.getItem('uid')||'kiosk';
+      const nama=localStorage.getItem('nama')||uid;
+      const now=new Date().toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
       await updateDoc(doc(db,'pelatihan',pltId),{
         status:'absensi_ditutup',
         absensi_ditutup_oleh:uid,
-        absensi_ditutup_at:serverTimestamp(),
+        absensi_ditutup_nama:nama,
+        absensi_ditutup_at:now, /* string agar mudah ditampilkan */
         peserta_hadir:Object.keys(absensiMap).length,
         peserta_tidak_hadir_dihapus:hapusCount
       });
