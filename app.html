@@ -534,7 +534,7 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
       </button>
     </div>
     <!-- Toggle Card/Table -->
-    <div class="fl-group" style="margin-left:auto;">
+    <div class="fl-group">
       <div class="fl-lbl">Tampilan</div>
       <div style="display:flex;border:1.5px solid #e2e8f0;border-radius:10px;overflow:hidden;">
         <button id="btnViewCard" class="btn btn-sm" style="border:none;border-radius:0;padding:7px 12px;"><i class="fas fa-grip"></i></button>
@@ -3240,7 +3240,7 @@ function updateTugasBadge(count){
   });
 }
 
-async function renderTugasSaya(){
+window.renderTugasSaya=async function renderTugasSaya(){
   const s=S();
   $('tugasUserInfo').innerHTML=`<span style="font-weight:900;color:#0f172a;">${s.nama||s.uid}</span>&nbsp;<span style="background:#ede9fe;color:#5b21b6;font-size:8px;font-weight:900;border-radius:5px;padding:2px 7px;text-transform:uppercase;">${s.role==='superadmin'?'Superadmin':'Level 2+'}</span>`;
   $('tugasPendingList').innerHTML=`<div style="text-align:center;padding:28px;font-size:12px;font-weight:700;color:#94a3b8;"><i class="fas fa-circle-notch fa-spin" style="margin-right:8px;"></i>Memuat data...</div>`;
