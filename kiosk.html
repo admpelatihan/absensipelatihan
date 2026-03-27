@@ -462,8 +462,7 @@ async function init(){
       absensiMap={};
       snap.forEach(d=>{const x=d.data();absensiMap[x.perner]={ttd:x.ttd_base64,ts:x.timestamp};});
       renderLists($('searchInput').value);
-      $('presentCount').textContent=Object.keys(absensiMap).length;
-      $('tamuCount').textContent=pesertaList.filter(k=>k._isTamu).length;
+      updateKioskStats();
     });
   }catch(e){toast('Gagal memuat: '+e.message,'error');}
   finally{hideLoad();}
@@ -476,7 +475,12 @@ function renderLists(filter=''){
   const q=filter.toLowerCase().trim();
   let sp=0,ss=0;
 
-  pesertaList.forEach(k=>{
+  /* Urutkan peserta abjad sebelum render */
+  const sorted=[...pesertaList].sort((a,b)=>
+    (a.nama_lengkap||a.perner||'').localeCompare(b.nama_lengkap||b.perner||'','id')
+  );
+
+  sorted.forEach(k=>{
     if(q.length>=2&&!(k.nama_lengkap||'').toLowerCase().includes(q)&&!(k.perner||'').includes(q))return;
     const hadir=!!absensiMap[k.perner];
     const card=document.createElement('div');
