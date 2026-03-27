@@ -998,7 +998,7 @@
         <button onclick="resetKeDefault()" style="padding:4px 10px;border-radius:7px;background:#064e3b;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;border:none;cursor:pointer;">Gunakan</button>
       </div>
       <div class="fg" style="position:relative;"><div class="fl">Atau masukkan password baru</div>
-        <input type="password" id="resetPwInput" placeholder="Minimal 8 karakter" style="padding-right:42px;"/>
+        <input type="password" id="resetPwInput" placeholder="Minimal 6 karakter" style="padding-right:42px;"/>
         <button type="button" onclick="toggleField('resetPwInput','resetEye')" style="position:absolute;right:11px;bottom:9px;background:none;border:none;cursor:pointer;color:#94a3b8;"><i id="resetEye" class="far fa-eye"></i></button>
       </div>
     </div>
@@ -3433,7 +3433,7 @@ window.resetKeDefault=()=>{
 $('btnSimpanResetPw')?.addEventListener('click',async()=>{
   const uid=$('btnSimpanResetPw').dataset.uid;
   const pw=$('resetPwInput').value;
-  if(!pw||pw.length<8){toast('Password minimal 8 karakter','error');return;}
+  if(!pw||pw.length<6){toast('Password minimal 6 karakter','error');return;}
 
   showLoad('Mereset password…');
   try{
