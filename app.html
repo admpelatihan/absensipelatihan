@@ -1787,6 +1787,8 @@ function normStatus(p){
   if(st==='selesai')return 'ekpi_selesai';
   /* Jika status masih aktif tapi absensi sudah ditutup via kiosk */
   if(st==='aktif'&&p.absensi_ditutup_at)return 'absensi_ditutup';
+  /* Jika status aktif tapi peserta_hadir sudah diset (kiosk tutup tapi field status tidak terupdate) */
+  if(st==='aktif'&&p.peserta_hadir!==undefined&&p.peserta_tidak_hadir_dihapus!==undefined)return 'absensi_ditutup';
   return st;
 }
 
@@ -1964,6 +1966,8 @@ function setPltExt(show){
 /* Toggle status PDF/eKPI — simpan ke Firestore */
 window.togglePltStatus=async(id,field,el,ev)=>{
   ev.stopPropagation();
+  /* Hanya Level 2+ dan Superadmin yang boleh toggle */
+  if(!canConfirm()){toast('Akses ditolak — hanya Level 2+ atau Superadmin','error');return;}
   const s=S();
   const p=allPelatihan.find(x=>x.id===id); if(!p)return;
   const cur=p[field]||false;
@@ -1976,7 +1980,6 @@ window.togglePltStatus=async(id,field,el,ev)=>{
   try{
     await updateDoc(doc(db,'pelatihan',id),update);
     p[field]=newVal; p[field+'_by']=s.nama; p[field+'_at']=now;
-    /* Update badge langsung tanpa full re-render */
     const isDone=newVal;
     if(field==='status_pdf'){
       el.className=`sbadge sbadge-pdf${isDone?' done':''}`;
@@ -1991,10 +1994,24 @@ window.togglePltStatus=async(id,field,el,ev)=>{
 };
 
 function buildStatusBadges(p){
+  const canClick=canConfirm(); /* hanya Level 2+ dan Superadmin */
   const pdfDone=!!p.status_pdf;
   const ekpiDone=!!p.status_ekpi;
-  const pdfTitle=pdfDone?`PDF ✓ oleh ${p.status_pdf_by||'?'} · ${p.status_pdf_at||''}`:' Tandai PDF sudah dicetak';
-  const ekpiTitle=ekpiDone?`eKPI ✓ oleh ${p.status_ekpi_by||'?'} · ${p.status_ekpi_at||''}`:' Tandai sudah input eKPI';
+  const pdfTitle=pdfDone
+    ?`PDF ✓ oleh ${p.status_pdf_by||'?'} · ${p.status_pdf_at||''}`
+    :canClick?'Tandai PDF sudah dicetak':'PDF belum dicetak';
+  const ekpiTitle=ekpiDone
+    ?`eKPI ✓ oleh ${p.status_ekpi_by||'?'} · ${p.status_ekpi_at||''}`
+    :canClick?'Tandai sudah input eKPI':'eKPI belum diinput';
+  /* Jika tidak bisa klik — tampilkan sebagai info saja (tidak ada onclick) */
+  if(!canClick){
+    return`<span class="sbadge sbadge-pdf${pdfDone?' done':''}" title="${pdfTitle}" style="cursor:default;">
+      <i class="fas fa-${pdfDone?'check':'print'}"></i> PDF
+    </span>
+    <span class="sbadge sbadge-ekpi${ekpiDone?' done':''}" title="${ekpiTitle}" style="cursor:default;">
+      <i class="fas fa-${ekpiDone?'check':'desktop'}"></i> eKPI
+    </span>`;
+  }
   return`<span class="sbadge sbadge-pdf${pdfDone?' done':''}" title="${pdfTitle}"
     onclick="togglePltStatus('${p.id}','status_pdf',this,event)">
     <i class="fas fa-${pdfDone?'check':'print'}"></i> PDF
