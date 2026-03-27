@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="id">
 <head>
   <meta charset="UTF-8"/>
@@ -22,6 +21,7 @@
     .participant-card{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-radius:20px;border:1px solid #f1f5f9;margin-bottom:10px;transition:all .2s;cursor:pointer;background:#fff;}
     .participant-card:hover{border-color:#059669;background:#f0fdf4;}
     .participant-card.signed{background:#f8fafc;opacity:.6;border:1px dashed #cbd5e1;cursor:default;}
+    .participant-card.is-tamu{border-left:3px solid #f59e0b;}
     .signature-overlay{position:fixed;inset:0;background:rgba(6,78,59,.95);backdrop-filter:blur(10px);z-index:100;display:none;flex-direction:column;align-items:center;justify-content:center;padding:18px;}
     .signature-overlay.open{display:flex;animation:fadeIn .2s ease;}
     @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -31,6 +31,8 @@
     canvas.active{border-style:solid;border-color:#059669;}
     .lock-overlay{position:fixed;inset:0;background:#fff;z-index:1000;display:none;align-items:center;justify-content:center;}
     .lock-overlay.open{display:flex;}
+    .dark-overlay{position:fixed;inset:0;background:rgba(6,78,59,.97);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;}
+    .dark-overlay.open{display:flex;animation:fadeIn .2s ease;}
     .offline-bar{display:none;background:#f59e0b;color:#fff;text-align:center;padding:7px;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:1px;}
     .offline-bar.show{display:block;}
     #toastCont{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;}
@@ -40,6 +42,10 @@
     #fullLoad.show{display:flex;}
     .spin-lg{width:40px;height:40px;border:3px solid #d1fae5;border-top-color:#059669;border-radius:50%;animation:spin .7s linear infinite;}
     @keyframes spin{to{transform:rotate(360deg)}}
+    .finput{width:100%;padding:14px 16px;border:2px solid #e2e8f0;border-radius:16px;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:600;color:#1e293b;outline:none;transition:all .2s;background:#f8fafc;box-sizing:border-box;}
+    .finput:focus{border-color:#059669;background:#fff;box-shadow:0 0 0 3px rgba(5,150,105,.1);}
+    .flabel{font-size:10px;font-weight:900;color:#64748b;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;display:block;}
+    .exit-choice{width:100%;padding:16px;border-radius:18px;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;transition:all .2s;text-align:left;display:flex;align-items:center;gap:12px;border:1.5px solid;}
   </style>
 </head>
 <body>
@@ -70,35 +76,63 @@
     <input type="search" id="searchInput" oninput="filterList()" class="search-input" placeholder="Ketik Nama atau Nomor Perner…"/>
   </div>
 
-  <div class="list-container" id="listContainer">
-    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-4 px-2">Daftar Peserta — Belum Absen</h3>
+  <div class="list-container">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:0 2px;min-height:32px;">
+      <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[3px]">Daftar Peserta — Belum Absen</h3>
+      <!-- Ikon plus: tambah peserta dengan password -->
+      <button onclick="requestTambahPeserta()" title="Tambah Peserta"
+        style="width:34px;height:34px;border-radius:10px;background:#064e3b;color:#fff;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;flex-shrink:0;box-shadow:0 2px 8px rgba(6,78,59,.25);">
+        <i class="fas fa-plus"></i>
+      </button>
+    </div>
     <div id="pendingList" class="mb-8"></div>
     <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-4 px-2">Sudah Absen</h3>
     <div id="signedList"></div>
+
+    <!-- Susulan dari database -->
     <div id="susulanSection" style="display:none;margin-top:18px;">
-      <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-4 px-2">Tambah Peserta Susulan</h3>
+      <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[3px] mb-4 px-2">Tambah dari Database</h3>
       <div id="susulanList"></div>
+    </div>
+
+    <!-- Tidak ditemukan — opsi peserta sementara -->
+    <div id="notFoundSection" style="display:none;margin-top:16px;">
+      <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:18px;padding:18px;">
+        <p style="font-size:10px;font-weight:900;color:#92400e;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">
+          <i class="fas fa-triangle-exclamation" style="margin-right:6px;"></i>Tidak ditemukan di database
+        </p>
+        <p style="font-size:13px;font-weight:600;color:#475569;margin-bottom:14px;line-height:1.5;">Peserta belum terdaftar? Pilih kategori yang sesuai:</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <button onclick="openFormSementara('baru')" style="padding:14px;border-radius:16px;background:#064e3b;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;border:none;transition:all .2s;">
+            <i class="fas fa-user-plus" style="display:block;font-size:20px;margin-bottom:6px;"></i>Karyawan Baru<br/>Belum Punya Perner
+          </button>
+          <button onclick="openFormSementara('tamu')" style="padding:14px;border-radius:16px;background:#d97706;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;border:none;transition:all .2s;">
+            <i class="fas fa-building-user" style="display:block;font-size:20px;margin-bottom:6px;"></i>Peserta Tamu<br/>Dari Luar Unit
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="flex justify-between items-center px-6 py-4 bg-slate-50 border-t border-slate-100 flex-shrink-0">
+  <div class="flex justify-between items-center px-6 py-4 bg-slate-50 border-t border-slate-100 flex-shrink:0;">
     <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-      Total: <span id="totalCount" class="text-slate-900">0</span> |
-      Hadir: <span id="presentCount" class="text-emerald-600">0</span>
+      Terdaftar: <span id="totalCount" class="text-slate-900">0</span> &nbsp;|&nbsp;
+      Hadir: <span id="presentCount" class="text-emerald-600">0</span> &nbsp;|&nbsp;
+      Tamu: <span id="tamuCount" class="text-amber-600">0</span>
     </p>
     <div class="flex items-center gap-2">
       <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-      <span class="text-[9px] font-black text-emerald-700 uppercase tracking-widest">Sistem Aktif</span>
+      <span class="text-[9px] font-black text-emerald-700 uppercase tracking-widest">Absensi Terbuka</span>
     </div>
   </div>
 </div>
 
-<!-- SIGNATURE OVERLAY -->
-
+<!-- ═══ SIGNATURE OVERLAY ═══ -->
 <div id="signatureOverlay" class="signature-overlay">
   <div class="sig-pad-wrap">
     <h2 class="text-2xl font-black text-slate-800 mb-1" id="signerName">–</h2>
-    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-5" id="signerInfo">–</p>
+    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1" id="signerInfo">–</p>
+    <p id="signerTag" style="display:none;font-size:9px;font-weight:900;color:#d97706;background:#fffbeb;border-radius:99px;padding:3px 12px;display:inline-block;margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px;"></p>
     <canvas id="signCanvas"></canvas>
     <div class="grid grid-cols-2 gap-4 mt-5">
       <button onclick="clearCanvas()" class="py-4 rounded-2xl bg-slate-100 text-slate-600 font-black text-[10px] uppercase tracking-widest hover:bg-slate-200 transition-all"><i class="fas fa-eraser mr-2"></i>Ulangi</button>
@@ -112,20 +146,136 @@
   </div>
 </div>
 
-<!-- EXIT / LOCK MODAL — password required only when leaving kiosk -->
+<!-- ═══ FORM PESERTA SEMENTARA ═══ -->
+<div id="formSementaraOverlay" class="dark-overlay">
+  <div style="background:#fff;width:100%;max-width:460px;border-radius:28px;padding:28px;animation:slideUp .22s cubic-bezier(.4,0,.2,1);">
+    <h2 id="fsTitle" style="font-size:18px;font-weight:900;color:#0f172a;margin-bottom:4px;">Tambah Peserta</h2>
+    <p id="fsDesc" style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;">–</p>
+    <div style="display:flex;flex-direction:column;gap:13px;">
+      <div>
+        <label class="flabel">Nama Lengkap <span style="color:#e11d48;">*</span></label>
+        <input type="text" id="fsNama" class="finput" placeholder="Nama lengkap"/>
+      </div>
+      <div>
+        <label class="flabel">Unit / Departemen <span style="color:#e11d48;">*</span></label>
+        <input type="text" id="fsUnit" class="finput" placeholder="Contoh: COD 2, HR, QA"/>
+      </div>
+      <div>
+        <label class="flabel">Nomor Perner <span style="font-weight:600;color:#94a3b8;text-transform:none;letter-spacing:0;">(opsional)</span></label>
+        <input type="text" id="fsPerner" class="finput" placeholder="Kosongkan jika belum ada"/>
+        <p id="fsPernerNote" style="font-size:10px;font-weight:600;color:#94a3b8;margin-top:5px;"></p>
+      </div>
+      <div>
+        <label class="flabel">Jabatan <span style="font-weight:600;color:#94a3b8;text-transform:none;letter-spacing:0;">(opsional)</span></label>
+        <input type="text" id="fsJabatan" class="finput" placeholder="Jabatan peserta"/>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;">
+      <button onclick="closeFormSementara()" style="padding:15px;border-radius:16px;background:#f1f5f9;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;color:#475569;cursor:pointer;">Batal</button>
+      <button onclick="simpanPesertaSementara()" style="padding:15px;border-radius:16px;background:#064e3b;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;color:#fff;cursor:pointer;letter-spacing:.5px;">
+        <i class="fas fa-pen" style="margin-right:6px;"></i>Lanjut Tanda Tangan
+      </button>
+    </div>
+  </div>
+</div>
 
+<!-- ═══ MODAL PASSWORD TAMBAH PESERTA ═══ -->
+<div id="tambahPesertaOverlay" class="lock-overlay">
+  <div style="width:100%;max-width:380px;padding:36px;text-align:center;">
+    <div style="width:64px;height:64px;background:#f0fdf4;color:#059669;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 18px;">
+      <i class="fas fa-user-plus"></i>
+    </div>
+    <h2 style="font-size:17px;font-weight:900;color:#0f172a;margin-bottom:6px;text-transform:uppercase;letter-spacing:-.3px;">Tambah Peserta</h2>
+    <p style="font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:22px;">Masukkan Password untuk Melanjutkan</p>
+    <input type="password" id="tambahPass" style="width:100%;padding:18px;background:#f8fafc;border:2px solid #e2e8f0;border-radius:18px;text-align:center;font-size:22px;letter-spacing:10px;outline:none;font-family:'Plus Jakarta Sans',sans-serif;font-weight:900;margin-bottom:12px;box-sizing:border-box;" placeholder="••••••"/>
+    <div id="tambahPassError" class="hidden" style="color:#e11d48;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Password Salah!</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <button onclick="cancelTambahPeserta()" style="padding:15px;border-radius:16px;background:#f1f5f9;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;color:#475569;cursor:pointer;">Batal</button>
+      <button onclick="verifyTambahPeserta()" style="padding:15px;border-radius:16px;background:#064e3b;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;color:#fff;cursor:pointer;">Lanjut</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PANEL PILIHAN TAMBAH PESERTA (setelah password verified) ═══ -->
+<div id="pilihTambahOverlay" class="lock-overlay">
+  <div style="width:100%;max-width:420px;padding:32px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <h2 style="font-size:17px;font-weight:900;color:#0f172a;text-transform:uppercase;">Tambah Peserta</h2>
+      <button onclick="cancelPilihTambah()" style="width:32px;height:32px;border-radius:9px;border:1px solid #e2e8f0;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:13px;">✕</button>
+    </div>
+
+    <!-- Pencarian dari database -->
+    <div style="margin-bottom:16px;">
+      <label style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;margin-bottom:7px;display:block;">Cari di Database Karyawan</label>
+      <div style="position:relative;">
+        <i class="fas fa-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:13px;pointer-events:none;"></i>
+        <input type="search" id="tambahCari" oninput="cariUntukTambah()" style="width:100%;padding:13px 13px 13px 40px;border:2px solid #e2e8f0;border-radius:14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;color:#1e293b;outline:none;transition:all .2s;box-sizing:border-box;" placeholder="Nama atau nomor perner…"/>
+      </div>
+      <div id="tambahCariResult" style="margin-top:8px;max-height:200px;overflow-y:auto;"></div>
+    </div>
+
+    <!-- Pemisah -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+      <div style="flex:1;height:1px;background:#e2e8f0;"></div>
+      <span style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">Atau</span>
+      <div style="flex:1;height:1px;background:#e2e8f0;"></div>
+    </div>
+
+    <!-- Dua pilihan untuk yang tidak ada di database -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <button onclick="cancelPilihTambah();openFormSementara('baru')" style="padding:14px;border-radius:16px;background:#064e3b;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.3px;cursor:pointer;border:none;line-height:1.4;">
+        <i class="fas fa-user-plus" style="display:block;font-size:18px;margin-bottom:6px;"></i>Karyawan Baru<br/>Belum Punya Perner
+      </button>
+      <button onclick="cancelPilihTambah();openFormSementara('tamu')" style="padding:14px;border-radius:16px;background:#d97706;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.3px;cursor:pointer;border:none;line-height:1.4;">
+        <i class="fas fa-building-user" style="display:block;font-size:18px;margin-bottom:6px;"></i>Peserta Tamu<br/>Dari Luar Unit
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ EXIT MODAL ═══ -->
 <div id="lockOverlay" class="lock-overlay">
-  <div class="w-full max-w-sm p-10 text-center">
-    <div class="w-20 h-20 bg-emerald-50 text-emerald-600 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-6 shadow-sm">
+  <div style="width:100%;max-width:380px;padding:36px;text-align:center;">
+    <div style="width:72px;height:72px;background:#f0fdf4;color:#059669;border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 20px;">
       <i class="fas fa-shield-halved"></i>
     </div>
-    <h2 class="text-xl font-black text-slate-800 mb-2 uppercase tracking-tight">Keluar dari Kiosk?</h2>
-    <p class="text-[10px] font-black text-slate-400 mb-7 uppercase tracking-widest">Masukkan Kode Exit atau Password Pembuat Form</p>
-    <input type="password" id="lockPass" class="w-full p-5 bg-slate-100 border-none rounded-2xl text-center text-2xl tracking-[10px] outline-none mb-4 focus:ring-2 focus:ring-emerald-500/20 font-black" placeholder="••••••"/>
-    <div id="lockError" class="hidden text-rose-500 text-[10px] font-black mb-4 uppercase tracking-widest">Password Salah!</div>
-    <div class="grid grid-cols-2 gap-3">
-      <button onclick="cancelExit()" class="py-4 rounded-2xl bg-slate-100 text-slate-500 font-black text-[10px] uppercase tracking-widest hover:bg-slate-200 transition-all">Batal</button>
-      <button onclick="confirmExit()" class="py-4 rounded-2xl bg-slate-800 text-white font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 transition-all">Keluar</button>
+    <h2 style="font-size:18px;font-weight:900;color:#0f172a;margin-bottom:6px;text-transform:uppercase;letter-spacing:-.3px;">Keluar dari Kiosk?</h2>
+    <p style="font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:22px;">Masukkan Kode Exit atau Password Pembuat Form</p>
+    <input type="password" id="lockPass" style="width:100%;padding:18px;background:#f8fafc;border:2px solid #e2e8f0;border-radius:18px;text-align:center;font-size:22px;letter-spacing:10px;outline:none;font-family:'Plus Jakarta Sans',sans-serif;font-weight:900;margin-bottom:12px;box-sizing:border-box;" placeholder="••••••"/>
+    <div id="lockError" class="hidden" style="color:#e11d48;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;">Password Salah!</div>
+
+    <!-- Step 1: Tombol verifikasi -->
+    <div id="lockStep1" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <button onclick="cancelExit()" style="padding:15px;border-radius:16px;background:#f1f5f9;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;color:#475569;cursor:pointer;">Batal</button>
+      <button onclick="verifyPassword()" style="padding:15px;border-radius:16px;background:#1e293b;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;text-transform:uppercase;color:#fff;cursor:pointer;">Lanjut</button>
+    </div>
+
+    <!-- Step 2: Dua pilihan keluar -->
+    <div id="lockStep2" style="display:none;">
+      <p style="font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;">Pilih tindakan:</p>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
+        <!-- Keluar saja -->
+        <button onclick="doExit(false)" class="exit-choice" style="background:#fff;border-color:#e2e8f0;color:#475569;">
+          <div style="width:42px;height:42px;border-radius:13px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="fas fa-door-open" style="color:#64748b;font-size:17px;"></i>
+          </div>
+          <div style="text-align:left;">
+            <div style="font-weight:900;color:#0f172a;font-size:12px;">Keluar Saja</div>
+            <div style="font-size:9px;color:#94a3b8;font-weight:600;text-transform:none;margin-top:2px;letter-spacing:0;">Absensi tetap terbuka · Kiosk bisa dibuka kembali</div>
+          </div>
+        </button>
+        <!-- Keluar dan tutup absensi -->
+        <button onclick="doExit(true)" class="exit-choice" style="background:#f0fdf4;border-color:#a7f3d0;color:#064e3b;">
+          <div style="width:42px;height:42px;border-radius:13px;background:#064e3b;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <i class="fas fa-clipboard-check" style="color:#fff;font-size:17px;"></i>
+          </div>
+          <div style="text-align:left;">
+            <div style="font-weight:900;color:#064e3b;font-size:12px;">Keluar &amp; Tutup Absensi</div>
+            <div style="font-size:9px;color:#059669;font-weight:600;text-transform:none;margin-top:2px;letter-spacing:0;">Peserta tanpa TTD dihapus · Status → "Absensi Ditutup"</div>
+          </div>
+        </button>
+      </div>
+      <button onclick="cancelExit()" style="background:none;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;cursor:pointer;">Batal</button>
     </div>
   </div>
 </div>
@@ -138,43 +288,46 @@ import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.2/fire
 import { getAuth, signInWithEmailAndPassword, setPersistence, browserLocalPersistence }
                             from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {
-  getFirestore, doc, getDoc, getDocs, addDoc, setDoc,
-  collection, query, where, onSnapshot, serverTimestamp
+  getFirestore, doc, getDoc, getDocs, addDoc, setDoc, updateDoc,
+  collection, query, where, onSnapshot, serverTimestamp, writeBatch
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const FB={apiKey:"AIzaSyDTVdA6QD_FsHeHVMm4l67NJP5_rpL_JmI",authDomain:"absensipelatihan-844d8.firebaseapp.com",projectId:"absensipelatihan-844d8",storageBucket:"absensipelatihan-844d8.firebasestorage.app",messagingSenderId:"518545818905",appId:"1:518545818905:web:d56035cc0678c58328f188"};
 const app=initializeApp(FB);
 const auth=getAuth(app);
 const db=getFirestore(app);
+await setPersistence(auth,browserLocalPersistence);
 
-await setPersistence(auth, browserLocalPersistence);
-
-const EXIT_CODE="SM2024";
+const EXIT_CODE='SM2024';
 const params=new URLSearchParams(location.search);
 const pltId=params.get('id')||'';
 
 let plt=null,pesertaList=[],absensiMap={},allKary=[],creatorPw='';
 let isDrawing=false,hasDrawn=false,currentPerner=null;
+let fsTipe='baru'; /* 'baru' | 'tamu' */
 
-/* ── Auto-logout after 30 min inactivity ── */
-let inactivityTimer=null;
-const INACTIVE_MS=30*60*1000;
+/* ── Auto-logout 30 menit ── */
+let _inactTimer=null;
 function resetInactivity(){
-  clearTimeout(inactivityTimer);
-  inactivityTimer=setTimeout(async()=>{
-    const{signOut}=await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
-    /* Only clear session-specific keys, preserve credentials (__ae, __ap) */
+  clearTimeout(_inactTimer);
+  _inactTimer=setTimeout(async()=>{
+    const{signOut}=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
     ['uid','role','nama','unit','perner'].forEach(k=>localStorage.removeItem(k));
     await signOut(auth);
     window.removeEventListener('beforeunload',beforeUnloadHandler);
     window.location.href='index.html';
-  },INACTIVE_MS);
+  },30*60*1000);
 }
 ['mousedown','mousemove','keydown','touchstart','scroll','click'].forEach(ev=>document.addEventListener(ev,resetInactivity,{passive:true}));
 resetInactivity();
 
 const $=id=>document.getElementById(id);
-function toast(msg,type='success'){const el=document.createElement('div');el.className=`toast-item bg-${type==='success'?'emerald-800':'rose-600'}`;el.style.pointerEvents='auto';el.innerHTML=`<i class="fas ${type==='success'?'fa-check-circle':'fa-times-circle'} mr-2"></i>${msg}`;$('toastCont').appendChild(el);setTimeout(()=>el.remove(),3200);}
+function toast(msg,type='success'){
+  const el=document.createElement('div');
+  el.className=`toast-item bg-${type==='success'?'emerald-800':type==='warn'?'amber-600':'rose-600'}`;
+  el.innerHTML=`<i class="fas ${type==='success'?'fa-check-circle':type==='warn'?'fa-triangle-exclamation':'fa-times-circle'} mr-2"></i>${msg}`;
+  $('toastCont').appendChild(el);setTimeout(()=>el.remove(),3200);
+}
 function showLoad(){$('fullLoad').classList.add('show');}
 function hideLoad(){$('fullLoad').classList.remove('show');}
 function getInitials(n=''){return n.split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?';}
@@ -183,25 +336,15 @@ window.addEventListener('offline',()=>$('offlineBar').classList.add('show'));
 window.addEventListener('online',()=>$('offlineBar').classList.remove('show'));
 if(!navigator.onLine)$('offlineBar').classList.add('show');
 
-/* Prevent accidental back/close */
 function beforeUnloadHandler(e){e.preventDefault();e.returnValue='';}
 window.addEventListener('beforeunload',beforeUnloadHandler);
 history.pushState(null,'',location.href);
 window.addEventListener('popstate',()=>history.pushState(null,'',location.href));
 
 async function doAuth(){
-  /* If already authenticated (e.g. opened from app.html), do nothing.
-     This prevents cross-tab session interference. */
-  if(auth.currentUser){
-    creatorPw=localStorage.getItem('__ap')?atob(localStorage.getItem('__ap')):'';
-    return;
-  }
-  const ae=localStorage.getItem('__ae');
-  const ap=localStorage.getItem('__ap');
-  if(ae&&ap){
-    try{await signInWithEmailAndPassword(auth,atob(ae),atob(ap));creatorPw=atob(ap);return;}
-    catch(_){}
-  }
+  if(auth.currentUser){creatorPw=localStorage.getItem('__ap')?atob(localStorage.getItem('__ap')):'';return;}
+  const ae=localStorage.getItem('__ae'),ap=localStorage.getItem('__ap');
+  if(ae&&ap){try{await signInWithEmailAndPassword(auth,atob(ae),atob(ap));creatorPw=atob(ap);return;}catch(_){}}
   creatorPw=ap?atob(ap):'';
 }
 
@@ -220,75 +363,192 @@ async function init(){
     $('headerUnit').textContent=plt.penyelenggara||plt.unit_pembuat||'–';
     document.title=`Kiosk – ${plt.topik}`;
 
-    const ks=await getDocs(query(collection(db,'karyawan'),where('status','==','aktif')));
+    const ks=await getDocs(collection(db,'karyawan'));
     allKary=ks.docs.map(d=>({id:d.id,...d.data()}));
+
     const pps=await getDocs(query(collection(db,'peserta_pelatihan'),where('id_pelatihan','==',pltId)));
     const perners=[...new Set(pps.docs.map(d=>d.data().perner))];
-    pesertaList=perners.map(p=>allKary.find(k=>k.perner===p)||{perner:p,nama_lengkap:p,unit:'–',jabatan:'–'});
+    /* Map peserta: gabungkan dengan data karyawan, tandai yang tamu */
+    pesertaList=pps.docs.reduce((acc,d)=>{
+      const x=d.data();
+      if(acc.some(p=>p.perner===x.perner))return acc;
+      const found=allKary.find(k=>k.perner===x.perner);
+      if(found){
+        acc.push({...found,_isTamu:!!x.is_tamu,_isNew:!!x.is_karyawan_baru});
+      }else{
+        acc.push({
+          perner:x.perner,
+          nama_lengkap:x.nama_sementara||x.perner,
+          unit:x.unit_sementara||'–',
+          jabatan:'–',
+          _isTamu:!!x.is_tamu,
+          _isNew:!!x.is_karyawan_baru
+        });
+      }
+      return acc;
+    },[]);
+
     $('totalCount').textContent=pesertaList.length;
 
     onSnapshot(query(collection(db,'absensi'),where('id_pelatihan','==',pltId)),snap=>{
-      absensiMap={};snap.forEach(d=>{const x=d.data();absensiMap[x.perner]={ttd:x.ttd_base64,ts:x.timestamp};});
+      absensiMap={};
+      snap.forEach(d=>{const x=d.data();absensiMap[x.perner]={ttd:x.ttd_base64,ts:x.timestamp};});
       renderLists($('searchInput').value);
       $('presentCount').textContent=Object.keys(absensiMap).length;
+      $('tamuCount').textContent=pesertaList.filter(k=>k._isTamu).length;
     });
   }catch(e){toast('Gagal memuat: '+e.message,'error');}
   finally{hideLoad();}
 }
 
+/* ── Render daftar peserta ── */
 function renderLists(filter=''){
   const pending=$('pendingList'),signed=$('signedList');
   pending.innerHTML='';signed.innerHTML='';
   const q=filter.toLowerCase().trim();
   let sp=0,ss=0;
+
   pesertaList.forEach(k=>{
     if(q.length>=2&&!(k.nama_lengkap||'').toLowerCase().includes(q)&&!(k.perner||'').includes(q))return;
     const hadir=!!absensiMap[k.perner];
     const card=document.createElement('div');
-    card.className=`participant-card${hadir?' signed':''}`;
+    const klsExt=k._isTamu?' is-tamu':'';
+    card.className=`participant-card${hadir?' signed':''}${klsExt}`;
     const ts=hadir&&absensiMap[k.perner]?.ts?.toDate?absensiMap[k.perner].ts.toDate().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}):'';
+
+    let tagHtml='';
+    if(k._isTamu)tagHtml='<span style="font-size:8px;font-weight:900;background:#fef3c7;color:#92400e;border-radius:5px;padding:1px 6px;margin-left:4px;text-transform:uppercase;">Tamu</span>';
+    else if(k._isNew)tagHtml='<span style="font-size:8px;font-weight:900;background:#ecfdf5;color:#065f46;border-radius:5px;padding:1px 6px;margin-left:4px;text-transform:uppercase;">Kary. Baru</span>';
+
+    const avatarBg=hadir?'#064e3b':k._isTamu?'#d97706':'#f8fafc';
+    const avatarColor=hadir||k._isTamu?'#fff':'#94a3b8';
+    const pernerTxt=k.perner&&k.perner!==k.nama_lengkap&&!k.perner.startsWith('TEMP-')?`Perner: ${k.perner} · `:'';
+
     card.innerHTML=`
       <div class="flex items-center gap-4">
-        <div style="width:46px;height:46px;border-radius:14px;background:${hadir?'#064e3b':'#f8fafc'};display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:${hadir?'#fff':'#94a3b8'};flex-shrink:0;">${getInitials(k.nama_lengkap)}</div>
+        <div style="width:46px;height:46px;border-radius:14px;background:${avatarBg};display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:${avatarColor};flex-shrink:0;">${getInitials(k.nama_lengkap)}</div>
         <div>
-          <p style="font-size:14px;font-weight:800;color:#1e293b;">${k.nama_lengkap||k.perner}</p>
-          <p style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;margin-top:2px;">Perner: ${k.perner} · ${k.unit||'–'}</p>
+          <p style="font-size:14px;font-weight:800;color:#1e293b;">${k.nama_lengkap||k.perner}${tagHtml}</p>
+          <p style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;margin-top:2px;">${pernerTxt}${k.unit||'–'}</p>
         </div>
       </div>
       ${hadir
-        ?`<span style="font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;padding:4px 11px;border-radius:9px;background:#ecfdf5;color:#064e3b;"><i class="fas fa-check mr-1"></i>Hadir ${ts}</span>`
+        ?`<span style="font-size:9px;font-weight:900;text-transform:uppercase;padding:4px 11px;border-radius:9px;background:#ecfdf5;color:#064e3b;"><i class="fas fa-check mr-1"></i>Hadir ${ts}</span>`
         :`<i class="fas fa-chevron-right" style="color:#e2e8f0;font-size:13px;"></i>`}`;
     if(!hadir){card.onclick=()=>openTTD(k.perner);pending.appendChild(card);sp++;}
     else{signed.appendChild(card);ss++;}
   });
-  if(!sp&&q.length>=2)pending.innerHTML='<p style="text-align:center;padding:28px;font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">Karyawan Tidak Ditemukan</p>';
+
+  if(!sp&&q.length>=2)pending.innerHTML='<p style="text-align:center;padding:14px;font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">Tidak ada di daftar peserta</p>';
   else if(!sp&&!q)pending.innerHTML='<p style="text-align:center;padding:28px;font-size:10px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">Semua Peserta Sudah Absen 🎉</p>';
 
-  /* Susulan */
-  if(q.length>=2&&sp===0&&ss===0){
-    const susulan=allKary.filter(k=>!pesertaList.some(p=>p.perner===k.perner)&&((k.nama_lengkap||'').toLowerCase().includes(q)||(k.perner||'').includes(q))).slice(0,5);
-    $('susulanSection').style.display=susulan.length?'block':'none';
-    $('susulanList').innerHTML=susulan.map(k=>`
-      <div class="participant-card" onclick="tambahSusulan('${k.perner}')">
-        <div class="flex items-center gap-4">
-          <div style="width:46px;height:46px;border-radius:14px;background:#ecfdf5;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#064e3b;">${getInitials(k.nama_lengkap)}</div>
-          <div><p style="font-size:14px;font-weight:800;">${k.nama_lengkap}</p><p style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;margin-top:2px;">${k.perner} · ${k.unit||'–'}</p></div>
-        </div>
-        <span style="font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;padding:4px 11px;border-radius:9px;background:#f1f5f9;color:#64748b;"><i class="fas fa-plus mr-1"></i>Tambah Susulan</span>
-      </div>`).join('');
-  }else{$('susulanSection').style.display='none';}
+  /* Susulan dari database */
+  if(q.length>=2){
+    const dbMatch=allKary.filter(k=>{
+      if(pesertaList.some(p=>p.perner===k.perner))return false;
+      return(k.nama_lengkap||'').toLowerCase().includes(q)||(k.perner||'').includes(q);
+    }).slice(0,5);
+    if(dbMatch.length){
+      $('susulanSection').style.display='block';
+      $('susulanList').innerHTML=dbMatch.map(k=>`
+        <div class="participant-card" onclick="tambahSusulan('${k.perner}')">
+          <div class="flex items-center gap-4">
+            <div style="width:46px;height:46px;border-radius:14px;background:#ecfdf5;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#064e3b;">${getInitials(k.nama_lengkap)}</div>
+            <div><p style="font-size:14px;font-weight:800;">${k.nama_lengkap}</p><p style="font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;margin-top:2px;">${k.perner} · ${k.unit||'–'}</p></div>
+          </div>
+          <span style="font-size:9px;font-weight:900;text-transform:uppercase;padding:4px 11px;border-radius:9px;background:#ecfdf5;color:#064e3b;"><i class="fas fa-plus mr-1"></i>Tambah</span>
+        </div>`).join('');
+    }else{
+      $('susulanSection').style.display='none';
+    }
+    /* Tampilkan opsi sementara jika tidak ada hasil sama sekali */
+    $('notFoundSection').style.display=(sp===0&&ss===0&&dbMatch.length===0)?'block':'none';
+  }else{
+    $('susulanSection').style.display='none';
+    $('notFoundSection').style.display='none';
+  }
 }
 window.filterList=()=>renderLists($('searchInput').value);
 
 window.tambahSusulan=async p=>{
   const k=allKary.find(k=>k.perner===p);if(!k)return;
-  showLoad();try{
+  showLoad();
+  try{
     const uid=localStorage.getItem('uid')||'kiosk';
     await setDoc(doc(collection(db,'peserta_pelatihan')),{id_pelatihan:pltId,perner:p,ditambahkan_oleh:uid,tgl_ditambahkan:serverTimestamp(),susulan:true});
-    pesertaList.push(k);$('totalCount').textContent=pesertaList.length;
+    pesertaList.push({...k,_isTamu:false,_isNew:false});
+    $('totalCount').textContent=pesertaList.length;
     $('searchInput').value='';renderLists('');
-    toast(`${k.nama_lengkap} ditambahkan sebagai peserta susulan`);
-  }catch(e){toast('Gagal: '+e.message,'error');}finally{hideLoad();}
+    toast(`${k.nama_lengkap} ditambahkan`);
+  }catch(e){toast('Gagal: '+e.message,'error');}
+  finally{hideLoad();}
+};
+
+/* ── Peserta Sementara ── */
+window.openFormSementara=tipe=>{
+  fsTipe=tipe;
+  $('fsNama').value='';$('fsUnit').value='';$('fsPerner').value='';$('fsJabatan').value='';
+  /* Pre-fill dari query pencarian */
+  const q=$('searchInput').value.trim();
+  if(/^\d{5,}$/.test(q))$('fsPerner').value=q;
+  else if(q)$('fsNama').value=q;
+
+  if(tipe==='tamu'){
+    $('fsTitle').textContent='Peserta Tamu';
+    $('fsDesc').textContent='Dari luar unit · Tidak masuk rekap core';
+    $('fsPernerNote').textContent='Opsional. Bisa dikosongkan untuk peserta dari luar unit.';
+  }else{
+    $('fsTitle').textContent='Karyawan Baru';
+    $('fsDesc').textContent='Belum punya perner · Data dilengkapi Admin nanti';
+    $('fsPernerNote').textContent='Kosongkan jika nomor perner belum diterbitkan. Admin dapat melengkapi melalui Data Karyawan.';
+  }
+  $('formSementaraOverlay').classList.add('open');
+  setTimeout(()=>$('fsNama').focus(),300);
+};
+window.closeFormSementara=()=>$('formSementaraOverlay').classList.remove('open');
+
+window.simpanPesertaSementara=async()=>{
+  const nama=$('fsNama').value.trim();
+  const unit=$('fsUnit').value.trim();
+  if(!nama){toast('Nama lengkap wajib diisi','error');$('fsNama').focus();return;}
+  if(!unit){toast('Unit/departemen wajib diisi','error');$('fsUnit').focus();return;}
+  const perner=$('fsPerner').value.trim();
+  const jabatan=$('fsJabatan').value.trim();
+  const isTamu=fsTipe==='tamu';
+  const uid=localStorage.getItem('uid')||'kiosk';
+  /* ID sementara unik */
+  const tempId=`TEMP-${Date.now()}-${Math.random().toString(36).slice(2,6).toUpperCase()}`;
+  const pernerFinal=perner||tempId;
+
+  showLoad();
+  try{
+    /* Untuk karyawan baru (bukan tamu), simpan ke database karyawan dgn status belum_lengkap */
+    if(!isTamu){
+      await setDoc(doc(db,'karyawan',pernerFinal),{
+        nama_lengkap:nama,perner:perner||'',temp_id:tempId,
+        unit,jabatan:jabatan||'',status:'aktif',
+        status_data:'belum_lengkap',
+        ditambahkan_via:'kiosk',ditambahkan_oleh:uid,
+        tgl_ditambahkan:serverTimestamp()
+      });
+    }
+    /* Simpan ke peserta_pelatihan */
+    await setDoc(doc(collection(db,'peserta_pelatihan')),{
+      id_pelatihan:pltId,perner:pernerFinal,
+      nama_sementara:nama,unit_sementara:unit,
+      is_tamu:isTamu,is_karyawan_baru:!isTamu,
+      ditambahkan_oleh:uid,tgl_ditambahkan:serverTimestamp(),susulan:true
+    });
+    /* Tambah ke list lokal */
+    pesertaList.push({perner:pernerFinal,nama_lengkap:nama,unit,jabatan:jabatan||'–',_isTamu:isTamu,_isNew:!isTamu});
+    $('totalCount').textContent=pesertaList.length;
+    $('formSementaraOverlay').classList.remove('open');
+    $('searchInput').value='';renderLists('');
+    toast(`${nama} ditambahkan sebagai ${isTamu?'tamu':'karyawan baru'}`, 'warn');
+    /* Langsung buka TTD */
+    setTimeout(()=>openTTD(pernerFinal),500);
+  }catch(e){toast('Gagal: '+e.message,'error');}
+  finally{hideLoad();}
 };
 
 /* ── Canvas ── */
@@ -312,8 +572,13 @@ function openTTD(perner){
   currentPerner=perner;
   const k=pesertaList.find(k=>k.perner===perner)||{};
   $('signerName').textContent=k.nama_lengkap||perner;
-  $('signerInfo').textContent=`Perner: ${perner} · ${k.unit||'–'} · ${k.jabatan||'–'}`;
-  clearCanvas();$('signatureOverlay').classList.add('open');
+  $('signerInfo').textContent=`${k.unit||'–'} · ${k.jabatan||'–'}`;
+  const tag=$('signerTag');
+  if(k._isTamu){tag.style.display='inline-block';tag.textContent='Peserta Tamu';}
+  else if(k._isNew){tag.style.display='inline-block';tag.textContent='Karyawan Baru';}
+  else tag.style.display='none';
+  clearCanvas();
+  $('signatureOverlay').classList.add('open');
   setTimeout(setupCanvas,60);
 }
 window.clearCanvas=()=>{ctx.clearRect(0,0,canvas.width/(window.devicePixelRatio||1),canvas.height/(window.devicePixelRatio||1));hasDrawn=false;canvas.classList.remove('active');$('canvasErr').style.display='none';};
@@ -336,33 +601,140 @@ window.saveAbsen=async()=>{
   finally{$('absenSpinner').style.display='none';$('absenLabel').textContent='Simpan Absensi';$('btnSimpanAbsen').disabled=false;}
 };
 
-/* ── Exit kiosk — password required here, NOT on open ── */
+/* ── Tambah Peserta langsung dari kiosk (dengan password) ── */
+window.requestTambahPeserta=()=>{
+  $('tambahPass').value='';
+  $('tambahPassError').classList.add('hidden');
+  $('tambahPesertaOverlay').classList.add('open');
+  setTimeout(()=>$('tambahPass').focus(),300);
+};
+window.cancelTambahPeserta=()=>$('tambahPesertaOverlay').classList.remove('open');
+
+window.verifyTambahPeserta=()=>{
+  const v=$('tambahPass').value.trim();
+  if(v===EXIT_CODE||v===creatorPw){
+    $('tambahPesertaOverlay').classList.remove('open');
+    $('tambahCari').value='';
+    $('tambahCariResult').innerHTML='';
+    $('pilihTambahOverlay').classList.add('open');
+    setTimeout(()=>$('tambahCari').focus(),300);
+  }else{
+    $('tambahPassError').classList.remove('hidden');
+    $('tambahPass').value='';$('tambahPass').focus();
+  }
+};
+$('tambahPass')?.addEventListener('keydown',e=>{if(e.key==='Enter')window.verifyTambahPeserta();});
+
+window.cancelPilihTambah=()=>$('pilihTambahOverlay').classList.remove('open');
+
+window.cariUntukTambah=()=>{
+  const q=($('tambahCari').value||'').toLowerCase().trim();
+  const hasil=$('tambahCariResult');
+  if(q.length<2){hasil.innerHTML='';return;}
+  const matches=allKary.filter(k=>{
+    if(pesertaList.some(p=>p.perner===k.perner))return false;
+    return(k.nama_lengkap||'').toLowerCase().includes(q)||(k.perner||'').includes(q);
+  }).slice(0,6);
+  if(!matches.length){
+    hasil.innerHTML=`<div style="text-align:center;padding:12px;font-size:10px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">Tidak ditemukan di database</div>`;
+    return;
+  }
+  hasil.innerHTML=matches.map(k=>`
+    <div onclick="tambahDariPanel('${k.perner}')" style="display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:13px;cursor:pointer;transition:background .15s;margin-bottom:4px;" onmouseenter="this.style.background='#f0fdf4'" onmouseleave="this.style.background='transparent'">
+      <div style="width:38px;height:38px;border-radius:11px;background:#ecfdf5;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#064e3b;flex-shrink:0;">${getInitials(k.nama_lengkap)}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:800;color:#0f172a;">${k.nama_lengkap}</div>
+        <div style="font-size:9px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-top:1px;">${k.perner} · ${k.unit||'–'}</div>
+      </div>
+      <i class="fas fa-plus-circle" style="color:#059669;font-size:18px;flex-shrink:0;"></i>
+    </div>`).join('');
+};
+
+window.tambahDariPanel=async perner=>{
+  const k=allKary.find(k=>k.perner===perner);if(!k)return;
+  $('pilihTambahOverlay').classList.remove('open');
+  showLoad();
+  try{
+    const uid=localStorage.getItem('uid')||'kiosk';
+    await setDoc(doc(collection(db,'peserta_pelatihan')),{
+      id_pelatihan:pltId,perner,
+      ditambahkan_oleh:uid,tgl_ditambahkan:serverTimestamp(),susulan:true
+    });
+    pesertaList.push({...k,_isTamu:false,_isNew:false});
+    $('totalCount').textContent=pesertaList.length;
+    renderLists('');
+    toast(`${k.nama_lengkap} ditambahkan`);
+    setTimeout(()=>openTTD(perner),400);
+  }catch(e){toast('Gagal: '+e.message,'error');}
+  finally{hideLoad();}
+};
+
+/* ── Exit: dua langkah ── */
 window.requestExit=()=>{
-  $('lockPass').value='';$('lockError').classList.add('hidden');
+  $('lockPass').value='';
+  $('lockError').classList.add('hidden');
+  $('lockStep1').style.display='grid';
+  $('lockStep2').style.display='none';
   $('lockOverlay').classList.add('open');
   setTimeout(()=>$('lockPass').focus(),300);
 };
-window.cancelExit=()=>$('lockOverlay').classList.remove('open');
-window.confirmExit=()=>{
+window.cancelExit=()=>{
+  $('lockOverlay').classList.remove('open');
+  $('lockStep1').style.display='grid';
+  $('lockStep2').style.display='none';
+};
+window.verifyPassword=()=>{
   const v=$('lockPass').value.trim();
   if(v===EXIT_CODE||v===creatorPw){
-    /* Remove beforeunload listener so window.close() works cleanly */
-    window.removeEventListener('beforeunload',beforeUnloadHandler);
-    /* Do NOT sign out — session is preserved for the main app */
-    clearTimeout(inactivityTimer);
-    $('lockOverlay').classList.remove('open');
-    window.close();
-    /* Fallback if window.close() is blocked */
-    setTimeout(()=>{window.location.href='app.html';},400);
+    $('lockError').classList.add('hidden');
+    $('lockStep1').style.display='none';
+    $('lockStep2').style.display='block';
   }else{
     $('lockError').classList.remove('hidden');
     $('lockPass').value='';$('lockPass').focus();
   }
 };
-$('lockPass')?.addEventListener('keydown',e=>{if(e.key==='Enter')window.confirmExit();});
+$('lockPass')?.addEventListener('keydown',e=>{if(e.key==='Enter')window.verifyPassword();});
+
+window.doExit=async(tutupAbsensi)=>{
+  $('lockOverlay').classList.remove('open');
+
+  if(tutupAbsensi){
+    showLoad();
+    try{
+      /* Hapus peserta yang tidak hadir (tidak punya TTD) */
+      const allPP=await getDocs(query(collection(db,'peserta_pelatihan'),where('id_pelatihan','==',pltId)));
+      const batch=writeBatch(db);
+      let hapusCount=0;
+      allPP.docs.forEach(d=>{
+        if(!absensiMap[d.data().perner]){batch.delete(doc(db,'peserta_pelatihan',d.id));hapusCount++;}
+      });
+      if(hapusCount>0)await batch.commit();
+
+      /* Update status pelatihan */
+      const uid=localStorage.getItem('uid')||'kiosk';
+      await updateDoc(doc(db,'pelatihan',pltId),{
+        status:'absensi_ditutup',
+        absensi_ditutup_oleh:uid,
+        absensi_ditutup_at:serverTimestamp(),
+        peserta_hadir:Object.keys(absensiMap).length,
+        peserta_tidak_hadir_dihapus:hapusCount
+      });
+      toast(`Absensi ditutup · ${Object.keys(absensiMap).length} hadir · ${hapusCount} tidak hadir dihapus`,'warn');
+    }catch(e){toast('Gagal tutup absensi: '+e.message,'error');}
+    finally{hideLoad();}
+  }
+
+  /* Keluar — session dipertahankan */
+  clearTimeout(_inactTimer);
+  window.removeEventListener('beforeunload',beforeUnloadHandler);
+  setTimeout(()=>{
+    window.close();
+    setTimeout(()=>{window.location.href='app.html';},400);
+  },tutupAbsensi?1400:100);
+};
 
 init();
 </script>
-
 </body>
 </html>
