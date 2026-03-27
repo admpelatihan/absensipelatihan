@@ -1625,7 +1625,10 @@ function renderDashboard(){
     mg.appendChild(card);
   });
   /* Latest 10 */
-  $('dashPltBody').innerHTML=!pf.length?`<tr><td colspan="5" class="empty-st"><div class="empty-lbl">Belum ada pelatihan</div></td></tr>`:pf.slice(0,10).map(p=>`<tr><td><strong>${p.topik||'–'}</strong>${p.is_core?` <span class="pill pill-core" style="font-size:8px;">Core</span>`:''}</td><td class="td-m">${p.unit_pembuat||'–'}</td><td class="td-m">${p.tanggal?hariIndo(p.tanggal)+', '+p.tanggal:'–'}</td><td class="td-m">${p.instruktur||'–'}</td><td><span class="pill ${normStatus(p)==='ekpi_selesai'?'pill-st-ekpi':normStatus(p)==='pdf_tercetak'?'pill-st-pdf':normStatus(p)==='absensi_ditutup'?'pill-st-absensi':'pill-st-aktif'}">${p.status||'aktif'}</span></td></tr>`).join('');
+  $('dashPltBody').innerHTML=!pf.length?`<tr><td colspan="5" class="empty-st"><div class="empty-lbl">Belum ada pelatihan</div></td></tr>`:pf
+    .sort((a,b)=>(b.tanggal||'').localeCompare(a.tanggal||''))
+    .slice(0,10)
+    .map(p=>`<tr><td><strong>${p.topik||'–'}</strong>${p.is_core?` <span class="pill pill-core" style="font-size:8px;">Core</span>`:''}</td><td class="td-m">${p.unit_pembuat||'–'}</td><td class="td-m">${p.tanggal?hariIndo(p.tanggal)+', '+p.tanggal:'–'}</td><td class="td-m">${p.instruktur||'–'}</td><td><span class="pill ${normStatus(p)==='ekpi_selesai'?'pill-st-ekpi':normStatus(p)==='pdf_tercetak'?'pill-st-pdf':normStatus(p)==='absensi_ditutup'?'pill-st-absensi':'pill-st-aktif'}">${normStatus(p).replace(/_/g,' ')||'aktif'}</span></td></tr>`).join('');
 }
 window.goRekap=(topik,status)=>{
   /* Sync filter dari dashboard ke rekap core */
