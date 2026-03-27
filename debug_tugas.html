@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<title>Debug Tugas Saya</title>
+<style>
+body{font-family:monospace;padding:20px;background:#0f172a;color:#e2e8f0;}
+h2{color:#34d399;}
+.ok{color:#34d399;} .warn{color:#fbbf24;} .err{color:#f87171;}
+table{border-collapse:collapse;width:100%;font-size:12px;margin-top:10px;}
+th,td{border:1px solid #334155;padding:6px 10px;text-align:left;}
+th{background:#1e293b;color:#94a3b8;}
+tr:hover{background:#1e293b;}
+.btn{padding:8px 16px;background:#059669;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;margin:5px;}
+#log{background:#1e293b;padding:15px;border-radius:10px;white-space:pre-wrap;max-height:400px;overflow-y:auto;font-size:11px;margin-top:10px;}
+</style>
+</head>
+<body>
+<h2>🔍 Debug Tugas Saya — Cek Data Firestore</h2>
+<button class="btn" onclick="runDiag()">▶ Jalankan Diagnostik</button>
+<button class="btn" style="background:#3b82f6;" onclick="fixData()">🔧 Perbaiki Status Lama</button>
+<div id="log">Klik "Jalankan Diagnostik" untuk mulai...</div>
+<div id="result"></div>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getFirestore,collection,getDocs,doc,updateDoc}
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app=initializeApp({
+  apiKey:"AIzaSyDTVdA6QD_FsHeHVMm4l67NJP5_rpL_JmI",
+  authDomain:"absensipelatihan-844d8.firebaseapp.com",
+  projectId:"absensipelatihan-844d8"
+});
+const db=getFirestore(app);
+
+function log(msg,cls=''){
+  const el=document.getElementById('log');
+  el.innerHTML+=`<span class="${cls}">${msg}\n</span>`;
+  el.scrollTop=el.scrollHeight;
+}
+
+function normStatus(p){
+  const st=p.status||'aktif';
+  if(st==='selesai')return'ekpi_selesai';
+  if(st==='aktif'&&p.absensi_ditutup_at)return'absensi_ditutup';
+  if(st==='aktif'&&p.peserta_hadir!==undefined)return'absensi_ditutup';
+  return st;
+}
+
+window.runDiag=async()=>{
+  document.getElementById('log').innerHTML='';
+  document.getElementById('result').innerHTML='';
+  log('📡 Mengambil semua data pelatihan dari Firestore...');
+  try{
+    const snap=await getDocs(collection(db,'pelatihan'));
+    log(`✅ Total dokumen: ${snap.docs.length}`,'ok');
+
+    const all=snap.docs.map(d=>({id:d.id,...d.data()}));
+    const nonExt=all.filter(p=>!p.id.startsWith('EXT-'));
+    log(`📋 Non-EXT: ${nonExt.length} dokumen`);
+
+    // Kelompokkan per status RAW (dari Firestore)
+    const byStatus={};
+    nonExt.forEach(p=>{
+      const st=p.status||'aktif';
+      byStatus[st]=(byStatus[st]||0)+1;
+    });
+    log('\n📊 Status RAW di Firestore:');
+    Object.entries(byStatus).forEach(([st,cnt])=>{
+      const cls=st==='absensi_ditutup'||st==='pdf_tercetak'?'ok':st==='aktif'?'warn':'';
+      log(`  ${st}: ${cnt} dokumen`,cls);
+    });
+
+    // Setelah normStatus
+    const byNorm={};
+    nonExt.forEach(p=>{
+      const st=normStatus(p);
+      byNorm[st]=(byNorm[st]||0)+1;
+    });
+    log('\n📊 Status setelah normStatus:');
+    Object.entries(byNorm).forEach(([st,cnt])=>{
+      const cls=st==='absensi_ditutup'||st==='pdf_tercetak'?'ok':'';
+      log(`  ${st}: ${cnt} dokumen`,cls);
+    });
+
+    // Tampilkan pending
+    const pending=nonExt.filter(p=>{
+      const st=normStatus(p);
+      return st==='absensi_ditutup'||st==='pdf_tercetak';
+    });
+    log(`\n🔔 PENDING (harus muncul di Tugas Saya): ${pending.length}`,'ok');
+
+    // Tabel hasil
+    if(pending.length>0){
+      let html='<h3 style="color:#34d399;margin-top:20px;">Pelatihan Pending:</h3><table><tr><th>ID</th><th>Topik</th><th>Tanggal</th><th>Status RAW</th><th>normStatus</th><th>absensi_ditutup_at</th></tr>';
+      pending.forEach(p=>{
+        const at=p.absensi_ditutup_at;
+        const atStr=at?(typeof at==='string'?at:at?.toDate?at.toDate().toISOString():JSON.stringify(at)):'–';
+        html+=`<tr><td style="font-size:10px;">${p.id}</td><td>${p.topik||'–'}</td><td>${p.tanggal||'–'}</td><td style="color:#fbbf24;">${p.status||'aktif'}</td><td style="color:#34d399;">${normStatus(p)}</td><td style="font-size:10px;">${atStr}</td></tr>`;
+      });
+      html+='</table>';
+      document.getElementById('result').innerHTML=html;
+    }else{
+      log('\n⚠️  TIDAK ADA pending — kemungkinan penyebab:','warn');
+      // Cek apakah ada yang status aktif tapi absensi_ditutup_at ada
+      const mightBePending=nonExt.filter(p=>p.status==='aktif'&&p.absensi_ditutup_at);
+      if(mightBePending.length>0){
+        log(`  → ${mightBePending.length} dok status='aktif' tapi punya absensi_ditutup_at`,'warn');
+        log('  → Klik "Perbaiki Status Lama" untuk fix otomatis','warn');
+      }
+      const selesaiLama=nonExt.filter(p=>p.status==='selesai');
+      if(selesaiLama.length>0){
+        log(`  → ${selesaiLama.length} dok masih status='selesai' (lama)`,'warn');
+      }
+      const allAktif=nonExt.filter(p=>p.status==='aktif');
+      log(`  → ${allAktif.length} dok status='aktif' (belum ditutup)`);
+    }
+
+  }catch(e){
+    log('❌ ERROR: '+e.message,'err');
+  }
+};
+
+window.fixData=async()=>{
+  log('\n🔧 Memulai perbaikan status lama...');
+  try{
+    const snap=await getDocs(collection(db,'pelatihan'));
+    const all=snap.docs.map(d=>({id:d.id,...d.data()}));
+    let fixed=0;
+    for(const p of all){
+      if(p.id.startsWith('EXT-'))continue;
+      // Jika status aktif tapi punya absensi_ditutup_at → update ke absensi_ditutup
+      if((p.status==='aktif'||!p.status)&&p.absensi_ditutup_at){
+        await updateDoc(doc(db,'pelatihan',p.id),{status:'absensi_ditutup'});
+        log(`  ✅ Fixed: ${p.topik||p.id} → absensi_ditutup`,'ok');
+        fixed++;
+      }
+      // Jika status aktif tapi punya peserta_hadir → update ke absensi_ditutup  
+      if((p.status==='aktif'||!p.status)&&p.peserta_hadir!==undefined&&!p.absensi_ditutup_at){
+        await updateDoc(doc(db,'pelatihan',p.id),{
+          status:'absensi_ditutup',
+          absensi_ditutup_at:new Date().toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})
+        });
+        log(`  ✅ Fixed (via peserta_hadir): ${p.topik||p.id}`,'ok');
+        fixed++;
+      }
+    }
+    log(`\n✅ Selesai. ${fixed} dokumen diperbaiki.`,'ok');
+    if(fixed>0)log('→ Reload halaman app.html dan cek Tugas Saya','ok');
+    else log('→ Tidak ada yang perlu diperbaiki — kemungkinan memang belum ada pelatihan yang ditutup','warn');
+  }catch(e){
+    log('❌ ERROR fix: '+e.message,'err');
+  }
+};
+</script>
+</body>
+</html>
