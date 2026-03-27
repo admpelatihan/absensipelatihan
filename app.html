@@ -363,6 +363,17 @@
 
     /* ═══ RIWAYAT STATS ═══ */
     .rwy-stat{background:#f0fdf4;border-radius:12px;border:1px solid #a7f3d0;padding:14px;display:flex;flex-direction:column;gap:2px;}
+    .rwy-stat-clickable{cursor:pointer;transition:all .2s;}
+    .rwy-stat-clickable:hover{background:#dcfce7;border-color:#059669;transform:translateY(-1px);}
+    .rwy-stat-sub{font-size:9px;font-weight:700;color:#94a3b8;margin-top:1px;}
+    /* Core item di sub-panel */
+    .core-item{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:9px;background:#fff;border:1px solid #f1f5f9;margin-bottom:5px;}
+    .core-item:last-child{margin-bottom:0;}
+    .core-item-name{font-size:12px;font-weight:700;color:#0f172a;}
+    .core-item-date{font-size:10px;font-weight:600;color:#94a3b8;margin-top:1px;}
+    .core-st-lunas{background:#ecfdf5;color:#064e3b;border:1px solid #a7f3d0;}
+    .core-st-refresh{background:#fffbeb;color:#92400e;border:1px solid #fde68a;}
+    .core-st-belum{background:#fff1f2;color:#9f1239;border:1px solid #fecaca;}
     .rwy-stat-val{font-size:22px;font-weight:900;color:var(--green);letter-spacing:-1px;}
     .rwy-stat-lbl{font-size:9px;font-weight:900;color:#64748b;text-transform:uppercase;letter-spacing:2px;}
 
@@ -752,8 +763,7 @@
       <button class="mo-close" onclick="closeModal('moRiwayatSaya')">✕</button>
     </div>
     <div class="mo-body" style="max-height:78vh;overflow-y:auto;">
-      <!-- Inline filter -->
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:flex-end;">
         <div class="fl-group"><div class="fl-lbl">Bulan</div>
           <select id="rwyBulan" style="min-width:100px;">
             <option value="">Semua</option>
@@ -764,13 +774,25 @@
           </select>
         </div>
         <div class="fl-group"><div class="fl-lbl">Tahun</div><select id="rwyTahun" style="min-width:88px;"></select></div>
-        <button class="btn btn-p btn-sm" onclick="renderRiwayatSaya()" style="align-self:flex-end;"><i class="fas fa-filter"></i> Filter</button>
+        <button class="btn btn-p btn-sm" onclick="renderRiwayatSaya()" style="align-self:flex-end;"><i class="fas fa-filter"></i> Terapkan</button>
       </div>
       <!-- Stats row -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">
-        <div class="rwy-stat"><div class="rwy-stat-val" id="rwyTotalPlt">–</div><div class="rwy-stat-lbl">Total Pelatihan</div></div>
-        <div class="rwy-stat"><div class="rwy-stat-val" id="rwyTotalJam">–</div><div class="rwy-stat-lbl">Total Jam</div></div>
-        <div class="rwy-stat"><div class="rwy-stat-val" id="rwyTotalCore">–</div><div class="rwy-stat-lbl">Pelatihan Core</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div class="rwy-stat"><div class="rwy-stat-val" id="rwyTotalPlt">–</div><div class="rwy-stat-lbl">Total Pelatihan</div><div class="rwy-stat-sub" id="rwyFilterLbl"></div></div>
+        <div class="rwy-stat"><div class="rwy-stat-val" id="rwyTotalJam">–</div><div class="rwy-stat-lbl">Total Jam</div><div class="rwy-stat-sub" id="rwyFilterLbl2"></div></div>
+        <div class="rwy-stat rwy-stat-clickable" onclick="toggleCorePanel('rwy')" title="Klik untuk detail core">
+          <div class="rwy-stat-val" id="rwyTotalCore">–</div>
+          <div class="rwy-stat-lbl">Total Core</div>
+          <div style="font-size:8px;font-weight:800;color:#059669;margin-top:3px;display:flex;align-items:center;gap:3px;"><i class="fas fa-chevron-down" id="rwyCoreCaret"></i> Klik untuk detail</div>
+        </div>
+      </div>
+      <!-- Sub-panel Core -->
+      <div id="rwyCorePanel" style="display:none;background:#f8fafc;border-radius:13px;padding:13px;margin-bottom:14px;border:1px solid #f1f5f9;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <span style="font-size:9px;font-weight:900;color:#64748b;text-transform:uppercase;letter-spacing:2px;">Detail Core — Tanggal Terakhir Per Topik</span>
+          <span style="font-size:9px;font-weight:700;color:#94a3b8;">Tidak terpengaruh filter bulan/tahun</span>
+        </div>
+        <div id="rwyCoreList"></div>
       </div>
       <div id="rwyBody"></div>
     </div>
@@ -785,7 +807,7 @@
       <button class="mo-close" onclick="closeModal('moRiwayatKary')">✕</button>
     </div>
     <div class="mo-body" style="max-height:78vh;overflow-y:auto;">
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:flex-end;">
         <div class="fl-group"><div class="fl-lbl">Bulan</div>
           <select id="rwyKaryBulan" style="min-width:100px;">
             <option value="">Semua</option>
@@ -796,12 +818,24 @@
           </select>
         </div>
         <div class="fl-group"><div class="fl-lbl">Tahun</div><select id="rwyKaryTahun" style="min-width:88px;"></select></div>
-        <button class="btn btn-p btn-sm" id="btnRwyKaryFilter" style="align-self:flex-end;"><i class="fas fa-filter"></i> Filter</button>
+        <button class="btn btn-p btn-sm" id="btnRwyKaryFilter" style="align-self:flex-end;"><i class="fas fa-filter"></i> Terapkan</button>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">
-        <div class="rwy-stat"><div class="rwy-stat-val" id="rwyKaryTotalPlt">–</div><div class="rwy-stat-lbl">Total Pelatihan</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div class="rwy-stat"><div class="rwy-stat-val" id="rwyKaryTotalPlt">–</div><div class="rwy-stat-lbl">Total Pelatihan</div><div class="rwy-stat-sub" id="rwyKaryFilterLbl"></div></div>
         <div class="rwy-stat"><div class="rwy-stat-val" id="rwyKaryTotalJam">–</div><div class="rwy-stat-lbl">Total Jam</div></div>
-        <div class="rwy-stat"><div class="rwy-stat-val" id="rwyKaryTotalCore">–</div><div class="rwy-stat-lbl">Pelatihan Core</div></div>
+        <div class="rwy-stat rwy-stat-clickable" onclick="toggleCorePanel('kary')" title="Klik untuk detail core">
+          <div class="rwy-stat-val" id="rwyKaryTotalCore">–</div>
+          <div class="rwy-stat-lbl">Total Core</div>
+          <div style="font-size:8px;font-weight:800;color:#059669;margin-top:3px;display:flex;align-items:center;gap:3px;"><i class="fas fa-chevron-down" id="rwyKaryCoreCaret"></i> Klik untuk detail</div>
+        </div>
+      </div>
+      <!-- Sub-panel Core -->
+      <div id="rwyKaryCorePanel" style="display:none;background:#f8fafc;border-radius:13px;padding:13px;margin-bottom:14px;border:1px solid #f1f5f9;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <span style="font-size:9px;font-weight:900;color:#64748b;text-transform:uppercase;letter-spacing:2px;">Detail Core — Tanggal Terakhir Per Topik</span>
+          <span style="font-size:9px;font-weight:700;color:#94a3b8;">Tidak terpengaruh filter bulan/tahun</span>
+        </div>
+        <div id="rwyKaryCoreList"></div>
       </div>
       <div id="rwyKaryBody"></div>
     </div>
@@ -1590,24 +1624,100 @@ $('btnShortRiwayat')?.addEventListener('click',()=>{
   renderRiwayatSaya(); openModal('moRiwayatSaya');
 });
 window.renderRiwayatSaya=()=>{
-  const s=S(); const bulan=$('rwyBulan').value; const tahun=$('rwyTahun').value;
-  /* All pelatihan ever (for core section - no filter) */
+  const s=S();
+  const bulan=$('rwyBulan').value;
+  const tahun=$('rwyTahun').value;
+
+  /* Semua pelatihan perner ini (tanpa filter) untuk core panel */
   const allPlts=getPelatihanByPerner(s.perner,'','');
-  const corePlts=allPlts.filter(p=>p.is_core);
-  /* Count unique core topics attended (each topic counts once regardless of refresh) */
-  const uniqueCore=new Set(corePlts.map(p=>p.topik)).size;
+  /* Filtered by bulan/tahun untuk statistik dan tabel */
+  const filtered=getPelatihanByPerner(s.perner,bulan,tahun);
+  const filteredCore=filtered.filter(p=>p.is_core);
+  const filteredNonCore=filtered.filter(p=>!p.is_core);
 
-  /* Non-core filtered by bulan/tahun */
-  const filteredNonCore=getPelatihanByPerner(s.perner,bulan,tahun).filter(p=>!p.is_core);
+  /* Stats — semua mengikuti filter */
+  const totalPlt=filtered.length;
+  const totalJam=calcJam(filtered);
+  const uniqueCoreFil=new Set(filteredCore.map(p=>p.topik)).size;
 
-  $('rwyTotalPlt').textContent=filteredNonCore.length;
-  $('rwyTotalJam').textContent=calcJam(filteredNonCore)+'h';
-  $('rwyTotalCore').textContent=uniqueCore;
+  /* Label filter */
+  const bulanNama=['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  const filterLbl=bulan&&tahun?`${bulanNama[parseInt(bulan)]} ${tahun}`:tahun?tahun:bulan?bulanNama[parseInt(bulan)]:'Semua waktu';
+  $('rwyTotalPlt').textContent=totalPlt;
+  $('rwyTotalJam').textContent=totalJam+'h';
+  $('rwyTotalCore').textContent=uniqueCoreFil;
+  $('rwyFilterLbl').textContent=filterLbl;
+  $('rwyFilterLbl2').textContent=filterLbl;
 
-  /* Table: non-core filtered + all core always shown */
-  const tableData=[...filteredNonCore,...corePlts];
-  tableData.sort((a,b)=>(b.tanggal||'').localeCompare(a.tanggal||''));
-  $('rwyBody').innerHTML=renderRwyTable(tableData,bulan,tahun);
+  /* Render core sub-panel (tidak terpengaruh filter) */
+  renderCorePanelList('rwy',s.perner,allPlts);
+
+  /* Tabel — hanya data yang sesuai filter */
+  filtered.sort((a,b)=>(b.tanggal||'').localeCompare(a.tanggal||''));
+  $('rwyBody').innerHTML=renderRwyTable(filtered,bulan,tahun);
+};
+
+/* ── Core sub-panel helpers ── */
+let _corePanelVisible={rwy:false,kary:false};
+
+function renderCorePanelList(which,perner,allPlts){
+  const listEl=$(which==='rwy'?'rwyCoreList':'rwyKaryCoreList');
+  if(!listEl)return;
+
+  /* Untuk setiap topik master core, cari tanggal terakhir perner ini */
+  const topikCore=masterCore.map(c=>c.nama_pelatihan||c.id);
+
+  /* Kumpulkan semua tanggal per topik dari allPlts */
+  const tanggalPerTopik={};
+  allPlts.filter(p=>p.is_core).forEach(p=>{
+    const t=(p.topik||'').trim();
+    if(!tanggalPerTopik[t])tanggalPerTopik[t]=[];
+    if(p.tanggal)tanggalPerTopik[t].push(p.tanggal);
+  });
+
+  /* Juga dari core_eksternal */
+  (allCoreEksternal[perner]||[]).forEach(ce=>{
+    const t=(ce.topik||'').trim();
+    if(!tanggalPerTopik[t])tanggalPerTopik[t]=[];
+    if(ce.tanggal)tanggalPerTopik[t].push(ce.tanggal);
+  });
+
+  /* Hitung status per topik */
+  const today=new Date();
+  const items=topikCore.map(topik=>{
+    const dates=(tanggalPerTopik[topik]||[]).sort((a,b)=>b.localeCompare(a));
+    const lastDate=dates[0]||null;
+    let status='belum',stCls='core-st-belum',stLbl='Belum';
+    if(lastDate){
+      const diff=(today-new Date(lastDate+'T00:00:00'))/(1000*60*60*24*365);
+      if(diff<=1){status='lunas';stCls='core-st-lunas';stLbl='Lunas';}
+      else{status='refresh';stCls='core-st-refresh';stLbl='Refresh';}
+    }
+    return{topik,lastDate,status,stCls,stLbl};
+  });
+
+  /* Urutkan: lunas dulu, lalu refresh, lalu belum */
+  const order={lunas:0,refresh:1,belum:2};
+  items.sort((a,b)=>order[a.status]-order[b.status]||(a.topik.localeCompare(b.topik)));
+
+  listEl.innerHTML=items.map(it=>`
+    <div class="core-item">
+      <div>
+        <div class="core-item-name">${it.topik}</div>
+        <div class="core-item-date">${it.lastDate?'Terakhir: '+it.lastDate:'Belum pernah mengikuti'}</div>
+      </div>
+      <span class="pill ${it.stCls}" style="font-size:8px;">${it.stLbl}</span>
+    </div>`).join('');
+}
+
+window.toggleCorePanel=which=>{
+  _corePanelVisible[which]=!_corePanelVisible[which];
+  const show=_corePanelVisible[which];
+  const panelId=which==='rwy'?'rwyCorePanel':'rwyKaryCorePanel';
+  const caretId=which==='rwy'?'rwyCoreCaret':'rwyKaryCoreCaret';
+  $(panelId).style.display=show?'block':'none';
+  const caret=$(caretId);
+  if(caret)caret.className=`fas fa-chevron-${show?'up':'down'}`;
 };
 
 /* ═══ PELATIHAN ═══ */
@@ -2399,15 +2509,22 @@ window.showRiwayatKary=p=>{
 function renderRiwayatKary(){
   const bulan=$('rwyKaryBulan').value,tahun=$('rwyKaryTahun').value;
   const allPlts=getPelatihanByPerner(rwyKaryPerner,'','');
-  const corePlts=allPlts.filter(p=>p.is_core);
-  const uniqueCore=new Set(corePlts.map(p=>p.topik)).size;
-  const filteredNonCore=getPelatihanByPerner(rwyKaryPerner,bulan,tahun).filter(p=>!p.is_core);
-  $('rwyKaryTotalPlt').textContent=filteredNonCore.length;
-  $('rwyKaryTotalJam').textContent=calcJam(filteredNonCore)+'h';
-  $('rwyKaryTotalCore').textContent=uniqueCore;
-  const tableData=[...filteredNonCore,...corePlts];
-  tableData.sort((a,b)=>(b.tanggal||'').localeCompare(a.tanggal||''));
-  $('rwyKaryBody').innerHTML=renderRwyTable(tableData,bulan,tahun);
+  const filtered=getPelatihanByPerner(rwyKaryPerner,bulan,tahun);
+  const filteredCore=filtered.filter(p=>p.is_core);
+
+  const bulanNama=['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  const filterLbl=bulan&&tahun?`${bulanNama[parseInt(bulan)]} ${tahun}`:tahun?tahun:bulan?bulanNama[parseInt(bulan)]:'Semua waktu';
+
+  $('rwyKaryTotalPlt').textContent=filtered.length;
+  $('rwyKaryTotalJam').textContent=calcJam(filtered)+'h';
+  $('rwyKaryTotalCore').textContent=new Set(filteredCore.map(p=>p.topik)).size;
+  $('rwyKaryFilterLbl').textContent=filterLbl;
+
+  /* Core sub-panel */
+  renderCorePanelList('kary',rwyKaryPerner,allPlts);
+
+  filtered.sort((a,b)=>(b.tanggal||'').localeCompare(a.tanggal||''));
+  $('rwyKaryBody').innerHTML=renderRwyTable(filtered,bulan,tahun);
 }
 $('btnRwyKaryFilter')?.addEventListener('click',renderRiwayatKary);
 
