@@ -3293,12 +3293,12 @@ function tugasCardFromPending(t,isDone=false){
     borderColor='#fde68a';bgColor='#fffbeb';iconBg='#f59e0b';iconColor='#fff';
     icon='fa-print';label='Menunggu cetak &amp; konfirmasi PDF';
     byInfo=`Absensi ditutup${t.ditutup_at?' '+t.ditutup_at:''} oleh ${t.ditutup_oleh_nama||'–'}`;
-    actionBtn=`<button class="btn btn-sm btn-a" onclick="konfirmasiPDFdanUpdateTugas('${id}','${t.id}');setTimeout(renderTugasSaya,1200);" style="background:#fffbeb;border:1.5px solid #fde68a;color:#b45309;flex-shrink:0;"><i class="fas fa-print"></i> Cetak PDF</button>`;
+    actionBtn=`<button class="btn btn-sm btn-a" onclick="konfirmasiPDFdanUpdateTugas('${id}','${t.id}')" style="background:#fffbeb;border:1.5px solid #fde68a;color:#b45309;flex-shrink:0;"><i class="fas fa-print"></i> Cetak PDF</button>`;
   }else if(t.status_tugas==='menunggu_ekpi'){
     borderColor='#bbf7d0';bgColor='#f0fdf4';iconBg='#059669';iconColor='#fff';
     icon='fa-desktop';label='Menunggu konfirmasi eKPI';
     byInfo=`PDF dicetak${t.pdf_at?' '+t.pdf_at:''} oleh ${t.pdf_oleh||'–'}`;
-    actionBtn=`<button class="btn btn-sm btn-p" onclick="konfirmasiEKPIdanUpdateTugas('${id}','${t.id}');setTimeout(renderTugasSaya,1200);" style="flex-shrink:0;"><i class="fas fa-desktop"></i> Konfirmasi eKPI</button>`;
+    actionBtn=`<button class="btn btn-sm btn-p" onclick="konfirmasiEKPIdanUpdateTugas('${id}','${t.id}')" style="flex-shrink:0;"><i class="fas fa-desktop"></i> Konfirmasi eKPI</button>`;
   }else{
     borderColor='#f1f5f9';bgColor='#f8fafc';iconBg='#e2e8f0';iconColor='#64748b';
     icon='fa-circle-check';label='Selesai semua';
@@ -3337,20 +3337,22 @@ window.konfirmasiPDFdanUpdateTugas=(pltId,tugasId)=>{
       const now=new Date().toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
       showLoad();
       try{
-        await updateDoc(doc(db,'pelatihan',pltId),{
-          status:'pdf_tercetak',status_pdf:true,
-          status_pdf_by:s.nama||s.uid,status_pdf_at:now,status_pdf_uid:s.uid
-        });
-        /* Update tugas_pending ke menunggu_ekpi */
-        await updateDoc(doc(db,'tugas_pending',tugasId||pltId),{
-          status_tugas:'menunggu_ekpi',
-          pdf_oleh:s.nama||s.uid,
-          pdf_at:now,
-          updated_at:serverTimestamp()
-        });
+        /* Update pelatihan dan tugas_pending secara paralel */
+        await Promise.all([
+          updateDoc(doc(db,'pelatihan',pltId),{
+            status:'pdf_tercetak',status_pdf:true,
+            status_pdf_by:s.nama||s.uid,status_pdf_at:now,status_pdf_uid:s.uid
+          }),
+          updateDoc(doc(db,'tugas_pending',tugasId||pltId),{
+            status_tugas:'menunggu_ekpi',
+            pdf_oleh:s.nama||s.uid,
+            pdf_at:now,
+            updated_at:serverTimestamp()
+          })
+        ]);
         await logAct('konfirmasi_pdf','',{id:pltId,topik:p.topik});
-        await loadAllData();
-        toast('PDF dikonfirmasi — status berubah ke PDF Tercetak');
+        toast('PDF dikonfirmasi — status berubah ke menunggu eKPI');
+        loadAllData().catch(()=>{});
       }catch(e){toast('Gagal: '+e.message,'error');}
       finally{hideLoad();}
     }
@@ -3369,20 +3371,31 @@ window.konfirmasiEKPIdanUpdateTugas=(pltId,tugasId)=>{
       const now=new Date().toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
       showLoad();
       try{
-        await updateDoc(doc(db,'pelatihan',pltId),{
-          status:'ekpi_selesai',status_ekpi:true,
-          status_ekpi_by:s.nama||s.uid,status_ekpi_at:now,status_ekpi_uid:s.uid
-        });
-        /* Update tugas_pending ke sudah_selesai */
-        await updateDoc(doc(db,'tugas_pending',tugasId||pltId),{
-          status_tugas:'sudah_selesai',
-          ekpi_oleh:s.nama||s.uid,
-          ekpi_at:now,
-          updated_at:serverTimestamp()
-        });
+        /* Update pelatihan dan tugas_pending secara paralel */
+        await Promise.all([
+          updateDoc(doc(db,'pelatihan',pltId),{
+            status:'ekpi_selesai',status_ekpi:true,
+            status_ekpi_by:s.nama||s.uid,status_ekpi_at:now,status_ekpi_uid:s.uid
+          }),
+          updateDoc(doc(db,'tugas_pending',tugasId||pltId),{
+            status_tugas:'sudah_selesai',
+            ekpi_oleh:s.nama||s.uid,
+            ekpi_at:now,
+            updated_at:serverTimestamp()
+          })
+        ]);
         await logAct('konfirmasi_ekpi','',{id:pltId,topik:p.topik});
-        await loadAllData();
         toast('eKPI dikonfirmasi — pelatihan selesai sepenuhnya ✓');
+        /* Tampilkan bagian Sudah Selesai otomatis */
+        if(!tugasSelesaiVisible){
+          tugasSelesaiVisible=true;
+          const sl=$('tugasSelesaiList');
+          if(sl)sl.style.display='block';
+          const btn=$('btnToggleTugasSelesai');
+          if(btn)btn.innerHTML=`<i class="fas fa-chevron-up" id="iconToggleTugas"></i> Sembunyikan`;
+        }
+        /* loadAllData di background tanpa blocking UI */
+        loadAllData().catch(()=>{});
       }catch(e){toast('Gagal: '+e.message,'error');}
       finally{hideLoad();}
     }
@@ -3723,11 +3736,11 @@ async function renderLog(){
 ['searchLog','filterLogAksi','filterLogDate'].forEach(id=>{$(id)?.addEventListener('input',()=>{logPage=1;allLogs=[];renderLog();});$(id)?.addEventListener('change',()=>{logPage=1;allLogs=[];renderLog();});});
 
 /* ═══ REALTIME LISTENERS ═══ */
-let _unsubPlt=null,_unsubPst=null,_unsubKary=null;
+let _unsubPlt=null,_unsubPst=null,_unsubKary=null,_unsubTugas=null;
 let _realtimeReady=false;
 
 function startRealtimeListeners(){
-  _unsubPlt?.();_unsubPst?.();_unsubKary?.();
+  _unsubPlt?.();_unsubPst?.();_unsubKary?.();_unsubTugas?.();
 
   _unsubPlt=onSnapshot(collection(db,'pelatihan'),snap=>{
     if(!_realtimeReady)return;
@@ -3753,6 +3766,23 @@ function startRealtimeListeners(){
       .sort((a,b)=>(a.nama_lengkap||'').localeCompare(b.nama_lengkap||'','id'));
     _refreshView();
   });
+
+  /* Realtime listener tugas_pending — update badge dan halaman Tugas Saya otomatis */
+  const s=S();
+  if(s.role==='superadmin'||s.role==='admin_plus'){
+    _unsubTugas=onSnapshot(collection(db,'tugas_pending'),snap=>{
+      if(!_realtimeReady)return;
+      /* Hitung pending untuk badge */
+      const pendingCount=snap.docs.filter(d=>{
+        const st=d.data().status_tugas;
+        return st==='menunggu_pdf'||st==='menunggu_ekpi';
+      }).length;
+      updateTugasBadge(pendingCount);
+      /* Jika halaman Tugas Saya sedang aktif, refresh otomatis */
+      const ap=document.querySelector('.page.active')?.id||'';
+      if(ap==='pageTugasSaya')renderTugasSaya();
+    });
+  }
 }
 
 function _refreshView(){
