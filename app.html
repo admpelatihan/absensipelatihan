@@ -1528,13 +1528,31 @@ async function loadAllData(){
 
 /* ═══ HELPERS: get pelatihan by perner ═══ */
 function getPelatihanByPerner(perner,bulan,tahun){
-  return allPelatihan.filter(p=>{
+  /* Filter dari allPelatihan berdasarkan peserta_pelatihan */
+  const fromPlt=allPelatihan.filter(p=>{
     const hadir=(allPesertaMap[p.id]||[]).some(pe=>pe.perner===perner);
     if(!hadir)return false;
     if(tahun){const y=p.tanggal?new Date(p.tanggal+'T00:00:00').getFullYear():null;if(y!==parseInt(tahun))return false;}
     if(bulan){const m=p.tanggal?new Date(p.tanggal+'T00:00:00').getMonth()+1:null;if(m!==parseInt(bulan))return false;}
     return true;
   });
+  /* Deduplikasi topik+tanggal yang sudah ada */
+  const seen=new Set(fromPlt.map(p=>`${(p.topik||'').toLowerCase()}|${p.tanggal||''}`));
+  /* Tambahkan dari core_eksternal yang belum masuk */
+  const fromExt=(allCoreEksternal[perner]||[]).filter(ce=>{
+    const k=`${(ce.topik||'').toLowerCase()}|${ce.tanggal||''}`;
+    if(seen.has(k))return false;
+    if(tahun){const y=ce.tanggal?new Date(ce.tanggal+'T00:00:00').getFullYear():null;if(y!==parseInt(tahun))return false;}
+    if(bulan){const m=ce.tanggal?new Date(ce.tanggal+'T00:00:00').getMonth()+1:null;if(m!==parseInt(bulan))return false;}
+    return true;
+  }).map(ce=>({
+    id:'EXT-CE-'+ce.topik+ce.tanggal,
+    topik:ce.topik,tanggal:ce.tanggal,
+    is_core:true,instruktur:'Eksternal',
+    status:'ekpi_selesai',unit_pembuat:'',
+    waktu_mulai:'00:00',waktu_selesai:'00:00'
+  }));
+  return[...fromPlt,...fromExt];
 }
 function renderRwyTable(plts){
   if(!plts.length)return'<div class="empty-st"><div class="empty-icon">📋</div><div class="empty-lbl">Tidak ada pelatihan</div></div>';
@@ -1601,15 +1619,16 @@ function renderDashboard(){
   $('dashPltBody').innerHTML=!pf.length?`<tr><td colspan="5" class="empty-st"><div class="empty-lbl">Belum ada pelatihan</div></td></tr>`:pf.slice(0,10).map(p=>`<tr><td><strong>${p.topik||'–'}</strong>${p.is_core?` <span class="pill pill-core" style="font-size:8px;">Core</span>`:''}</td><td class="td-m">${p.unit_pembuat||'–'}</td><td class="td-m">${p.tanggal?hariIndo(p.tanggal)+', '+p.tanggal:'–'}</td><td class="td-m">${p.instruktur||'–'}</td><td><span class="pill ${normStatus(p)==='ekpi_selesai'?'pill-st-ekpi':normStatus(p)==='pdf_tercetak'?'pill-st-pdf':normStatus(p)==='absensi_ditutup'?'pill-st-absensi':'pill-st-aktif'}">${p.status||'aktif'}</span></td></tr>`).join('');
 }
 window.goRekap=(topik,status)=>{
-  /* Sync semua filter dari dashboard ke rekap core */
+  /* Sync filter dari dashboard ke rekap core */
   $('filterRekapCore').value=topik;
   $('filterRekapStatus').value=status;
   /* Bawa filter Unit dari dashboard */
   const dashUnit=$('dashUnit')?.value||'';
   if(dashUnit)$('filterRekapUnit').value=dashUnit;
-  /* Bawa filter Tahun dari dashboard */
-  const dashTahun=$('dashTahun')?.value||'';
-  if(dashTahun)$('filterRekapTahun').value=dashTahun;
+  /* TIDAK membawa filter Tahun — rekap core pakai rolling 12 bulan sendiri */
+  /* Reset tahun ke semua agar data rolling terlihat */
+  const rekapTahun=$('filterRekapTahun');
+  if(rekapTahun)rekapTahun.value='';
   rekapPage=1;
   showPage('RekapCore');
 };
@@ -1621,6 +1640,10 @@ $('btnShortBuat')?.addEventListener('click',()=>{editPltId=null;$('moPltTitle').
 $('btnShortRiwayat')?.addEventListener('click',()=>{
   const s=S(); const bulan=$('dashBulan').value; const tahun=$('dashTahun').value;
   $('rwyBulan').value=bulan; $('rwyTahun').value=tahun||new Date().getFullYear();
+  /* Reset sub-panel core */
+  _corePanelVisible.rwy=false;
+  const rwyCp=$('rwyCorePanel');if(rwyCp)rwyCp.style.display='none';
+  const rwyCaret=$('rwyCoreCaret');if(rwyCaret)rwyCaret.className='fas fa-chevron-down';
   renderRiwayatSaya(); openModal('moRiwayatSaya');
 });
 window.renderRiwayatSaya=()=>{
@@ -1646,8 +1669,10 @@ window.renderRiwayatSaya=()=>{
   $('rwyTotalPlt').textContent=totalPlt;
   $('rwyTotalJam').textContent=totalJam+'h';
   $('rwyTotalCore').textContent=uniqueCoreFil;
-  $('rwyFilterLbl').textContent=filterLbl;
-  $('rwyFilterLbl2').textContent=filterLbl;
+  /* Label hanya muncul jika ada filter aktif */
+  const showLbl=bulan||tahun;
+  $('rwyFilterLbl').textContent=showLbl?filterLbl:'';
+  $('rwyFilterLbl2').textContent=showLbl?filterLbl:'';
 
   /* Render core sub-panel (tidak terpengaruh filter) */
   renderCorePanelList('rwy',s.perner,allPlts);
@@ -1725,8 +1750,8 @@ window.toggleCorePanel=which=>{
 /* Normalise legacy status values */
 function normStatus(p){
   const st=p.status||'aktif';
-  /* Legacy: 'selesai' → anggap absensi_ditutup jika belum ada konfirmasi PDF */
-  if(st==='selesai')return p.status_pdf?'pdf_tercetak':'absensi_ditutup';
+  /* Legacy: 'selesai' → anggap ekpi_selesai (data lama sudah selesai sepenuhnya) */
+  if(st==='selesai')return 'ekpi_selesai';
   return st;
 }
 
@@ -2504,6 +2529,10 @@ window.showRiwayatKary=p=>{
   const k=allKaryawan.find(k=>k.perner===p);if(!k)return;
   $('rwyKaryTitle').textContent=`Riwayat — ${k.nama_lengkap}`;
   $('rwyKaryBulan').value=''; $('rwyKaryTahun').value=new Date().getFullYear();
+  /* Reset sub-panel core */
+  _corePanelVisible.kary=false;
+  const karyCp=$('rwyKaryCorePanel');if(karyCp)karyCp.style.display='none';
+  const karyCaret=$('rwyKaryCoreCaret');if(karyCaret)karyCaret.className='fas fa-chevron-down';
   renderRiwayatKary(); openModal('moRiwayatKary');
 };
 function renderRiwayatKary(){
@@ -2518,7 +2547,7 @@ function renderRiwayatKary(){
   $('rwyKaryTotalPlt').textContent=filtered.length;
   $('rwyKaryTotalJam').textContent=calcJam(filtered)+'h';
   $('rwyKaryTotalCore').textContent=new Set(filteredCore.map(p=>p.topik)).size;
-  $('rwyKaryFilterLbl').textContent=filterLbl;
+  $('rwyKaryFilterLbl').textContent=(bulan||tahun)?filterLbl:'';
 
   /* Core sub-panel */
   renderCorePanelList('kary',rwyKaryPerner,allPlts);
