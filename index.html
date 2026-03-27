@@ -221,7 +221,7 @@
       </div>
 
       <div class="input-group">
-        <input type="password" id="newPw1" class="input-field" placeholder="Minimal 8 karakter"/>
+        <input type="password" id="newPw1" class="input-field" placeholder="Minimal 6 karakter"/>
         <i class="fas fa-lock input-icon"></i>
         <button type="button" onclick="toggleField('newPw1','eye1')" class="input-toggle"><i id="eye1" class="far fa-eye"></i></button>
       </div>
@@ -378,7 +378,7 @@
     /* password strength */
     document.getElementById('newPw1').addEventListener('input',()=>{
       const v=document.getElementById('newPw1').value; let s=0;
-      if(v.length>=8)s++; if(v.length>=12)s++;
+      if(v.length>=6)s++; if(v.length>=12)s++;
       if(/[A-Z]/.test(v))s++; if(/[0-9]/.test(v))s++; if(/[^A-Za-z0-9]/.test(v))s++;
       const pct=Math.min(100,s*20);
       const cols=['#ef4444','#f97316','#eab308','#22c55e','#064e3b'];
@@ -398,13 +398,13 @@
     }
     function checkSave(){
       document.getElementById('btnSaveNewPw').disabled=
-        !(document.getElementById('newPw1').value.length>=8&&document.getElementById('newPw1').value===document.getElementById('newPw2').value);
+        !(document.getElementById('newPw1').value.length>=6&&document.getElementById('newPw1').value===document.getElementById('newPw2').value);
     }
 
     /* save new password */
     document.getElementById('btnSaveNewPw').addEventListener('click',async()=>{
       const pw=document.getElementById('newPw1').value;
-      if(pw!==document.getElementById('newPw2').value||pw.length<8)return;
+      if(pw!==document.getElementById('newPw2').value||pw.length<6)return;
       document.getElementById('savePwLabel').textContent='Menyimpan…';
       document.getElementById('savePwLoader').style.display='block';
       document.getElementById('btnSaveNewPw').disabled=true;
