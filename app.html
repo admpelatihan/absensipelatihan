@@ -236,11 +236,44 @@
     .pill-selesai{background:#eff6ff;color:#1d4ed8;}
     .pill-proses{background:#fffbeb;color:#92400e;}
     .pill-core{background:#ede9fe;color:#5b21b6;}
+    /* Status empat tahap */
+    .pill-st-aktif{background:#fef9c3;color:#854d0e;border:1px solid #fde047;}
+    .pill-st-absensi{background:#dbeafe;color:#1d4ed8;border:1px solid #93c5fd;}
+    .pill-st-pdf{background:#fef3c7;color:#92400e;border:1px solid #fcd34d;}
+    .pill-st-ekpi{background:#dcfce7;color:#14532d;border:1px solid #86efac;}
+    /* Banner info di card */
+    .plt-banner{border-radius:10px;padding:8px 11px;margin-bottom:10px;font-size:10px;font-weight:700;display:flex;align-items:center;gap:7px;line-height:1.4;}
+    .plt-banner-blue{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;}
+    .plt-banner-amber{background:#fffbeb;border:1px solid #fde68a;color:#92400e;}
+    .plt-banner-green{background:#f0fdf4;border:1px solid #bbf7d0;color:#065f46;}
 
-    /* ═══ PLT GRID ═══ */
+    /* ═══ PLT GRID / TABLE TOGGLE ═══ */
     .plt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:13px;}
     .plt-card{background:#fff;border-radius:18px;border:1px solid #f1f5f9;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.04);cursor:pointer;transition:all .2s;}
     .plt-card:hover{border-color:var(--green2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(5,150,105,.1);}
+    .plt-card.is-ext{border-left:3px solid #e2e8f0;opacity:.85;}
+    .plt-card.is-ext:hover{border-color:#94a3b8;}
+
+    /* Status PDF/eKPI badges */
+    .status-badges{display:flex;gap:5px;align-items:center;flex-shrink:0;}
+    .sbadge{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:6px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:.3px;cursor:pointer;border:1.5px solid;transition:all .18s;user-select:none;-webkit-tap-highlight-color:transparent;}
+    .sbadge-pdf{border-color:#e2e8f0;background:#fff;color:#94a3b8;}
+    .sbadge-pdf.done{border-color:#059669;background:#ecfdf5;color:#064e3b;}
+    .sbadge-ekpi{border-color:#e2e8f0;background:#fff;color:#94a3b8;}
+    .sbadge-ekpi.done{border-color:#2563eb;background:#eff6ff;color:#1d4ed8;}
+
+    /* Table view */
+    .plt-table-wrap{border-radius:14px;border:1px solid #f1f5f9;overflow:hidden;}
+    .plt-table-wrap table{width:100%;border-collapse:collapse;font-size:13px;}
+    .plt-table-wrap thead th{background:#f8fafc;padding:10px 12px;text-align:left;font-size:9px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:2px;border-bottom:1px solid #f1f5f9;white-space:nowrap;}
+    .plt-table-wrap tbody tr{border-bottom:1px solid #f8fafc;transition:background .15s;cursor:pointer;}
+    .plt-table-wrap tbody tr:hover{background:#f8fafc;}
+    .plt-table-wrap tbody tr.is-ext{background:#fafafa;}
+    .plt-table-wrap tbody tr:last-child{border-bottom:none;}
+    .plt-table-wrap td{padding:10px 12px;vertical-align:middle;}
+
+    /* View toggle active state */
+    #btnViewCard.vactive,#btnViewTable.vactive{background:var(--green);color:#fff;}
 
     /* ═══ CHIPS ═══ */
     .chip-area{display:flex;flex-wrap:wrap;gap:6px;padding:10px;border:1.5px dashed #e2e8f0;border-radius:13px;min-height:44px;}
@@ -461,46 +494,103 @@
     <div class="page" id="pagePelatihan">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:2px;">
         <div class="pg-title">Pelatihan</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
           <button class="btn btn-o" id="btnBersihDuplikat" title="Deteksi dan hapus data pelatihan duplikat"><i class="fas fa-broom"></i> Bersihkan Duplikat</button>
           <button class="btn btn-p" id="btnBuatPlt"><i class="fas fa-plus"></i> Buat Pelatihan</button>
         </div>
       </div>
       <div class="pg-sub">Kelola Semua Data Pelatihan</div>
-      <div class="filters">
+      <div class="filters" style="align-items:flex-end;">
         <div class="fl-group"><div class="fl-lbl">Cari</div><div class="sw"><span class="si"><i class="fas fa-search"></i></span><input type="search" id="searchPlt" placeholder="Topik / instruktur…" style="width:185px;"/></div></div>
         <div class="fl-group"><div class="fl-lbl">Unit</div><select id="filterPltUnit" style="min-width:115px;"></select></div>
-        <div class="fl-group"><div class="fl-lbl">Status</div><select id="filterPltStatus"><option value="">Semua</option><option value="aktif">Aktif</option><option value="selesai">Selesai</option></select></div>
+        <div class="fl-group"><div class="fl-lbl">Status</div><select id="filterPltStatus"><option value="">Semua</option><option value="aktif">Aktif</option><option value="absensi_ditutup">Absensi Ditutup</option><option value="pdf_tercetak">PDF Tercetak</option><option value="ekpi_selesai">eKPI Selesai</option></select></div>
         <div class="fl-group"><div class="fl-lbl">Tahun</div><select id="filterPltTahun" style="min-width:88px;"></select></div>
+        <!-- Toggle EXT -->
+        <div class="fl-group">
+          <div class="fl-lbl">Eksternal</div>
+          <button id="btnToggleExt" class="btn btn-o btn-sm" title="Tampilkan/sembunyikan data core eksternal (EXT-)">
+            <i class="fas fa-eye-slash"></i> Sembunyikan EXT
+          </button>
+        </div>
+        <!-- Toggle Card/Table -->
+        <div class="fl-group" style="margin-left:auto;">
+          <div class="fl-lbl">Tampilan</div>
+          <div style="display:flex;border:1.5px solid #e2e8f0;border-radius:10px;overflow:hidden;">
+            <button id="btnViewCard" class="btn btn-sm" style="border:none;border-radius:0;padding:7px 12px;"><i class="fas fa-grip"></i></button>
+            <button id="btnViewTable" class="btn btn-sm" style="border:none;border-radius:0;padding:7px 12px;border-left:1.5px solid #e2e8f0;"><i class="fas fa-list"></i></button>
+          </div>
+        </div>
       </div>
-      <div class="plt-grid" id="pltGrid"><div class="empty-st"><div class="empty-icon">📋</div><div class="empty-lbl">Memuat…</div></div></div>
+      <!-- Info bar: jumlah data tampil -->
+      <div id="pltInfoBar" style="font-size:10px;font-weight:700;color:#94a3b8;margin-bottom:10px;display:flex;align-items:center;gap:12px;"></div>
+      <!-- Grid/Table container -->
+      <div id="pltGrid"><div class="empty-st"><div class="empty-icon">📋</div><div class="empty-lbl">Memuat…</div></div></div>
+      <!-- Pagination -->
+      <div class="pag" id="pltPag" style="margin-top:14px;"></div>
     </div>
 
     <!-- ── KARYAWAN ── -->
     <div class="page" id="pageKaryawan">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:2px;">
         <div class="pg-title">Data Karyawan</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;" id="karyActWrap">
           <button class="btn btn-o" id="btnImport"><i class="fas fa-file-import"></i> Import</button>
           <button class="btn btn-o" id="btnTplKary"><i class="fas fa-file-csv"></i> Template</button>
           <button class="btn btn-p" id="btnTambahKary"><i class="fas fa-plus"></i> Tambah</button>
         </div>
       </div>
       <div class="pg-sub">Kelola Data Seluruh Karyawan</div>
-      <div class="filters">
-        <div class="fl-group"><div class="fl-lbl">Cari</div><div class="sw"><span class="si"><i class="fas fa-search"></i></span><input type="search" id="searchKary" placeholder="Nama atau perner…" style="width:185px;"/></div></div>
-        <div class="fl-group"><div class="fl-lbl">Unit</div><select id="filterKaryUnit" style="min-width:115px;"></select></div>
-        <div class="fl-group"><div class="fl-lbl">Bagian</div><select id="filterKaryBagian" style="min-width:125px;"></select></div>
-        <div class="fl-group"><div class="fl-lbl">Status</div><select id="filterKaryStatus"><option value="">Semua</option><option value="aktif">Aktif</option><option value="nonaktif">Nonaktif</option></select></div>
+
+      <!-- Tab bar -->
+      <div class="tab-bar" id="karyTabBar">
+        <button class="tab-btn active" id="tabKaryTetap" onclick="switchKaryTab('tetap')">
+          <i class="fas fa-id-badge" style="margin-right:5px;"></i>Karyawan Tetap
+        </button>
+        <button class="tab-btn" id="tabKaryPKH" onclick="switchKaryTab('pkh')">
+          <i class="fas fa-user-clock" style="margin-right:5px;"></i>PKH
+          <span id="pkhCount" style="background:#f1f5f9;color:#64748b;font-size:8px;font-weight:900;border-radius:99px;padding:1px 6px;margin-left:5px;">0</span>
+        </button>
       </div>
-      <div class="card">
-        <div class="tw">
-          <table>
-            <thead><tr><th>Nama &amp; Perner</th><th>Unit</th><th>Bagian</th><th>Jabatan</th><th>Status</th><th>Aksi</th></tr></thead>
-            <tbody id="karyBody"><tr><td colspan="6" class="empty-st"><div class="empty-lbl">Memuat…</div></td></tr></tbody>
-          </table>
+
+      <!-- Tab: Karyawan Tetap -->
+      <div id="karyTabTetap">
+        <div class="filters">
+          <div class="fl-group"><div class="fl-lbl">Cari</div><div class="sw"><span class="si"><i class="fas fa-search"></i></span><input type="search" id="searchKary" placeholder="Nama atau perner…" style="width:185px;"/></div></div>
+          <div class="fl-group"><div class="fl-lbl">Unit</div><select id="filterKaryUnit" style="min-width:115px;"></select></div>
+          <div class="fl-group"><div class="fl-lbl">Bagian</div><select id="filterKaryBagian" style="min-width:125px;"></select></div>
+          <div class="fl-group"><div class="fl-lbl">Status</div><select id="filterKaryStatus"><option value="">Semua</option><option value="aktif">Aktif</option><option value="nonaktif">Nonaktif</option></select></div>
         </div>
-        <div class="pag" id="karyPag"></div>
+        <div class="card">
+          <div class="tw">
+            <table>
+              <thead><tr><th>Nama &amp; Perner</th><th>Unit</th><th>Bagian</th><th>Jabatan</th><th>Status</th><th id="karyAksiTh">Aksi</th></tr></thead>
+              <tbody id="karyBody"><tr><td colspan="6" class="empty-st"><div class="empty-lbl">Memuat…</div></td></tr></tbody>
+            </table>
+          </div>
+          <div class="pag" id="karyPag"></div>
+        </div>
+      </div>
+
+      <!-- Tab: PKH -->
+      <div id="karyTabPKH" style="display:none;">
+        <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:11px;font-weight:700;color:#92400e;line-height:1.6;">
+          <i class="fas fa-circle-info" style="margin-right:6px;"></i>
+          Data PKH hanya digunakan sebagai referensi untuk form pelatihan. Rekap core dan statistik jam pelatihan tidak mencatat PKH. Level 3 hanya dapat melihat data ini.
+        </div>
+        <div class="filters">
+          <div class="fl-group"><div class="fl-lbl">Cari</div><div class="sw"><span class="si"><i class="fas fa-search"></i></span><input type="search" id="searchPKH" placeholder="Nama atau ID…" style="width:185px;"/></div></div>
+          <div class="fl-group"><div class="fl-lbl">Unit</div><select id="filterPKHUnit" style="min-width:115px;"></select></div>
+          <div class="fl-group"><div class="fl-lbl">Status</div><select id="filterPKHStatus"><option value="">Semua</option><option value="aktif">Aktif</option><option value="nonaktif">Nonaktif</option></select></div>
+        </div>
+        <div class="card">
+          <div class="tw">
+            <table>
+              <thead><tr><th>Nama &amp; ID</th><th>Unit</th><th>Bagian</th><th>Jabatan</th><th>Status</th><th id="pkhAksiTh">Aksi</th></tr></thead>
+              <tbody id="pkhBody"><tr><td colspan="6" class="empty-st"><div class="empty-lbl">Memuat…</div></td></tr></tbody>
+            </table>
+          </div>
+          <div class="pag" id="pkhPag"></div>
+        </div>
       </div>
     </div>
 
@@ -727,6 +817,11 @@
           <div class="sw"><span class="si"><i class="fas fa-search"></i></span><input type="search" id="searchPeserta" placeholder="Cari nama/perner…" style="width:165px;"/></div>
           <select id="filterPesertaUnit" style="min-width:105px;"></select>
           <select id="filterPesertaBagian" style="min-width:115px;"></select>
+          <!-- Toggle tampilkan PKH -->
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:0 4px;font-size:11px;font-weight:700;color:#92400e;background:#fffbeb;border:1px solid #fde68a;border-radius:9px;height:37px;padding:0 10px;white-space:nowrap;">
+            <input type="checkbox" id="filterPesertaPKH" onchange="loadPesertaSearch(document.getElementById('searchPeserta').value,document.getElementById('filterPesertaUnit').value,document.getElementById('filterPesertaBagian').value)" style="width:14px;height:14px;accent-color:#d97706;"/>
+            Tampilkan PKH
+          </label>
         </div>
         <div class="tw" style="max-height:170px;overflow-y:auto;">
           <table><thead><tr><th style="width:34px;"></th><th>Nama</th><th>Perner</th><th>Unit</th></tr></thead><tbody id="pesertaBody"></tbody></table>
@@ -765,6 +860,26 @@
     <div class="mo-foot">
       <button class="btn btn-o" onclick="closeModal('moKary')">Batal</button>
       <button class="btn btn-p" id="btnSimpanKary"><i class="fas fa-floppy-disk"></i> Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Form PKH -->
+<div class="mo" id="moPKH">
+  <div class="mo-box">
+    <div class="mo-head"><div class="mo-title" id="moPKHTitle">Tambah Data PKH</div><button class="mo-close" onclick="closeModal('moPKH')">✕</button></div>
+    <div class="mo-body">
+      <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:9px 13px;margin-bottom:13px;font-size:11px;font-weight:700;color:#92400e;">
+        <i class="fas fa-circle-info" style="margin-right:5px;"></i>Data PKH hanya untuk referensi form pelatihan. Tidak masuk rekap core atau statistik.
+      </div>
+      <div class="fr"><div class="fg"><div class="fl">Nama Lengkap</div><input type="text" id="pkhNama" placeholder="Nama lengkap"/></div><div class="fg"><div class="fl">ID / Nomor Kontrak</div><input type="text" id="pkhId" placeholder="ID atau nomor kontrak (opsional)"/></div></div>
+      <div class="fr"><div class="fg"><div class="fl">Unit</div><select id="pkhUnit"></select></div><div class="fg"><div class="fl">Bagian</div><input type="text" id="pkhBagian" placeholder="Nama bagian"/></div></div>
+      <div class="fr fr-full"><div class="fg"><div class="fl">Jabatan / Pekerjaan</div><input type="text" id="pkhJabatan" placeholder="Contoh: Operator Borongan, Helper"/></div></div>
+      <div class="fr fr-full"><div class="fg"><div class="fl">Status</div><select id="pkhStatus"><option value="aktif">Aktif</option><option value="nonaktif">Nonaktif</option></select></div></div>
+    </div>
+    <div class="mo-foot">
+      <button class="btn btn-o" onclick="closeModal('moPKH')">Batal</button>
+      <button class="btn btn-p" id="btnSimpanPKH"><i class="fas fa-floppy-disk"></i> Simpan</button>
     </div>
   </div>
 </div>
@@ -1033,6 +1148,8 @@ const S=()=>({uid:LS.get('uid'),role:LS.get('role'),nama:LS.get('nama'),unit:LS.
 
 /* State */
 let allKaryawan=[],allPelatihan=[],allPesertaMap={},allUsers=[],allLogs=[],allCoreEksternal={};
+let allPKH=[]; /* Data PKH tersimpan terpisah dari allKaryawan */
+let pkhPage=1;
 let masterCore=[],jabatanOpts=[];
 let selectedPeserta=new Map();
 let editPltId=null,editKaryId=null,editUserId=null;
@@ -1117,7 +1234,7 @@ onAuthStateChanged(auth,async user=>{
 /* ═══ INIT ═══ */
 async function initApp(){
   startClock(); updateGreeting();
-  buildNav(); buildYears(); buildUnitDrops();
+  buildNav(); buildYears(); buildUnitDrops(); buildPKHUnitDrop();
   setupUcPernerRows();
   await loadMasterCore(); await loadJabatan(); await loadAllData();
   setupListeners();
@@ -1254,15 +1371,26 @@ async function loadAllData(){
 
   try{
     /* Use simplest possible queries — no orderBy, no index required */
-    const[ks,ps,pps,ces]=await Promise.all([
+    const[ks,ps,pps,ces,pkhs]=await Promise.all([
       getDocs(collection(db,'karyawan')),
       getDocs(collection(db,'pelatihan')),
       getDocs(collection(db,'peserta_pelatihan')),
-      getDocs(collection(db,'core_eksternal'))
+      getDocs(collection(db,'core_eksternal')),
+      getDocs(collection(db,'pkh'))
     ]);
 
+    /* Pisahkan karyawan tetap dan PKH */
     allKaryawan=ks.docs.map(d=>({id:d.id,...d.data()}))
+      .filter(k=>k.tipe_kepegawaian!=='pkh') /* exclude PKH yang tersimpan di koleksi karyawan */
       .sort((a,b)=>(a.nama_lengkap||'').localeCompare(b.nama_lengkap||'','id'));
+
+    /* Data PKH dari koleksi terpisah */
+    allPKH=pkhs.docs.map(d=>({id:d.id,...d.data()}))
+      .sort((a,b)=>(a.nama_lengkap||'').localeCompare(b.nama_lengkap||'','id'));
+
+    /* Update badge count */
+    const pkhCountEl=$('pkhCount');
+    if(pkhCountEl)pkhCountEl.textContent=allPKH.length;
 
     /* Include ALL pelatihan including EXT- (core eksternal) */
     const rawPelatihan=ps.docs.map(d=>({id:d.id,...d.data()}))
@@ -1357,7 +1485,7 @@ function renderRwyTable(plts){
     <div style="margin-bottom:14px;">
       <div style="font-size:10px;font-weight:900;color:var(--green);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;padding-bottom:5px;border-bottom:2px solid #ecfdf5;">${y}</div>
       <div class="tw"><table><thead><tr><th>Topik</th><th>Tanggal</th><th>Instruktur</th><th>Jam</th><th>Status</th></tr></thead>
-        <tbody>${yrs[y].map(p=>{const m=p.waktu_mulai&&p.waktu_selesai?((parseInt(p.waktu_selesai.split(':')[0])*60+parseInt(p.waktu_selesai.split(':')[1]))-(parseInt(p.waktu_mulai.split(':')[0])*60+parseInt(p.waktu_mulai.split(':')[1]))):0;return`<tr><td style="font-weight:700;">${p.topik||'–'} ${p.is_core?'<span class="pill pill-core" style="font-size:8px;">Core</span>':''}</td><td class="td-m">${p.tanggal||'–'}</td><td class="td-m">${p.instruktur||'–'}</td><td class="td-m">${(m/60).toFixed(1)}h</td><td><span class="pill ${p.status==='selesai'?'pill-selesai':'pill-proses'}">${p.status||'aktif'}</span></td></tr>`;}).join('')}</tbody>
+        <tbody>${yrs[y].map(p=>{const m=p.waktu_mulai&&p.waktu_selesai?((parseInt(p.waktu_selesai.split(':')[0])*60+parseInt(p.waktu_selesai.split(':')[1]))-(parseInt(p.waktu_mulai.split(':')[0])*60+parseInt(p.waktu_mulai.split(':')[1]))):0;return`<tr><td style="font-weight:700;">${p.topik||'–'} ${p.is_core?'<span class="pill pill-core" style="font-size:8px;">Core</span>':''}</td><td class="td-m">${p.tanggal||'–'}</td><td class="td-m">${p.instruktur||'–'}</td><td class="td-m">${(m/60).toFixed(1)}h</td><td><span class="pill ${normStatus(p)==='ekpi_selesai'?'pill-st-ekpi':normStatus(p)==='pdf_tercetak'?'pill-st-pdf':normStatus(p)==='absensi_ditutup'?'pill-st-absensi':'pill-st-aktif'}">${p.status||'aktif'}</span></td></tr>`;}).join('')}</tbody>
       </table></div>
     </div>`).join('');
 }
@@ -1404,7 +1532,7 @@ function renderDashboard(){
     mg.appendChild(card);
   });
   /* Latest 10 */
-  $('dashPltBody').innerHTML=!pf.length?`<tr><td colspan="5" class="empty-st"><div class="empty-lbl">Belum ada pelatihan</div></td></tr>`:pf.slice(0,10).map(p=>`<tr><td><strong>${p.topik||'–'}</strong>${p.is_core?` <span class="pill pill-core" style="font-size:8px;">Core</span>`:''}</td><td class="td-m">${p.unit_pembuat||'–'}</td><td class="td-m">${p.tanggal?hariIndo(p.tanggal)+', '+p.tanggal:'–'}</td><td class="td-m">${p.instruktur||'–'}</td><td><span class="pill ${p.status==='selesai'?'pill-selesai':'pill-proses'}">${p.status||'aktif'}</span></td></tr>`).join('');
+  $('dashPltBody').innerHTML=!pf.length?`<tr><td colspan="5" class="empty-st"><div class="empty-lbl">Belum ada pelatihan</div></td></tr>`:pf.slice(0,10).map(p=>`<tr><td><strong>${p.topik||'–'}</strong>${p.is_core?` <span class="pill pill-core" style="font-size:8px;">Core</span>`:''}</td><td class="td-m">${p.unit_pembuat||'–'}</td><td class="td-m">${p.tanggal?hariIndo(p.tanggal)+', '+p.tanggal:'–'}</td><td class="td-m">${p.instruktur||'–'}</td><td><span class="pill ${normStatus(p)==='ekpi_selesai'?'pill-st-ekpi':normStatus(p)==='pdf_tercetak'?'pill-st-pdf':normStatus(p)==='absensi_ditutup'?'pill-st-absensi':'pill-st-aktif'}">${p.status||'aktif'}</span></td></tr>`).join('');
 }
 window.goRekap=(topik,status)=>{
   /* Sync semua filter dari dashboard ke rekap core */
@@ -1451,82 +1579,403 @@ window.renderRiwayatSaya=()=>{
 };
 
 /* ═══ PELATIHAN ═══ */
+/* ═══ STATUS HELPERS ═══ */
+/* Normalise legacy status values */
+function normStatus(p){
+  const st=p.status||'aktif';
+  /* Legacy: 'selesai' → anggap absensi_ditutup jika belum ada konfirmasi PDF */
+  if(st==='selesai')return p.status_pdf?'pdf_tercetak':'absensi_ditutup';
+  return st;
+}
+
+/* Pill HTML per status */
+function statusPill(p){
+  const st=normStatus(p);
+  const map={
+    aktif:         ['pill-st-aktif',  '● Aktif'],
+    absensi_ditutup:['pill-st-absensi','● Absensi Ditutup'],
+    pdf_tercetak:  ['pill-st-pdf',    '● PDF Tercetak'],
+    ekpi_selesai:  ['pill-st-ekpi',   '✓ eKPI Selesai'],
+  };
+  const [cls,lbl]=map[st]||['pill-proses',st];
+  return`<span class="pill ${cls}">${lbl}</span>`;
+}
+
+/* Border warna kiri card per status */
+function statusBorder(p){
+  const st=normStatus(p);
+  const map={absensi_ditutup:'#3b82f6',pdf_tercetak:'#f59e0b',ekpi_selesai:'#86efac'};
+  return map[st]?`border-left:3px solid ${map[st]};`:'';
+}
+
+/* Banner info di dalam card */
+function statusBanner(p){
+  const st=normStatus(p);
+  if(st==='absensi_ditutup'){
+    const by=p.absensi_ditutup_nama||p.absensi_ditutup_oleh||'–';
+    const at=p.absensi_ditutup_at||'';
+    return`<div class="plt-banner plt-banner-blue"><i class="fas fa-clipboard-check"></i>Ditutup${at?' '+at:''} oleh ${by}</div>`;
+  }
+  if(st==='pdf_tercetak'){
+    const by=p.status_pdf_by||'–'; const at=p.status_pdf_at||'';
+    return`<div class="plt-banner plt-banner-amber"><i class="fas fa-print"></i>PDF dicetak${at?' '+at:''} oleh ${by}</div>`;
+  }
+  if(st==='ekpi_selesai'){
+    const by=p.status_ekpi_by||'–'; const at=p.status_ekpi_at||'';
+    return`<div class="plt-banner plt-banner-green"><i class="fas fa-circle-check"></i>eKPI diinput${at?' '+at:''} oleh ${by}</div>`;
+  }
+  return'';
+}
+
+/* Apakah user bisa konfirmasi PDF/eKPI (Level 2+ atau Superadmin) */
+function canConfirm(){
+  const s=S();
+  return s.role==='superadmin'||s.role==='admin_plus';
+}
+
+/* Apakah user bisa edit pelatihan ini */
+function canEditPlt(p){
+  const s=S();
+  if(s.role==='superadmin'||s.role==='admin'||s.role==='admin_plus')return true;
+  if(s.role==='unit')return p.dibuat_oleh===s.uid; /* Level 3 hanya buatan sendiri */
+  return false;
+}
+
+/* Apakah user bisa hapus pelatihan */
+function canDeletePlt(){
+  const s=S();
+  return s.role==='superadmin'||s.role==='admin'||s.role==='admin_plus';
+}
+
+/* Tombol aksi card berdasarkan status dan level */
+function buildCardActions(p,waMsg){
+  const s=S();
+  const st=normStatus(p);
+  const isUnit=s.role==='unit';
+  const confirm=canConfirm();
+  const canEdit=canEditPlt(p);
+  const canDel=canDeletePlt();
+  const isCore=p.is_core;
+  const id=p.id;
+
+  const btnKiosk=`<button class="btn btn-sm btn-b" onclick="event.stopPropagation();openKiosk('${id}')"><i class="fas fa-tablet-screen-button"></i> Kiosk</button>`;
+  const btnEdit=canEdit?`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();editPlt('${id}')"><i class="fas fa-pen"></i></button>`:'';
+  const btnCetak=`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();printPlt('${id}')"><i class="fas fa-print"></i></button>`;
+  const btnShare=isCore?`<button class="btn btn-sm" style="background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;" onclick="event.stopPropagation();window.open('https://wa.me/?text=${waMsg}','_blank')"><i class="fab fa-whatsapp"></i> Share</button>`:'';
+  const btnHapus=canDel?`<button class="btn btn-sm btn-r" onclick="event.stopPropagation();hapusPlt('${id}')"><i class="fas fa-trash"></i></button>`:'';
+
+  /* Tombol konfirmasi — hanya Level 2+ & Superadmin */
+  const btnCetakKonfirmasi=confirm?`<button class="btn btn-sm btn-a" onclick="event.stopPropagation();konfirmasiPDF('${id}')" style="background:#fffbeb;border:1.5px solid #fde68a;color:#b45309;"><i class="fas fa-print"></i> Cetak &amp; Konfirmasi PDF</button>`:'';
+  const btnBukaUlang=confirm?`<button class="btn btn-sm" style="background:#f5f3ff;border:1.5px solid #c4b5fd;color:#6d28d9;" onclick="event.stopPropagation();bukaUlangAbsensi('${id}')"><i class="fas fa-rotate-left"></i></button>`:'';
+  const btnKonfirmasiEKPI=confirm?`<button class="btn btn-sm btn-p" onclick="event.stopPropagation();konfirmasiEKPI('${id}')"><i class="fas fa-desktop"></i> Konfirmasi eKPI</button>`:'';
+  const btnCetakUlang=`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();printPlt('${id}')"><i class="fas fa-print"></i> Cetak Ulang</button>`;
+
+  if(st==='aktif'){
+    return[btnKiosk,btnEdit,!isUnit?btnCetak:'',btnShare,btnHapus].filter(Boolean).join('');
+  }
+  if(st==='absensi_ditutup'){
+    /* Level 2+ lihat "Cetak & Konfirmasi", level lain lihat "Cetak" biasa */
+    const cetakBtn=confirm?btnCetakKonfirmasi:btnCetak;
+    return[cetakBtn,btnBukaUlang,btnEdit,btnShare,btnHapus].filter(Boolean).join('');
+  }
+  if(st==='pdf_tercetak'){
+    return[btnKonfirmasiEKPI,btnCetakUlang,btnShare,btnHapus].filter(Boolean).join('');
+  }
+  if(st==='ekpi_selesai'){
+    const btnDetail=`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();showDetailPlt('${id}')"><i class="fas fa-eye"></i> Detail</button>`;
+    /* Hapus hanya Superadmin untuk status final */
+    const hapusFinal=s.role==='superadmin'?btnHapus:'';
+    return[btnDetail,btnCetakUlang,btnShare,hapusFinal].filter(Boolean).join('');
+  }
+  return[btnKiosk,btnEdit,btnCetak,btnShare,btnHapus].filter(Boolean).join('');
+}
+
+/* Tombol aksi tabel berdasarkan status dan level */
+function buildTableActions(p){
+  const s=S();
+  const st=normStatus(p);
+  const confirm=canConfirm();
+  const canEdit=canEditPlt(p);
+  const canDel=canDeletePlt();
+  const id=p.id;
+
+  const bKiosk=`<button class="btn btn-sm btn-b" onclick="event.stopPropagation();openKiosk('${id}')" title="Kiosk"><i class="fas fa-tablet-screen-button"></i></button>`;
+  const bEdit=canEdit?`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();editPlt('${id}')" title="Edit"><i class="fas fa-pen"></i></button>`:'';
+  const bCetak=`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();printPlt('${id}')" title="Cetak PDF"><i class="fas fa-print"></i></button>`;
+  const bHapus=canDel?`<button class="btn btn-sm btn-r" onclick="event.stopPropagation();hapusPlt('${id}')" title="Hapus"><i class="fas fa-trash"></i></button>`:'';
+  const bCetakKonfirmasi=confirm?`<button class="btn btn-sm btn-a" onclick="event.stopPropagation();konfirmasiPDF('${id}')" title="Cetak & Konfirmasi PDF" style="background:#fffbeb;border:1.5px solid #fde68a;color:#b45309;"><i class="fas fa-print"></i> PDF</button>`:'';
+  const bBukaUlang=confirm?`<button class="btn btn-sm" style="background:#f5f3ff;border:1.5px solid #c4b5fd;color:#6d28d9;padding:6px 8px;" onclick="event.stopPropagation();bukaUlangAbsensi('${id}')" title="Buka Ulang Absensi"><i class="fas fa-rotate-left"></i></button>`:'';
+  const bEKPI=confirm?`<button class="btn btn-sm btn-p" onclick="event.stopPropagation();konfirmasiEKPI('${id}')" title="Konfirmasi eKPI"><i class="fas fa-desktop"></i></button>`:'';
+  const bCetakUlang=`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();printPlt('${id}')" title="Cetak Ulang"><i class="fas fa-print"></i></button>`;
+
+  if(st==='aktif')return[bKiosk,bEdit,bCetak,bHapus].filter(Boolean).join('');
+  if(st==='absensi_ditutup')return[confirm?bCetakKonfirmasi:bCetak,bBukaUlang,bEdit,bHapus].filter(Boolean).join('');
+  if(st==='pdf_tercetak')return[bEKPI,bCetakUlang,bHapus].filter(Boolean).join('');
+  if(st==='ekpi_selesai'){
+    const bDetail=`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();showDetailPlt('${id}')" title="Detail"><i class="fas fa-eye"></i></button>`;
+    return[bDetail,bCetakUlang,s.role==='superadmin'?bHapus:''].filter(Boolean).join('');
+  }
+  return[bKiosk,bEdit,bCetak,bHapus].filter(Boolean).join('');
+}
+let pltViewMode=localStorage.getItem('pltView')||'card'; /* 'card' | 'table' */
+let pltShowExt=localStorage.getItem('pltShowExt')!=='false'; /* default true */
+let pltPage=1;
+const PLT_PAGE_CARD=15, PLT_PAGE_TABLE=20;
+
+function setPltView(mode){
+  pltViewMode=mode;
+  localStorage.setItem('pltView',mode);
+  $('btnViewCard').classList.toggle('vactive',mode==='card');
+  $('btnViewTable').classList.toggle('vactive',mode==='table');
+  pltPage=1; renderPelatihan();
+}
+function setPltExt(show){
+  pltShowExt=show;
+  localStorage.setItem('pltShowExt',show);
+  const btn=$('btnToggleExt');
+  if(btn){
+    btn.innerHTML=show
+      ?'<i class="fas fa-eye-slash"></i> Sembunyikan EXT'
+      :'<i class="fas fa-eye"></i> Tampilkan EXT';
+  }
+  pltPage=1; renderPelatihan();
+}
+
+/* Toggle status PDF/eKPI — simpan ke Firestore */
+window.togglePltStatus=async(id,field,el,ev)=>{
+  ev.stopPropagation();
+  const s=S();
+  const p=allPelatihan.find(x=>x.id===id); if(!p)return;
+  const cur=p[field]||false;
+  const newVal=!cur;
+  const now=new Date().toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  const update={};
+  update[field]=newVal;
+  update[field+'_by']=s.nama||s.uid;
+  update[field+'_at']=now;
+  try{
+    await updateDoc(doc(db,'pelatihan',id),update);
+    p[field]=newVal; p[field+'_by']=s.nama; p[field+'_at']=now;
+    /* Update badge langsung tanpa full re-render */
+    const isDone=newVal;
+    if(field==='status_pdf'){
+      el.className=`sbadge sbadge-pdf${isDone?' done':''}`;
+      el.title=isDone?`PDF ✓ oleh ${s.nama} · ${now}`:'Tandai PDF sudah dicetak';
+      el.innerHTML=`<i class="fas fa-${isDone?'check':'print'}"></i> PDF`;
+    }else{
+      el.className=`sbadge sbadge-ekpi${isDone?' done':''}`;
+      el.title=isDone?`eKPI ✓ oleh ${s.nama} · ${now}`:'Tandai sudah input eKPI';
+      el.innerHTML=`<i class="fas fa-${isDone?'check':'desktop'}"></i> eKPI`;
+    }
+  }catch(e){toast('Gagal: '+e.message,'error');}
+};
+
+function buildStatusBadges(p){
+  const pdfDone=!!p.status_pdf;
+  const ekpiDone=!!p.status_ekpi;
+  const pdfTitle=pdfDone?`PDF ✓ oleh ${p.status_pdf_by||'?'} · ${p.status_pdf_at||''}`:' Tandai PDF sudah dicetak';
+  const ekpiTitle=ekpiDone?`eKPI ✓ oleh ${p.status_ekpi_by||'?'} · ${p.status_ekpi_at||''}`:' Tandai sudah input eKPI';
+  return`<span class="sbadge sbadge-pdf${pdfDone?' done':''}" title="${pdfTitle}"
+    onclick="togglePltStatus('${p.id}','status_pdf',this,event)">
+    <i class="fas fa-${pdfDone?'check':'print'}"></i> PDF
+  </span>
+  <span class="sbadge sbadge-ekpi${ekpiDone?' done':''}" title="${ekpiTitle}"
+    onclick="togglePltStatus('${p.id}','status_ekpi',this,event)">
+    <i class="fas fa-${ekpiDone?'check':'desktop'}"></i> eKPI
+  </span>`;
+}
+
 function renderPelatihan(){
-  const s=S(); const q=$('searchPlt')?.value.toLowerCase()||''; const unit=$('filterPltUnit')?.value||''; const status=$('filterPltStatus')?.value||''; const tahun=parseInt($('filterPltTahun')?.value)||0;
-  const cd=s.role!=='unit';
-  const cf=s.role!=='unit';
-  const cp=s.role!=='unit';
+  const s=S();
+  const q=($('searchPlt')?.value||'').toLowerCase();
+  const unit=$('filterPltUnit')?.value||'';
+  const status=$('filterPltStatus')?.value||'';
+  const tahun=parseInt($('filterPltTahun')?.value)||0;
+  const cd=s.role!=='unit', cf=s.role!=='unit', cp=s.role!=='unit';
+
+  /* Sync toggle buttons */
+  $('btnViewCard')?.classList.toggle('vactive',pltViewMode==='card');
+  $('btnViewTable')?.classList.toggle('vactive',pltViewMode==='table');
+  const extBtn=$('btnToggleExt');
+  if(extBtn)extBtn.innerHTML=pltShowExt
+    ?'<i class="fas fa-eye-slash"></i> Sembunyikan EXT'
+    :'<i class="fas fa-eye"></i> Tampilkan EXT';
+
   const grid=$('pltGrid');
 
-  /* If data empty show reload button */
-  if(!allPelatihan || allPelatihan.length===0){
-    var authInfo = auth.currentUser ? 'Login: OK' : 'Login: TIDAK';
-    var uidInfo = 'UID: ' + (LS.get('uid')||'-');
-    grid.innerHTML = '<div class="empty-st"><div class="empty-icon">📋</div>'
-      + '<div class="empty-lbl" style="color:#e11d48;">Data belum termuat</div>'
-      + '<div style="font-size:11px;color:#64748b;margin:8px 0;">' + authInfo + ' | ' + uidInfo + '</div>'
-      + '<button onclick="loadAllData()" class="btn btn-p" style="margin-top:10px;">'
-      + '<i class="fas fa-rotate-right"></i> Muat Ulang</button></div>';
+  if(!allPelatihan||allPelatihan.length===0){
+    grid.innerHTML='<div class="empty-st"><div class="empty-icon">📋</div>'
+      +'<div class="empty-lbl" style="color:#e11d48;">Data belum termuat</div>'
+      +'<button onclick="loadAllData()" class="btn btn-p" style="margin-top:10px;"><i class="fas fa-rotate-right"></i> Muat Ulang</button></div>';
+    $('pltPag').innerHTML=''; $('pltInfoBar').innerHTML='';
     return;
   }
 
-  let data=allPelatihan;
-  if(s.role==='unit')data=data.filter(p=>p.unit_pembuat===s.unit);
-  if(unit)data=data.filter(p=>p.unit_pembuat===unit);if(status)data=data.filter(p=>p.status===status);
-  if(tahun)data=data.filter(p=>{const y=p.tanggal?new Date(p.tanggal+'T00:00:00').getFullYear():null;return y===tahun;});
-  if(q)data=data.filter(p=>(p.topik||'').toLowerCase().includes(q)||(p.instruktur||'').toLowerCase().includes(q));
-  if(!data.length){grid.innerHTML='<div class="empty-st"><div class="empty-icon">📋</div><div class="empty-lbl">Tidak ada pelatihan ditemukan</div></div>';return;}
-  grid.innerHTML=data.map(p=>{
-    const cnt=(allPesertaMap[p.id]||[]).length;
-    const pesertaNames=(allPesertaMap[p.id]||[])
-      .map(pe=>allKaryawan.find(k=>k.perner===pe.perner)?.nama_lengkap||pe.perner)
-      .filter(Boolean);
+  let data=[...allPelatihan];
+  if(s.role==='unit') data=data.filter(p=>p.unit_pembuat===s.unit);
+  if(unit)   data=data.filter(p=>p.unit_pembuat===unit);
+  if(status) data=data.filter(p=>normStatus(p)===status);
+  if(tahun)  data=data.filter(p=>p.tanggal&&new Date(p.tanggal+'T00:00:00').getFullYear()===tahun);
+  if(q)      data=data.filter(p=>(p.topik||'').toLowerCase().includes(q)||(p.instruktur||'').toLowerCase().includes(q));
+  if(!pltShowExt) data=data.filter(p=>!p.id?.startsWith('EXT-'));
 
-    /* Build WhatsApp message for core training */
-    const waMsg=encodeURIComponent(
-      `🎓 *Pemberitahuan Pelatihan Core*\n\n`+
-      `📋 *Topik:* ${p.topik}\n`+
-      `📅 *Hari/Tgl:* ${p.hari||hariIndo(p.tanggal||'')}, ${p.tanggal||'–'}\n`+
-      `⏰ *Waktu:* ${p.waktu_mulai||'–'} – ${p.waktu_selesai||'–'}\n`+
-      `📍 *Tempat:* ${p.lokasi||'–'}\n`+
-      `👤 *Instruktur:* ${p.instruktur||'–'}\n`+
-      `🏢 *Penyelenggara:* ${p.penyelenggara||p.unit_pembuat||'–'}\n\n`+
-      `👥 *Peserta (${pesertaNames.length}):*\n`+
-      pesertaNames.map((n,i)=>`${i+1}. ${n}`).join('\n')+
-      `\n\nMohon hadir tepat waktu. Terima kasih.`
-    );
+  const totalAll=data.length;
+  const PER=pltViewMode==='card'?PLT_PAGE_CARD:PLT_PAGE_TABLE;
+  const totalPages=Math.max(1,Math.ceil(totalAll/PER));
+  if(pltPage>totalPages)pltPage=totalPages;
+  const paged=data.slice((pltPage-1)*PER, pltPage*PER);
 
-    return`<div class="plt-card" onclick="showDetailPlt('${p.id}')">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:7px;margin-bottom:9px;">
-        <div style="font-size:14px;font-weight:800;color:#0f172a;line-height:1.3;">${p.topik||'–'}</div>
-        <div style="display:flex;gap:4px;flex-wrap:wrap;flex-shrink:0;">
-          ${p.is_core?'<span class="pill pill-core">Core</span>':''}
-          <span class="pill ${p.status==='selesai'?'pill-selesai':'pill-proses'}">${p.status||'aktif'}</span>
+  /* Info bar */
+  const extCount=data.filter(p=>p.id?.startsWith('EXT-')).length;
+  $('pltInfoBar').innerHTML=
+    `<span>${totalAll} pelatihan</span>`+
+    (extCount&&pltShowExt?`<span style="color:#94a3b8;">· ${extCount} eksternal</span>`:'')+
+    `<span style="color:#94a3b8;">· Halaman ${pltPage}/${totalPages}</span>`;
+
+  if(!paged.length){
+    grid.className='';
+    grid.innerHTML='<div class="empty-st"><div class="empty-icon">📋</div><div class="empty-lbl">Tidak ada pelatihan ditemukan</div></div>';
+    $('pltPag').innerHTML='';
+    return;
+  }
+
+  /* ── CARD VIEW ── */
+  if(pltViewMode==='card'){
+    grid.className='plt-grid';
+    grid.innerHTML=paged.map(p=>{
+      const cnt=(allPesertaMap[p.id]||[]).length;
+      const hadirCnt=Object.keys(
+        (allPesertaMap[p.id]||[]).reduce((a,pe)=>{if(pe.hadir)a[pe.perner]=1;return a;},{})
+      ).length;
+      const isExt=p.id?.startsWith('EXT-');
+      const st=normStatus(p);
+      const isDim=st==='ekpi_selesai';
+      const pesertaNames=(allPesertaMap[p.id]||[])
+        .map(pe=>allKaryawan.find(k=>k.perner===pe.perner)?.nama_lengkap||pe.perner).filter(Boolean);
+      const waMsg=encodeURIComponent(
+        `🎓 *Pemberitahuan Pelatihan Core*\n\n`+
+        `📋 *Topik:* ${p.topik}\n`+
+        `📅 *Hari/Tgl:* ${p.hari||hariIndo(p.tanggal||'')}, ${p.tanggal||'–'}\n`+
+        `⏰ *Waktu:* ${p.waktu_mulai||'–'} – ${p.waktu_selesai||'–'}\n`+
+        `📍 *Tempat:* ${p.lokasi||'–'}\n`+
+        `👤 *Instruktur:* ${p.instruktur||'–'}\n`+
+        `🏢 *Penyelenggara:* ${p.penyelenggara||p.unit_pembuat||'–'}\n\n`+
+        `👥 *Peserta (${pesertaNames.length}):*\n`+
+        pesertaNames.map((n,i)=>`${i+1}. ${n}`).join('\n')+
+        `\n\nMohon hadir tepat waktu. Terima kasih.`
+      );
+      /* Absensi progress bar — hanya untuk status aktif */
+      const belumCnt=cnt-hadirCnt;
+      const pct=cnt>0?Math.round((hadirCnt/cnt)*100):0;
+      const attBar=st==='aktif'&&cnt>0?`
+        <div style="background:#f8fafc;border-radius:10px;padding:8px 12px;margin-bottom:10px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+            <span style="font-size:11px;font-weight:800;color:#059669;"><i class="fas fa-check" style="font-size:9px;"></i> ${hadirCnt} hadir</span>
+            <span style="width:1px;height:12px;background:#e2e8f0;"></span>
+            <span style="font-size:11px;font-weight:800;color:#94a3b8;"><i class="fas fa-clock" style="font-size:9px;"></i> ${belumCnt} belum</span>
+          </div>
+          <div style="height:4px;border-radius:99px;background:#e2e8f0;overflow:hidden;">
+            <div style="height:100%;border-radius:99px;background:linear-gradient(90deg,#059669,#34d399);width:${pct}%;"></div>
+          </div>
+          <div style="font-size:9px;font-weight:700;color:#94a3b8;margin-top:3px;">${pct}% sudah tanda tangan</div>
+        </div>`:'';
+
+      return`<div class="plt-card${isExt?' is-ext':''}${isDim?' dim':''}" style="${statusBorder(p)}" onclick="showDetailPlt('${p.id}')">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:9px;">
+          <div style="font-size:14px;font-weight:800;color:#0f172a;line-height:1.3;flex:1;min-width:0;">
+            ${p.topik||'–'}${isExt?'<span style="font-size:9px;color:#94a3b8;font-weight:700;margin-left:5px;">EXT</span>':''}
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
+            <div style="display:flex;gap:3px;flex-wrap:wrap;justify-content:flex-end;">
+              ${p.is_core?'<span class="pill pill-core">Core</span>':''}
+              ${statusPill(p)}
+            </div>
+            <div class="status-badges" onclick="event.stopPropagation()">
+              ${buildStatusBadges(p)}
+            </div>
+          </div>
         </div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:11px;">
-        ${[
-          ['fa-calendar-day', p.tanggal?hariIndo(p.tanggal)+', '+p.tanggal:'–'],
-          ['fa-clock', (p.waktu_mulai||'–')+' – '+(p.waktu_selesai||'–')],
-          ['fa-location-dot', p.lokasi||'–'],
-          ['fa-user-tie', p.instruktur||'–'],
-          ['fa-users', cnt+' peserta']
-        ].map(([ic,v])=>`<div style="display:flex;align-items:center;gap:7px;font-size:11px;color:#64748b;font-weight:600;">
-          <i class="fas ${ic}" style="width:13px;color:#94a3b8;font-size:11px;"></i>${v}
-        </div>`).join('')}
-      </div>
-      <div style="display:flex;flex-wrap:wrap;gap:5px;padding-top:10px;border-top:1px solid #f8fafc;" onclick="event.stopPropagation()">
-        <button class="btn btn-sm btn-b" onclick="event.stopPropagation();openKiosk('${p.id}')"><i class="fas fa-tablet-screen-button"></i> Kiosk</button>
-        <button class="btn btn-sm btn-o" onclick="event.stopPropagation();editPlt('${p.id}')"><i class="fas fa-pen"></i></button>
-        ${cp?`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();printPlt('${p.id}')"><i class="fas fa-print"></i></button>`:''}
-        ${p.is_core?`<button class="btn btn-sm" style="background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;" onclick="event.stopPropagation();window.open('https://wa.me/?text=${waMsg}','_blank')"><i class="fab fa-whatsapp"></i> Share</button>`:''}
-        ${cf&&p.status!=='selesai'?`<button class="btn btn-sm btn-a" onclick="event.stopPropagation();tandaiSelesai('${p.id}')"><i class="fas fa-check"></i> Selesai</button>`:''}
-        ${cd?`<button class="btn btn-sm btn-r" onclick="event.stopPropagation();hapusPlt('${p.id}')"><i class="fas fa-trash"></i></button>`:''}
-      </div>
-    </div>`;
-  }).join('');
+        <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:10px;">
+          ${[
+            ['fa-calendar-day', p.tanggal?hariIndo(p.tanggal)+', '+p.tanggal:'–'],
+            ['fa-clock',(p.waktu_mulai||'–')+' – '+(p.waktu_selesai||'–')],
+            ['fa-location-dot',p.lokasi||'–'],
+            ['fa-user-tie',p.instruktur||'–'],
+            ['fa-users',cnt+' peserta']
+          ].map(([ic,v])=>`<div style="display:flex;align-items:center;gap:7px;font-size:11px;color:#64748b;font-weight:600;">
+            <i class="fas ${ic}" style="width:13px;color:#94a3b8;font-size:11px;"></i>${v}
+          </div>`).join('')}
+        </div>
+        ${attBar}
+        ${statusBanner(p)}
+        <div style="display:flex;flex-wrap:wrap;gap:5px;padding-top:10px;border-top:1px solid #f8fafc;" onclick="event.stopPropagation()">
+          ${buildCardActions(p,waMsg)}
+        </div>
+      </div>`;
+    }).join('');
+
+  /* ── TABLE VIEW ── */
+  }else{
+    grid.className='plt-table-wrap';
+    const rows=paged.map(p=>{
+      const cnt=(allPesertaMap[p.id]||[]).length;
+      const hadirCnt=(allPesertaMap[p.id]||[]).filter(pe=>pe.hadir).length;
+      const isExt=p.id?.startsWith('EXT-');
+      const st=normStatus(p);
+      const rowStyle=st==='ekpi_selesai'?'opacity:.65;':'';
+      const borderStyle=statusBorder(p)?`border-left:${statusBorder(p).replace('border-left:','')}`:'';;
+      return`<tr class="${isExt?'is-ext':''}" style="${rowStyle}" onclick="showDetailPlt('${p.id}')">
+        <td style="max-width:220px;${borderStyle}">
+          <div style="font-weight:800;color:#0f172a;font-size:13px;">${p.topik||'–'}${isExt?'<span style="font-size:9px;color:#94a3b8;font-weight:700;margin-left:5px;">EXT</span>':''}</div>
+          <div style="font-size:10px;color:#94a3b8;font-weight:600;margin-top:1px;">${p.unit_pembuat||'–'}</div>
+        </td>
+        <td class="td-m" style="white-space:nowrap;">${p.tanggal?hariIndo(p.tanggal)+', '+p.tanggal:'–'}</td>
+        <td class="td-m">
+          ${st==='aktif'&&cnt>0
+            ?`<span style="font-weight:800;color:#059669;">${hadirCnt}</span><span style="color:#94a3b8;font-size:10px;">/${cnt}</span>`
+            :`<span style="font-weight:700;">${cnt}</span>`}
+        </td>
+        <td>
+          <div style="display:flex;gap:3px;flex-wrap:wrap;">
+            ${p.is_core?'<span class="pill pill-core" style="font-size:7px;">Core</span>':''}
+            ${statusPill(p).replace('class="pill','class="pill" style="font-size:7px;"')}
+          </div>
+        </td>
+        <td onclick="event.stopPropagation()">
+          <div class="status-badges">${buildStatusBadges(p)}</div>
+        </td>
+        <td onclick="event.stopPropagation()">
+          <div style="display:flex;gap:4px;flex-wrap:wrap;">
+            ${buildTableActions(p)}
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+    grid.innerHTML=`<table>
+      <thead><tr>
+        <th>Topik / Unit</th>
+        <th>Tanggal</th>
+        <th>Instruktur</th>
+        <th>Peserta</th>
+        <th>Status</th>
+        <th>PDF · eKPI</th>
+        <th>Aksi</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+  }
+
+  /* Pagination */
+  renderPag('pltPag',totalAll,pltPage,pg=>{pltPage=pg;renderPelatihan();});
 }
-['searchPlt','filterPltUnit','filterPltStatus','filterPltTahun'].forEach(id=>{$(id)?.addEventListener('input',renderPelatihan);$(id)?.addEventListener('change',renderPelatihan);});
+
+['searchPlt','filterPltUnit','filterPltStatus','filterPltTahun'].forEach(id=>{
+  $(id)?.addEventListener('input',()=>{pltPage=1;renderPelatihan();});
+  $(id)?.addEventListener('change',()=>{pltPage=1;renderPelatihan();});
+});
+$('btnViewCard')?.addEventListener('click',()=>setPltView('card'));
+$('btnViewTable')?.addEventListener('click',()=>setPltView('table'));
+$('btnToggleExt')?.addEventListener('click',()=>setPltExt(!pltShowExt));
 
 window.showDetailPlt=id=>{
   const p=allPelatihan.find(x=>x.id===id);if(!p)return;
@@ -1552,7 +2001,30 @@ function checkCoreHint(t){const m=getCoreMatch(t),h=$('coreHint');if(m){h.classL
 $('btnBuatPlt')?.addEventListener('click',()=>{editPltId=null;$('moPltTitle').textContent='Buat Pelatihan Baru';clearPltForm();const s=S();if(s.role==='unit')$('pltUnit').value=s.unit;loadPesertaSearch('','','');openModal('moPlt');});
 window.editPlt=id=>{editPltId=id;const p=allPelatihan.find(x=>x.id===id);if(!p)return;$('moPltTitle').textContent='Edit Pelatihan';$('pltTopik').value=p.topik||'';$('pltUnit').value=p.unit_pembuat||'';$('pltTgl').value=p.tanggal||'';$('pltMulai').value=p.waktu_mulai||'';$('pltSelesai').value=p.waktu_selesai||'';$('pltLokasi').value=p.lokasi||'';$('pltInstruktur').value=p.instruktur||'';$('pltPenyelenggara').value=p.penyelenggara||'';checkCoreHint(p.topik||'');selectedPeserta=new Map();const pp=allPesertaMap[id]||[],seen=new Set();pp.forEach(pe=>{if(seen.has(pe.perner))return;seen.add(pe.perner);const k=allKaryawan.find(k=>k.perner===pe.perner)||{perner:pe.perner,nama_lengkap:pe.perner,unit:'–'};selectedPeserta.set(pe.perner,k);});renderChips();loadPesertaSearch('','','');openModal('moPlt');};
 function clearPltForm(){['pltTopik','pltTgl','pltMulai','pltSelesai','pltLokasi','pltInstruktur','pltPenyelenggara'].forEach(id=>{const el=$(id);if(el)el.value='';});selectedPeserta=new Map();renderChips();$('coreHint').classList.remove('show');$('pltAC')?.classList.remove('show');}
-function loadPesertaSearch(q,unit,bagian){let data=allKaryawan.filter(k=>k.status==='aktif');if(unit)data=data.filter(k=>k.unit===unit);if(bagian)data=data.filter(k=>k.bagian===bagian);if(q)data=data.filter(k=>(k.nama_lengkap||'').toLowerCase().includes(q)||(k.perner||'').includes(q));$('pesertaBody').innerHTML=data.slice(0,80).map(k=>`<tr><td><input type="checkbox" ${selectedPeserta.has(k.perner)?'checked':''} onchange="togglePeserta('${k.perner}')"/></td><td style="font-weight:700;">${k.nama_lengkap||'–'}</td><td class="td-m">${k.perner||'–'}</td><td class="td-m">${k.unit||'–'}</td></tr>`).join('');}
+function loadPesertaSearch(q,unit,bagian){
+  const showPKH=$('filterPesertaPKH')?.checked||false;
+  /* Data karyawan tetap */
+  let data=allKaryawan.filter(k=>k.status==='aktif');
+  if(unit)data=data.filter(k=>k.unit===unit);
+  if(bagian)data=data.filter(k=>k.bagian===bagian);
+  if(q)data=data.filter(k=>(k.nama_lengkap||'').toLowerCase().includes(q)||(k.perner||'').includes(q));
+  /* Tambahkan PKH jika filter diaktifkan */
+  if(showPKH){
+    let pkhData=allPKH.filter(k=>(k.status||'aktif')==='aktif');
+    if(unit)pkhData=pkhData.filter(k=>k.unit===unit);
+    if(q)pkhData=pkhData.filter(k=>(k.nama_lengkap||'').toLowerCase().includes(q)||(k.pkh_id||'').includes(q));
+    /* Konversi PKH ke format yang kompatibel dengan selectedPeserta */
+    pkhData=pkhData.map(k=>({...k,perner:k.id,_isPKH:true}));
+    data=[...data,...pkhData];
+  }
+  $('pesertaBody').innerHTML=data.slice(0,80).map(k=>`
+    <tr${k._isPKH?' style="background:#fffbeb;"':''}>
+      <td><input type="checkbox" ${selectedPeserta.has(k.perner||k.id)?'checked':''} onchange="togglePeserta('${k.perner||k.id}')"/></td>
+      <td style="font-weight:700;">${k.nama_lengkap||'–'}${k._isPKH?'<span style="font-size:8px;background:#fef3c7;color:#92400e;border-radius:4px;padding:1px 5px;margin-left:5px;font-weight:900;">PKH</span>':''}</td>
+      <td class="td-m">${k.perner&&!k._isPKH?k.perner:(k.pkh_id||'–')}</td>
+      <td class="td-m">${k.unit||'–'}</td>
+    </tr>`).join('');
+}
 window.togglePeserta=perner=>{const k=allKaryawan.find(k=>k.perner===perner);if(!k)return;if(selectedPeserta.has(perner))selectedPeserta.delete(perner);else selectedPeserta.set(perner,k);renderChips();const cb=document.querySelector(`#pesertaBody input[onchange="togglePeserta('${perner}')"]`);if(cb)cb.checked=selectedPeserta.has(perner);};
 function renderChips(){const area=$('chipArea'),s=S();$('chipCount').textContent=selectedPeserta.size;if(!selectedPeserta.size){area.innerHTML='<span id="chipEmpty" style="font-size:11px;color:#94a3b8;font-weight:600;align-self:center;">Belum ada peserta dipilih</span>';$('btnHapusSemua').style.display='none';return;}area.innerHTML=[...selectedPeserta.values()].map(k=>`<span class="chip">${k.nama_lengkap||k.perner}${s.role!=='unit'?`<button class="chip-x" onclick="removeChip('${k.perner}')">×</button>`:''}</span>`).join('');$('btnHapusSemua').style.display=s.role!=='unit'?'inline-flex':'none';}
 window.removeChip=p=>{selectedPeserta.delete(p);renderChips();};
@@ -1622,25 +2094,264 @@ $('btnSimpanPlt')?.addEventListener('click',async()=>{
     }
   }catch(e){toast('Gagal: '+e.message,'error');}finally{hideLoad();}
 });
-window.tandaiSelesai=id=>confirm2('Tandai Selesai?','Pelatihan akan ditandai selesai.','✅','Ya, Selesai','btn-p',async()=>{showLoad();try{await updateDoc(doc(db,'pelatihan',id),{status:'selesai'});await logAct('tandai_selesai','',{id});await loadAllData();toast('Pelatihan ditandai selesai');}catch(e){toast('Gagal: '+e.message,'error');}finally{hideLoad();}});
+/* ── Konfirmasi PDF → status pdf_tercetak ── */
+window.konfirmasiPDF=id=>{
+  const p=allPelatihan.find(x=>x.id===id);
+  confirm2(
+    'Cetak & Konfirmasi PDF?',
+    `PDF daftar hadir "${p?.topik}" akan dicetak dan status berubah ke "PDF Tercetak".`,
+    '🖨','Ya, Cetak & Konfirmasi','btn-p',
+    async()=>{
+      /* Buka print terlebih dahulu */
+      printPlt(id);
+      const s=S();
+      const now=new Date().toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+      showLoad();
+      try{
+        await updateDoc(doc(db,'pelatihan',id),{
+          status:'pdf_tercetak',
+          status_pdf:true,
+          status_pdf_by:s.nama||s.uid,
+          status_pdf_at:now,
+          status_pdf_uid:s.uid
+        });
+        await logAct('konfirmasi_pdf','',{id,topik:p?.topik});
+        await loadAllData();
+        toast('PDF dikonfirmasi — status berubah ke PDF Tercetak');
+      }catch(e){toast('Gagal: '+e.message,'error');}
+      finally{hideLoad();}
+    }
+  );
+};
+
+/* ── Konfirmasi eKPI → status ekpi_selesai ── */
+window.konfirmasiEKPI=id=>{
+  const p=allPelatihan.find(x=>x.id===id);
+  confirm2(
+    'Konfirmasi eKPI?',
+    `Pelatihan "${p?.topik}" sudah diinput di eKPI? Status akan berubah ke "eKPI Selesai".`,
+    '✅','Ya, Konfirmasi','btn-p',
+    async()=>{
+      const s=S();
+      const now=new Date().toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+      showLoad();
+      try{
+        await updateDoc(doc(db,'pelatihan',id),{
+          status:'ekpi_selesai',
+          status_ekpi:true,
+          status_ekpi_by:s.nama||s.uid,
+          status_ekpi_at:now,
+          status_ekpi_uid:s.uid
+        });
+        await logAct('konfirmasi_ekpi','',{id,topik:p?.topik});
+        await loadAllData();
+        toast('eKPI dikonfirmasi — pelatihan selesai sepenuhnya ✓');
+      }catch(e){toast('Gagal: '+e.message,'error');}
+      finally{hideLoad();}
+    }
+  );
+};
+
+/* ── Buka Ulang Absensi → kembali ke aktif ── */
+window.bukaUlangAbsensi=id=>{
+  const p=allPelatihan.find(x=>x.id===id);
+  confirm2(
+    'Buka Ulang Absensi?',
+    `Absensi "${p?.topik}" akan dibuka kembali. Status kembali ke "Aktif" dan kiosk bisa digunakan lagi.`,
+    '🔓','Ya, Buka Ulang','btn-a',
+    async()=>{
+      showLoad();
+      try{
+        await updateDoc(doc(db,'pelatihan',id),{
+          status:'aktif',
+          absensi_ditutup_oleh:null,
+          absensi_ditutup_at:null
+        });
+        await logAct('buka_ulang_absensi','',{id,topik:p?.topik});
+        await loadAllData();
+        toast('Absensi dibuka ulang — status kembali ke Aktif');
+      }catch(e){toast('Gagal: '+e.message,'error');}
+      finally{hideLoad();}
+    }
+  );
+};
 window.hapusPlt=id=>{const p=allPelatihan.find(x=>x.id===id);confirm2('Hapus Pelatihan?',`"${p?.topik}" dan semua pesertanya akan dihapus permanen.`,'🗑','Ya, Hapus','btn-r',async()=>{showLoad();try{const pp=allPesertaMap[id]||[],b=writeBatch(db);pp.forEach(pe=>b.delete(doc(db,'peserta_pelatihan',pe.id)));b.delete(doc(db,'pelatihan',id));await b.commit();await logAct('hapus_pelatihan',{id,topik:p?.topik},'');await loadAllData();toast('Pelatihan dihapus');}catch(e){toast('Gagal: '+e.message,'error');}finally{hideLoad();}});};
 window.openKiosk=id=>{window.open(`kiosk.html?id=${id}`,'_blank');logAct('buka_kiosk','',{id});};
 window.printPlt=id=>{window.open(`print.html?id=${id}`,'_blank');logAct('cetak_pdf','',{id});};
 
 /* ═══ KARYAWAN ═══ */
 function renderKaryawan(){
+  const s=S();
+  const canEdit=s.role==='superadmin'||s.role==='admin'||s.role==='admin_plus';
+  const aksiTh=$('karyAksiTh');if(aksiTh)aksiTh.style.display=canEdit?'':'none';
   const q=$('searchKary')?.value.toLowerCase()||'',unit=$('filterKaryUnit')?.value||'',bagian=$('filterKaryBagian')?.value||'',status=$('filterKaryStatus')?.value||'';
   let data=allKaryawan;
   if(unit)data=data.filter(k=>k.unit===unit);if(bagian)data=data.filter(k=>k.bagian===bagian);if(status)data=data.filter(k=>k.status===status);if(q)data=data.filter(k=>(k.nama_lengkap||'').toLowerCase().includes(q)||(k.perner||'').includes(q));
   const bEl=$('filterKaryBagian');if(bEl){const cur=bEl.value;const bs=[...new Set(allKaryawan.map(k=>k.bagian).filter(Boolean))].sort();bEl.innerHTML=`<option value="">Semua Bagian</option>`+bs.map(b=>`<option value="${b}">${b}</option>`).join('');bEl.value=cur;}
   const total=data.length,start=(karyPage-1)*PAGE,paged=data.slice(start,start+PAGE);
   const tbody=$('karyBody');
-  if(!paged.length){tbody.innerHTML=`<tr><td colspan="6" class="empty-st"><div class="empty-lbl">Tidak ada data</div></td></tr>`;renderPag('karyPag',total,karyPage,p=>{karyPage=p;renderKaryawan();});return;}
-  tbody.innerHTML=paged.map(k=>`<tr><td><div class="td-name" onclick="showRiwayatKary('${k.perner}')">${k.nama_lengkap||'–'}</div><div class="td-sub">${k.perner||'–'}</div></td><td class="td-m">${k.unit||'–'}</td><td class="td-m">${k.bagian||'–'}</td><td class="td-m">${k.jabatan||'–'}</td><td><span class="pill ${k.status==='aktif'?'pill-aktif':'pill-nonaktif'}">${k.status||'aktif'}</span></td><td><div style="display:flex;gap:5px;"><button class="btn btn-sm btn-o" onclick="editKary('${k.perner}')"><i class="fas fa-pen"></i></button><button class="btn btn-sm btn-r" onclick="hapusKary('${k.perner}')"><i class="fas fa-trash"></i></button></div></td></tr>`).join('');
+  if(!paged.length){tbody.innerHTML=`<tr><td colspan="${canEdit?6:5}" class="empty-st"><div class="empty-lbl">Tidak ada data</div></td></tr>`;renderPag('karyPag',total,karyPage,p=>{karyPage=p;renderKaryawan();});return;}
+  tbody.innerHTML=paged.map(k=>`<tr>
+    <td><div class="td-name" onclick="showRiwayatKary('${k.perner}')">${k.nama_lengkap||'–'}</div><div class="td-sub">${k.perner||'–'}</div></td>
+    <td class="td-m">${k.unit||'–'}</td>
+    <td class="td-m">${k.bagian||'–'}</td>
+    <td class="td-m">${k.jabatan||'–'}</td>
+    <td><span class="pill ${k.status==='aktif'?'pill-aktif':'pill-nonaktif'}">${k.status||'aktif'}</span></td>
+    ${canEdit?`<td><div style="display:flex;gap:5px;"><button class="btn btn-sm btn-o" onclick="editKary('${k.perner}')"><i class="fas fa-pen"></i></button><button class="btn btn-sm btn-r" onclick="hapusKary('${k.perner}')"><i class="fas fa-trash"></i></button></div></td>`:''}
+  </tr>`).join('');
   renderPag('karyPag',total,karyPage,p=>{karyPage=p;renderKaryawan();});
 }
 ['searchKary','filterKaryUnit','filterKaryBagian','filterKaryStatus'].forEach(id=>{$(id)?.addEventListener('input',()=>{karyPage=1;renderKaryawan();});$(id)?.addEventListener('change',()=>{karyPage=1;renderKaryawan();});});
 $('btnTambahKary')?.addEventListener('click',()=>{editKaryId=null;$('moKaryTitle').textContent='Tambah Karyawan';['karyNama','karyPerner','karyBagian','karyJabatan'].forEach(id=>{const el=$(id);if(el)el.value='';});$('karyUnit').selectedIndex=0;$('karyStatus').value='aktif';openModal('moKary');});
+
+/* ─── Tab Karyawan / PKH ─── */
+let karyCurrentTab='tetap';
+window.switchKaryTab=function(tab){
+  karyCurrentTab=tab;
+  $('karyTabTetap').style.display=tab==='tetap'?'block':'none';
+  $('karyTabPKH').style.display=tab==='pkh'?'block':'none';
+  $('tabKaryTetap').classList.toggle('active',tab==='tetap');
+  $('tabKaryPKH').classList.toggle('active',tab==='pkh');
+  const s=S();
+  const canEdit=s.role==='superadmin'||s.role==='admin'||s.role==='admin_plus';
+  /* Tombol aksi di header: Tambah & Import hanya untuk non-Level3 dan sesuai tab */
+  const wrap=$('karyActWrap');
+  if(wrap){
+    if(tab==='tetap'){
+      wrap.innerHTML=`
+        <button class="btn btn-o" id="btnImport"><i class="fas fa-file-import"></i> Import</button>
+        <button class="btn btn-o" id="btnTplKary"><i class="fas fa-file-csv"></i> Template</button>
+        ${canEdit?'<button class="btn btn-p" id="btnTambahKary"><i class="fas fa-plus"></i> Tambah</button>':''}`;
+      $('btnImport')?.addEventListener('click',()=>openModal('moImport'));
+      $('btnTplKary')?.addEventListener('click',()=>{const csv='\uFEFFNama Lengkap,Perner,Unit,Bagian,Jabatan,Status\nJohn Doe,90001234,COD 2,Produksi,Operator,aktif\n';const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='template_karyawan.csv';a.click();});
+      $('btnTambahKary')?.addEventListener('click',()=>{editKaryId=null;$('moKaryTitle').textContent='Tambah Karyawan';['karyNama','karyPerner','karyBagian','karyJabatan'].forEach(id=>{const el=$(id);if(el)el.value='';});$('karyUnit').selectedIndex=0;$('karyStatus').value='aktif';openModal('moKary');});
+    }else{
+      wrap.innerHTML=canEdit?`<button class="btn btn-p" id="btnTambahPKH"><i class="fas fa-plus"></i> Tambah PKH</button>`:'';
+      $('btnTambahPKH')?.addEventListener('click',()=>{editPKHId=null;$('moPKHTitle').textContent='Tambah Data PKH';['pkhNama','pkhId','pkhBagian','pkhJabatan'].forEach(id=>{const el=$(id);if(el)el.value='';});const pu=$('pkhUnit');if(pu){UNITS.forEach(u=>pu.innerHTML+=`<option value="${u}">${u}</option>`);pu.selectedIndex=0;}$('pkhStatus').value='aktif';openModal('moPKH');});
+    }
+  }
+  if(tab==='pkh')renderPKH();
+};
+
+/* ─── PKH CRUD ─── */
+let editPKHId=null;
+
+function renderPKH(){
+  const s=S();
+  const q=($('searchPKH')?.value||'').toLowerCase();
+  const unit=$('filterPKHUnit')?.value||'';
+  const status=$('filterPKHStatus')?.value||'';
+  const canEdit=s.role==='superadmin'||s.role==='admin'||s.role==='admin_plus';
+
+  /* Kolom aksi — sembunyikan untuk Level 3 */
+  const aksiTh=$('pkhAksiTh');
+  if(aksiTh)aksiTh.style.display=canEdit?'':'none';
+
+  let data=[...allPKH];
+  if(unit)data=data.filter(k=>k.unit===unit);
+  if(status)data=data.filter(k=>(k.status||'aktif')===status);
+  if(q)data=data.filter(k=>(k.nama_lengkap||'').toLowerCase().includes(q)||(k.pkh_id||'').includes(q));
+
+  const total=data.length,start=(pkhPage-1)*PAGE,paged=data.slice(start,start+PAGE);
+  const tbody=$('pkhBody');
+  if(!paged.length){
+    tbody.innerHTML=`<tr><td colspan="6" class="empty-st"><div class="empty-lbl">Tidak ada data PKH</div></td></tr>`;
+    renderPag('pkhPag',total,pkhPage,p=>{pkhPage=p;renderPKH();});
+    return;
+  }
+  tbody.innerHTML=paged.map(k=>`<tr>
+    <td>
+      <div style="font-size:13px;font-weight:700;color:#0f172a;">${k.nama_lengkap||'–'}</div>
+      <div class="td-sub">${k.pkh_id||'–'}</div>
+    </td>
+    <td class="td-m">${k.unit||'–'}</td>
+    <td class="td-m">${k.bagian||'–'}</td>
+    <td class="td-m">${k.jabatan||'–'}</td>
+    <td><span class="pill ${(k.status||'aktif')==='aktif'?'pill-aktif':'pill-nonaktif'}">${k.status||'aktif'}</span></td>
+    <td style="display:${canEdit?'':'none'}">
+      <div style="display:flex;gap:5px;">
+        <button class="btn btn-sm btn-o" onclick="editPKH('${k.id}')"><i class="fas fa-pen"></i></button>
+        <button class="btn btn-sm btn-r" onclick="hapusPKH('${k.id}')"><i class="fas fa-trash"></i></button>
+      </div>
+    </td>
+  </tr>`).join('');
+  renderPag('pkhPag',total,pkhPage,p=>{pkhPage=p;renderPKH();});
+}
+
+['searchPKH','filterPKHUnit','filterPKHStatus'].forEach(id=>{
+  $(id)?.addEventListener('input',()=>{pkhPage=1;renderPKH();});
+  $(id)?.addEventListener('change',()=>{pkhPage=1;renderPKH();});
+});
+
+window.editPKH=id=>{
+  editPKHId=id;
+  const k=allPKH.find(k=>k.id===id);if(!k)return;
+  $('moPKHTitle').textContent='Edit Data PKH';
+  $('pkhNama').value=k.nama_lengkap||'';
+  $('pkhId').value=k.pkh_id||'';
+  $('pkhUnit').value=k.unit||'';
+  $('pkhBagian').value=k.bagian||'';
+  $('pkhJabatan').value=k.jabatan||'';
+  $('pkhStatus').value=k.status||'aktif';
+  openModal('moPKH');
+};
+
+$('btnSimpanPKH')?.addEventListener('click',async()=>{
+  const nama=$('pkhNama').value.trim();
+  if(!nama){toast('Nama wajib diisi','error');return;}
+  const data={
+    nama_lengkap:nama,
+    pkh_id:$('pkhId').value.trim()||'',
+    unit:$('pkhUnit').value||'',
+    bagian:$('pkhBagian').value.trim()||'',
+    jabatan:$('pkhJabatan').value.trim()||'',
+    status:$('pkhStatus').value||'aktif',
+    tipe:'pkh'
+  };
+  showLoad();
+  try{
+    if(editPKHId){
+      await updateDoc(doc(db,'pkh',editPKHId),data);
+      await logAct('edit_pkh','',{nama});
+    }else{
+      const ref=doc(collection(db,'pkh'));
+      await setDoc(ref,{...data,tgl_dibuat:serverTimestamp()});
+      await logAct('tambah_pkh','',{nama});
+    }
+    closeModal('moPKH');
+    await loadAllData();
+    /* Refresh tab PKH */
+    if(karyCurrentTab==='pkh')renderPKH();
+    toast('Data PKH berhasil disimpan');
+  }catch(e){toast('Gagal: '+e.message,'error');}
+  finally{hideLoad();}
+});
+
+window.hapusPKH=id=>{
+  const k=allPKH.find(k=>k.id===id);
+  confirm2('Hapus Data PKH?',`Data "${k?.nama_lengkap}" akan dihapus permanen.`,'🗑','Ya, Hapus','btn-r',async()=>{
+    showLoad();
+    try{
+      await deleteDoc(doc(db,'pkh',id));
+      await logAct('hapus_pkh',{id,nama:k?.nama_lengkap},'');
+      await loadAllData();
+      renderPKH();
+      toast('Data PKH dihapus');
+    }catch(e){toast('Gagal: '+e.message,'error');}
+    finally{hideLoad();}
+  });
+};
+
+/* ─── Filter PKH Unit dropdown ─── */
+function buildPKHUnitDrop(){
+  const el=$('filterPKHUnit');if(!el)return;
+  el.innerHTML='<option value="">Semua Unit</option>';
+  UNITS.forEach(u=>el.innerHTML+=`<option value="${u}">${u}</option>`);
+  /* Juga untuk form PKH */
+  const pu=$('pkhUnit');if(!pu)return;
+  pu.innerHTML='<option value="">Pilih Unit</option>';
+  UNITS.forEach(u=>pu.innerHTML+=`<option value="${u}">${u}</option>`);
+}
 window.editKary=p=>{editKaryId=p;const k=allKaryawan.find(k=>k.perner===p);if(!k)return;$('moKaryTitle').textContent='Edit Karyawan';$('karyNama').value=k.nama_lengkap||'';$('karyPerner').value=k.perner||'';$('karyBagian').value=k.bagian||'';$('karyJabatan').value=k.jabatan||'';$('karyUnit').value=k.unit||'';$('karyStatus').value=k.status||'aktif';openModal('moKary');};
 $('btnSimpanKary')?.addEventListener('click',async()=>{const nama=$('karyNama').value.trim(),perner=$('karyPerner').value.trim();if(!nama||!perner){toast('Nama dan Perner wajib diisi','error');return;}const jabatan=$('karyJabatan').value.trim();const data={nama_lengkap:nama,perner,unit:$('karyUnit').value,bagian:$('karyBagian').value.trim(),jabatan,status:$('karyStatus').value};showLoad();try{const old=editKaryId?allKaryawan.find(k=>k.perner===editKaryId):null;await setDoc(doc(db,'karyawan',perner),data,{merge:true});await ensureJabatan(jabatan);await logAct(editKaryId?'edit_karyawan':'tambah_karyawan',old||'',data);closeModal('moKary');await loadAllData();toast('Karyawan berhasil disimpan');}catch(e){toast('Gagal: '+e.message,'error');}finally{hideLoad();}});
 window.hapusKary=p=>{const k=allKaryawan.find(k=>k.perner===p);confirm2('Hapus Karyawan?',`Data "${k?.nama_lengkap}" akan dihapus permanen.`,'🗑','Ya, Hapus','btn-r',async()=>{showLoad();try{await deleteDoc(doc(db,'karyawan',p));await logAct('hapus_karyawan',{perner:p},'');await loadAllData();toast('Karyawan dihapus');}catch(e){toast('Gagal: '+e.message,'error');}finally{hideLoad();}});};
