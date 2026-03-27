@@ -72,6 +72,36 @@
     </div>
   </div>
 
+  <!-- Stats bar — dipindah ke atas sebelum search agar langsung terlihat -->
+
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:#f0fdf4;border-bottom:1px solid #d1fae5;">
+    <div style="display:flex;gap:18px;align-items:center;">
+      <div style="text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#064e3b;" id="totalCount">0</div>
+        <div style="font-size:8px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">Terdaftar</div>
+      </div>
+      <div style="width:1px;height:28px;background:#d1fae5;"></div>
+      <div style="text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#059669;" id="presentCount">0</div>
+        <div style="font-size:8px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">Hadir</div>
+      </div>
+      <div style="width:1px;height:28px;background:#d1fae5;"></div>
+      <div style="text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#e11d48;" id="belumCount">0</div>
+        <div style="font-size:8px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">Belum</div>
+      </div>
+      <div style="width:1px;height:28px;background:#d1fae5;"></div>
+      <div style="text-align:center;">
+        <div style="font-size:18px;font-weight:900;color:#d97706;" id="tamuCount">0</div>
+        <div style="font-size:8px;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">Tamu</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <div style="width:8px;height:8px;border-radius:99px;background:#059669;animation:pulse 2s infinite;"></div>
+      <span style="font-size:9px;font-weight:900;color:#059669;text-transform:uppercase;letter-spacing:1px;">Absensi Terbuka</span>
+    </div>
+  </div>
+
   <div class="search-box">
     <i class="fas fa-search absolute left-9 top-1/2 -translate-y-1/2 text-slate-300 text-lg"></i>
     <input type="search" id="searchInput" oninput="filterList()" class="search-input" placeholder="Ketik Nama atau Nomor Perner…"/>
@@ -118,15 +148,12 @@
 
   </div>
 
-  <div class="flex justify-between items-center px-6 py-4 bg-slate-50 border-t border-slate-100 flex-shrink:0;">
-    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-      Terdaftar: <span id="totalCount" class="text-slate-900">0</span> &nbsp;|&nbsp;
-      Hadir: <span id="presentCount" class="text-emerald-600">0</span> &nbsp;|&nbsp;
-      Tamu: <span id="tamuCount" class="text-amber-600">0</span>
-    </p>
+  <!-- Footer: status sistem -->
+
+  <div class="flex justify-end items-center px-6 py-3 bg-slate-50 border-t border-slate-100 flex-shrink:0;">
     <div class="flex items-center gap-2">
       <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-      <span class="text-[9px] font-black text-emerald-700 uppercase tracking-widest">Absensi Terbuka</span>
+      <span class="text-[9px] font-black text-emerald-700 uppercase tracking-widest">Sistem Aktif</span>
     </div>
   </div>
 </div>
@@ -363,6 +390,18 @@ async function doAuth(){
   creatorPw=ap?atob(ap):'';
 }
 
+function updateKioskStats(){
+  const total=pesertaList.length;
+  const hadir=Object.keys(absensiMap).length;
+  const tamu=pesertaList.filter(k=>k._isTamu).length;
+  const belum=total-hadir;
+  const tc=$('totalCount'),pc=$('presentCount'),bc=$('belumCount'),tmc=$('tamuCount');
+  if(tc)tc.textContent=total;
+  if(pc)pc.textContent=hadir;
+  if(bc){bc.textContent=belum;bc.style.color=belum>0?'#e11d48':'#059669';}
+  if(tmc)tmc.textContent=tamu;
+}
+
 async function init(){
   if(!pltId){$('pendingList').innerHTML='<p style="text-align:center;padding:40px;color:#94a3b8;font-size:11px;font-weight:800;text-transform:uppercase">ID Pelatihan tidak ditemukan</p>';return;}
   showLoad();
@@ -371,6 +410,20 @@ async function init(){
     const ps=await getDoc(doc(db,'pelatihan',pltId));
     if(!ps.exists()){toast('Pelatihan tidak ditemukan','error');hideLoad();return;}
     plt={id:ps.id,...ps.data()};
+
+    /* Guard: hanya pembuat atau superadmin yang bisa buka Daftar Hadir */
+    const currentUid=localStorage.getItem('uid');
+    const currentRole=localStorage.getItem('role');
+    if(currentRole!=='superadmin'&&plt.dibuat_oleh&&plt.dibuat_oleh!==currentUid){
+      document.body.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;font-family:sans-serif;background:#f8fafc;">
+        <div style="font-size:48px;">🔒</div>
+        <div style="font-size:18px;font-weight:800;color:#0f172a;">Akses Ditolak</div>
+        <div style="font-size:13px;color:#64748b;text-align:center;max-width:280px;">Hanya pembuat pelatihan ini yang bisa membuka Daftar Hadir.</div>
+        <button onclick="window.close();setTimeout(()=>location.href='app.html',300)" style="padding:10px 24px;background:#064e3b;color:#fff;border:none;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;">Kembali</button>
+      </div>`;
+      return;
+    }
+
     $('headerTopik').textContent=plt.topik||'–';
     $('headerDate').textContent=plt.hari&&plt.tanggal?plt.hari+', '+plt.tanggal:plt.tanggal||'–';
     $('headerTime').textContent=plt.waktu_mulai&&plt.waktu_selesai?plt.waktu_mulai+'–'+plt.waktu_selesai:'–';
@@ -403,7 +456,7 @@ async function init(){
       return acc;
     },[]);
 
-    $('totalCount').textContent=pesertaList.length;
+    updateKioskStats();
 
     onSnapshot(query(collection(db,'absensi'),where('id_pelatihan','==',pltId)),snap=>{
       absensiMap={};
@@ -492,7 +545,7 @@ window.tambahSusulan=async p=>{
     const uid=localStorage.getItem('uid')||'kiosk';
     await setDoc(doc(collection(db,'peserta_pelatihan')),{id_pelatihan:pltId,perner:p,ditambahkan_oleh:uid,tgl_ditambahkan:serverTimestamp(),susulan:true});
     pesertaList.push({...k,_isTamu:false,_isNew:false});
-    $('totalCount').textContent=pesertaList.length;
+    updateKioskStats();
     $('searchInput').value='';renderLists('');
     toast(`${k.nama_lengkap} ditambahkan`);
   }catch(e){toast('Gagal: '+e.message,'error');}
@@ -556,7 +609,7 @@ window.simpanPesertaSementara=async()=>{
     });
     /* Tambah ke list lokal */
     pesertaList.push({perner:pernerFinal,nama_lengkap:nama,unit,jabatan:jabatan||'–',_isTamu:isTamu,_isNew:!isTamu});
-    $('totalCount').textContent=pesertaList.length;
+    updateKioskStats();
     $('formSementaraOverlay').classList.remove('open');
     $('searchInput').value='';renderLists('');
     toast(`${nama} ditambahkan sebagai ${isTamu?'tamu':'karyawan baru'}`, 'warn');
@@ -676,7 +729,7 @@ window.tambahDariPanel=async perner=>{
       ditambahkan_oleh:uid,tgl_ditambahkan:serverTimestamp(),susulan:true
     });
     pesertaList.push({...k,_isTamu:false,_isNew:false});
-    $('totalCount').textContent=pesertaList.length;
+    updateKioskStats();
     renderLists('');
     toast(`${k.nama_lengkap} ditambahkan`);
     setTimeout(()=>openTTD(perner),400);
