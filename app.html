@@ -545,8 +545,8 @@
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:2px;">
         <div class="pg-title">Data Karyawan</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;" id="karyActWrap">
-          <button class="btn btn-o" id="btnImport"><i class="fas fa-file-import"></i> Import</button>
-          <button class="btn btn-o" id="btnTplKary"><i class="fas fa-file-csv"></i> Template</button>
+          <button class="btn btn-o" id="btnImport" data-minrole="admin"><i class="fas fa-file-import"></i> Import</button>
+          <button class="btn btn-o" id="btnTplKary" data-minrole="admin"><i class="fas fa-file-csv"></i> Template</button>
           <button class="btn btn-p" id="btnTambahKary"><i class="fas fa-plus"></i> Tambah</button>
         </div>
       </div>
@@ -584,9 +584,9 @@
 
       <!-- Tab: PKH -->
       <div id="karyTabPKH" style="display:none;">
-        <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:11px;font-weight:700;color:#92400e;line-height:1.6;">
+        <div id="pkhInfoBox" style="background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:11px;font-weight:700;color:#92400e;line-height:1.6;">
           <i class="fas fa-circle-info" style="margin-right:6px;"></i>
-          Data PKH hanya digunakan sebagai referensi untuk form pelatihan. Rekap core dan statistik jam pelatihan tidak mencatat PKH. Level 3 hanya dapat melihat data ini.
+          Data PKH hanya digunakan sebagai referensi untuk form pelatihan. Rekap core dan statistik jam pelatihan tidak mencatat PKH.
         </div>
         <div class="filters">
           <div class="fl-group"><div class="fl-lbl">Cari</div><div class="sw"><span class="si"><i class="fas fa-search"></i></span><input type="search" id="searchPKH" placeholder="Nama atau ID…" style="width:185px;"/></div></div>
@@ -628,10 +628,10 @@
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:2px;">
         <div class="pg-title">Rekap Core</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;" id="rekapActWrap">
-          <button class="btn btn-o" id="btnImportCore"><i class="fas fa-file-import"></i> Import Core</button>
-          <button class="btn btn-o" id="btnTplCore"><i class="fas fa-file-csv"></i> Template</button>
-          <button class="btn btn-o" id="btnUpdateCoreExt"><i class="fas fa-rotate"></i> Update Eksternal</button>
-          <button class="btn btn-p" id="btnExportRekap"><i class="fas fa-file-excel"></i> Export XLSX</button>
+          <button class="btn btn-o" id="btnImportCore" data-minrole="admin"><i class="fas fa-file-import"></i> Import Core</button>
+          <button class="btn btn-o" id="btnTplCore" data-minrole="admin"><i class="fas fa-file-csv"></i> Template</button>
+          <button class="btn btn-o" id="btnUpdateCoreExt" data-minrole="admin"><i class="fas fa-rotate"></i> Update Eksternal</button>
+          <button class="btn btn-p" id="btnExportRekap" data-minrole="admin"><i class="fas fa-file-excel"></i> Export XLSX</button>
         </div>
       </div>
       <div class="pg-sub">Status Ketercapaian Pelatihan Core Per Karyawan</div>
@@ -1297,6 +1297,7 @@ onAuthStateChanged(auth,async user=>{
 async function initApp(){
   startClock(); updateGreeting();
   buildNav(); buildYears(); buildUnitDrops(); buildPKHUnitDrop();
+  applyRoleUI();
   setupUcPernerRows();
   await loadMasterCore(); await loadJabatan(); await loadAllData();
   setupListeners();
@@ -1317,6 +1318,22 @@ async function initApp(){
 }
 
 /* ─── Nav ─── */
+/* ═══ ROLE UI — sembunyikan elemen berdasarkan level ═══ */
+function applyRoleUI(){
+  const s=S();
+  const isUnit=s.role==='unit';
+  const canAdmin=s.role==='superadmin'||s.role==='admin'||s.role==='admin_plus';
+
+  /* Sembunyikan semua elemen bertanda data-minrole="admin" untuk Level 3 */
+  document.querySelectorAll('[data-minrole="admin"]').forEach(el=>{
+    el.style.display=canAdmin?'':'none';
+  });
+
+  /* Info box PKH — hanya superadmin */
+  const pkhInfo=$('pkhInfoBox');
+  if(pkhInfo)pkhInfo.style.display=s.role==='superadmin'?'':'none';
+}
+
 function buildNav(){
   const s=S();
   const items=[
@@ -1796,16 +1813,22 @@ function statusBorder(p){
 /* Banner info di dalam card */
 function statusBanner(p){
   const st=normStatus(p);
+  const s=S();
+  const isUnit=s.role==='unit';
   if(st==='absensi_ditutup'){
+    /* Level 3 hanya lihat status, tanpa detail siapa/kapan menutup */
+    if(isUnit)return`<div class="plt-banner plt-banner-blue"><i class="fas fa-clipboard-check"></i>Absensi sudah ditutup</div>`;
     const by=p.absensi_ditutup_nama||p.absensi_ditutup_oleh||'–';
     const at=p.absensi_ditutup_at||'';
     return`<div class="plt-banner plt-banner-blue"><i class="fas fa-clipboard-check"></i>Ditutup${at?' '+at:''} oleh ${by}</div>`;
   }
   if(st==='pdf_tercetak'){
+    if(isUnit)return`<div class="plt-banner plt-banner-amber"><i class="fas fa-print"></i>PDF sudah dicetak</div>`;
     const by=p.status_pdf_by||'–'; const at=p.status_pdf_at||'';
     return`<div class="plt-banner plt-banner-amber"><i class="fas fa-print"></i>PDF dicetak${at?' '+at:''} oleh ${by}</div>`;
   }
   if(st==='ekpi_selesai'){
+    if(isUnit)return`<div class="plt-banner plt-banner-green"><i class="fas fa-circle-check"></i>eKPI sudah diinput</div>`;
     const by=p.status_ekpi_by||'–'; const at=p.status_ekpi_at||'';
     return`<div class="plt-banner plt-banner-green"><i class="fas fa-circle-check"></i>eKPI diinput${at?' '+at:''} oleh ${by}</div>`;
   }
@@ -1843,23 +1866,28 @@ function buildCardActions(p,waMsg){
   const isCore=p.is_core;
   const id=p.id;
 
+  /* Level 3: hanya Kiosk + Edit (jika pelatihan milik sendiri) */
+  if(isUnit){
+    const btnK=`<button class="btn btn-sm btn-b" onclick="event.stopPropagation();openKiosk('${id}')"><i class="fas fa-tablet-screen-button"></i> Kiosk</button>`;
+    const btnE=canEdit?`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();editPlt('${id}')"><i class="fas fa-pen"></i></button>`:'';
+    return[btnK,btnE].filter(Boolean).join('');
+  }
+
   const btnKiosk=`<button class="btn btn-sm btn-b" onclick="event.stopPropagation();openKiosk('${id}')"><i class="fas fa-tablet-screen-button"></i> Kiosk</button>`;
   const btnEdit=canEdit?`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();editPlt('${id}')"><i class="fas fa-pen"></i></button>`:'';
   const btnCetak=`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();printPlt('${id}')"><i class="fas fa-print"></i></button>`;
   const btnShare=isCore?`<button class="btn btn-sm" style="background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;" onclick="event.stopPropagation();window.open('https://wa.me/?text=${waMsg}','_blank')"><i class="fab fa-whatsapp"></i> Share</button>`:'';
   const btnHapus=canDel?`<button class="btn btn-sm btn-r" onclick="event.stopPropagation();hapusPlt('${id}')"><i class="fas fa-trash"></i></button>`:'';
 
-  /* Tombol konfirmasi — hanya Level 2+ & Superadmin */
   const btnCetakKonfirmasi=confirm?`<button class="btn btn-sm btn-a" onclick="event.stopPropagation();konfirmasiPDF('${id}')" style="background:#fffbeb;border:1.5px solid #fde68a;color:#b45309;"><i class="fas fa-print"></i> Cetak &amp; Konfirmasi PDF</button>`:'';
   const btnBukaUlang=confirm?`<button class="btn btn-sm" style="background:#f5f3ff;border:1.5px solid #c4b5fd;color:#6d28d9;" onclick="event.stopPropagation();bukaUlangAbsensi('${id}')"><i class="fas fa-rotate-left"></i></button>`:'';
   const btnKonfirmasiEKPI=confirm?`<button class="btn btn-sm btn-p" onclick="event.stopPropagation();konfirmasiEKPI('${id}')"><i class="fas fa-desktop"></i> Konfirmasi eKPI</button>`:'';
   const btnCetakUlang=`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();printPlt('${id}')"><i class="fas fa-print"></i> Cetak Ulang</button>`;
 
   if(st==='aktif'){
-    return[btnKiosk,btnEdit,!isUnit?btnCetak:'',btnShare,btnHapus].filter(Boolean).join('');
+    return[btnKiosk,btnEdit,btnCetak,btnShare,btnHapus].filter(Boolean).join('');
   }
   if(st==='absensi_ditutup'){
-    /* Level 2+ lihat "Cetak & Konfirmasi", level lain lihat "Cetak" biasa */
     const cetakBtn=confirm?btnCetakKonfirmasi:btnCetak;
     return[cetakBtn,btnBukaUlang,btnEdit,btnShare,btnHapus].filter(Boolean).join('');
   }
@@ -1868,7 +1896,6 @@ function buildCardActions(p,waMsg){
   }
   if(st==='ekpi_selesai'){
     const btnDetail=`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();showDetailPlt('${id}')"><i class="fas fa-eye"></i> Detail</button>`;
-    /* Hapus hanya Superadmin untuk status final */
     const hapusFinal=s.role==='superadmin'?btnHapus:'';
     return[btnDetail,btnCetakUlang,btnShare,hapusFinal].filter(Boolean).join('');
   }
@@ -1879,10 +1906,18 @@ function buildCardActions(p,waMsg){
 function buildTableActions(p){
   const s=S();
   const st=normStatus(p);
+  const isUnit=s.role==='unit';
   const confirm=canConfirm();
   const canEdit=canEditPlt(p);
   const canDel=canDeletePlt();
   const id=p.id;
+
+  /* Level 3: hanya Kiosk + Edit milik sendiri */
+  if(isUnit){
+    const bK=`<button class="btn btn-sm btn-b" onclick="event.stopPropagation();openKiosk('${id}')" title="Kiosk"><i class="fas fa-tablet-screen-button"></i></button>`;
+    const bE=canEdit?`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();editPlt('${id}')" title="Edit"><i class="fas fa-pen"></i></button>`:'';
+    return[bK,bE].filter(Boolean).join('');
+  }
 
   const bKiosk=`<button class="btn btn-sm btn-b" onclick="event.stopPropagation();openKiosk('${id}')" title="Kiosk"><i class="fas fa-tablet-screen-button"></i></button>`;
   const bEdit=canEdit?`<button class="btn btn-sm btn-o" onclick="event.stopPropagation();editPlt('${id}')" title="Edit"><i class="fas fa-pen"></i></button>`:'';
@@ -3166,29 +3201,35 @@ function renderTugasSaya(){
   $('tugasUserInfo').innerHTML=`<span style="font-weight:900;color:#0f172a;">${s.nama||s.uid}</span>&nbsp;<span style="background:#ede9fe;color:#5b21b6;font-size:8px;font-weight:900;border-radius:5px;padding:2px 7px;text-transform:uppercase;">${s.role==='superadmin'?'Superadmin':'Level 2+'}</span>`;
 
   const pending=allPelatihan.filter(p=>{
-    /* EXT- (core eksternal) tidak perlu konfirmasi PDF/eKPI */
     if(p.id?.startsWith('EXT-'))return false;
     const st=normStatus(p);
     return st==='absensi_ditutup'||st==='pdf_tercetak';
-  }).sort((a,b)=>(a.tanggal||'').localeCompare(b.tanggal||''));
+  }).sort((a,b)=>(b.tanggal||'').localeCompare(a.tanggal||'')); /* terbaru dulu */
 
-  const selesai=allPelatihan.filter(p=>normStatus(p)==='ekpi_selesai')
-    .sort((a,b)=>(b.tanggal||'').localeCompare(a.tanggal||''))
-    .slice(0,20);
+  const selesai=allPelatihan.filter(p=>{
+    if(p.id?.startsWith('EXT-'))return false;
+    return normStatus(p)==='ekpi_selesai';
+  }).sort((a,b)=>(b.tanggal||'').localeCompare(a.tanggal||'')).slice(0,20);
 
   /* Badge count */
   const pc=$('tugasPendingCount');
   if(pc)pc.textContent=pending.length>0?pending.length:'';
 
   /* Render pending */
-  $('tugasPendingList').innerHTML=pending.length===0
-    ?`<div class="empty-st" style="padding:28px;"><div class="empty-icon">✅</div><div class="empty-lbl">Tidak ada tugas yang menunggu!</div></div>`
-    :pending.map(p=>tugasCard(p,false)).join('');
+  try{
+    $('tugasPendingList').innerHTML=pending.length===0
+      ?`<div class="empty-st" style="padding:28px;"><div class="empty-icon">✅</div><div class="empty-lbl">Tidak ada tugas yang menunggu!</div></div>`
+      :pending.map(p=>tugasCard(p,false)).join('');
+  }catch(e){
+    $('tugasPendingList').innerHTML=`<div style="padding:20px;color:#e11d48;font-size:11px;">Gagal render: ${e.message}</div>`;
+  }
 
   /* Render selesai */
-  $('tugasSelesaiList').innerHTML=selesai.length===0
-    ?`<div style="text-align:center;padding:16px;font-size:11px;font-weight:700;color:#94a3b8;">Belum ada pelatihan yang selesai sepenuhnya</div>`
-    :selesai.map(p=>tugasCard(p,true)).join('');
+  try{
+    $('tugasSelesaiList').innerHTML=selesai.length===0
+      ?`<div style="text-align:center;padding:16px;font-size:11px;font-weight:700;color:#94a3b8;">Belum ada pelatihan yang selesai sepenuhnya</div>`
+      :selesai.map(p=>tugasCard(p,true)).join('');
+  }catch(e){}
 
   updateTugasBadge();
 }
@@ -3198,24 +3239,32 @@ function tugasCard(p,isDone){
   const cnt=(allPesertaMap[p.id]||[]).length;
   const id=p.id;
 
+  /* Helper: format timestamp — bisa string atau Firestore Timestamp */
+  const fmtAt=v=>{
+    if(!v)return'';
+    if(typeof v==='string')return v;
+    if(v?.toDate)return v.toDate().toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    return String(v);
+  };
+
   let borderColor,bgColor,iconBg,iconColor,icon,label,byInfo,actionBtn='';
   if(st==='absensi_ditutup'){
     borderColor='#fde68a';bgColor='#fffbeb';iconBg='#f59e0b';iconColor='#fff';
     icon='fa-print';label='Menunggu cetak &amp; konfirmasi PDF';
     const by=p.absensi_ditutup_nama||p.absensi_ditutup_oleh||'–';
-    const at=p.absensi_ditutup_at||'';
+    const at=fmtAt(p.absensi_ditutup_at);
     byInfo=`Absensi ditutup${at?' '+at:''} oleh ${by}`;
-    actionBtn=`<button class="btn btn-sm btn-a" onclick="konfirmasiPDF('${id}');renderTugasSaya();" style="background:#fffbeb;border:1.5px solid #fde68a;color:#b45309;flex-shrink:0;"><i class="fas fa-print"></i> Cetak PDF</button>`;
+    actionBtn=`<button class="btn btn-sm btn-a" onclick="konfirmasiPDF('${id}');setTimeout(renderTugasSaya,800);" style="background:#fffbeb;border:1.5px solid #fde68a;color:#b45309;flex-shrink:0;"><i class="fas fa-print"></i> Cetak PDF</button>`;
   }else if(st==='pdf_tercetak'){
     borderColor='#bbf7d0';bgColor='#f0fdf4';iconBg='#059669';iconColor='#fff';
     icon='fa-desktop';label='Menunggu konfirmasi eKPI';
-    const by=p.status_pdf_by||'–'; const at=p.status_pdf_at||'';
+    const by=p.status_pdf_by||'–'; const at=fmtAt(p.status_pdf_at);
     byInfo=`PDF dicetak${at?' '+at:''} oleh ${by}`;
-    actionBtn=`<button class="btn btn-sm btn-p" onclick="konfirmasiEKPI('${id}');renderTugasSaya();" style="flex-shrink:0;"><i class="fas fa-desktop"></i> Konfirmasi eKPI</button>`;
+    actionBtn=`<button class="btn btn-sm btn-p" onclick="konfirmasiEKPI('${id}');setTimeout(renderTugasSaya,800);" style="flex-shrink:0;"><i class="fas fa-desktop"></i> Konfirmasi eKPI</button>`;
   }else{
     borderColor='#f1f5f9';bgColor='#f8fafc';iconBg='#e2e8f0';iconColor='#64748b';
     icon='fa-circle-check';label='Selesai semua';
-    const by=p.status_ekpi_by||'–'; const at=p.status_ekpi_at||'';
+    const by=p.status_ekpi_by||'–'; const at=fmtAt(p.status_ekpi_at);
     byInfo=`eKPI diinput${at?' '+at:''} oleh ${by}`;
   }
 
