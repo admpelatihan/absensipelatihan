@@ -12,14 +12,14 @@
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
   <style>
-    :root{--green:#064e3b;--green2:#059669;--green3:#d1fae5;--sw:210px;}
+    :root{--green:#064e3b;--green2:#059669;--green3:#d1fae5;--sw:200px;}
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Plus Jakarta Sans',sans-serif;background:#f8fafc;color:#1e293b;-webkit-font-smoothing:antialiased;}
     .app{display:flex;min-height:100vh;}
 
 ```
 /* ═══ SIDEBAR ═══ */
-.sidebar{width:var(--sw);flex-shrink:0;background:#fff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow:hidden;}
+.sidebar{width:var(--sw);flex-shrink:0;background:#fff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:200;overflow:hidden;}
 .sidebar::-webkit-scrollbar{width:3px;}
 .sidebar::-webkit-scrollbar-thumb{background:#e2e8f0;border-radius:3px;}
 .sb-logo{padding:18px 18px 14px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:11px;}
@@ -49,7 +49,7 @@
 .btn-logout:hover{background:#e11d48;color:#fff;}
 
 /* ═══ MAIN ═══ */
-.main{flex:1;margin-left:var(--sw);display:flex;flex-direction:column;min-height:100vh;}
+.main{flex:1;margin-left:var(--sw);display:flex;flex-direction:column;min-height:100vh;width:calc(100% - var(--sw));overflow-x:hidden;}
 
 /* ═══ TOPBAR ═══ */
 .topbar{background:#fff;border-bottom:1px solid #f1f5f9;padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:90;}
@@ -294,7 +294,7 @@ td{padding:11px 14px;color:#334155;vertical-align:middle;}
 .ac-badge{background:#ede9fe;color:#5b21b6;font-size:8px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;padding:2px 6px;border-radius:5px;}
 
 /* ═══ MODAL ═══ */
-.mo{display:none;position:fixed;inset:0;z-index:500;background:rgba(15,23,42,.4);backdrop-filter:blur(4px);align-items:flex-start;justify-content:center;padding:14px;overflow-y:auto;}
+.mo{display:none;position:fixed;inset:0;z-index:600;background:rgba(15,23,42,.4);backdrop-filter:blur(4px);align-items:flex-start;justify-content:center;padding:14px;overflow-y:auto;}
 .mo.open{display:flex;animation:fadeIn .2s ease;}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .mo-box{background:#fff;border-radius:22px;width:100%;max-width:540px;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:slideUp .22s cubic-bezier(.4,0,.2,1);margin:auto;}
@@ -1236,7 +1236,7 @@ const LS={get:k=>localStorage.getItem(k),set:(k,v)=>localStorage.setItem(k,v),cl
 const S=()=>({uid:LS.get('uid'),role:LS.get('role'),nama:LS.get('nama'),unit:LS.get('unit'),perner:LS.get('perner')});
 
 /* State */
-let allKaryawan=[],allPelatihan=[],allPesertaMap={},allUsers=[],allLogs=[],allCoreEksternal={};
+let allKaryawan=[],allPelatihan=[],allPesertaMap={},allUsers=[],allLogs=[],allCoreEksternal={},allAbsensiMap={};
 let allPKH=[]; /* Data PKH tersimpan terpisah dari allKaryawan */
 let pkhPage=1;
 let masterCore=[],jabatanOpts=[];
@@ -1340,7 +1340,17 @@ async function initApp(){
   const sbGreetEl=$('sbGreet');
   if(sbGreetEl){
     sbGreetEl.onclick=null;
-    sbGreetEl.addEventListener('click',function(e){e.stopPropagation();openModal('moProfile');});
+    sbGreetEl.addEventListener('click',function(e){
+      e.stopPropagation();
+      /* Populate profile data saat dibuka */
+      const s=S();
+      const pa=$('profileAvatar'),pn=$('profileName'),pu=$('profileUnit'),pp=$('profilePerner');
+      if(pa)pa.textContent=initials(s.nama);
+      if(pn)pn.textContent=s.nama||'–';
+      if(pu)pu.textContent=roleLbl(s.role)||s.unit||'–';
+      if(pp)pp.textContent='Perner: '+(s.perner||'–');
+      openModal('moProfile');
+    });
   }
 }
 
@@ -1410,7 +1420,15 @@ function showPage(id){
   const pg=$('page'+id); if(pg)pg.classList.add('active');
   /* Float bar only on RekapCore */
   if(id!=='RekapCore'){$('floatBar').classList.remove('show');}
-  if(id==='Dashboard')    renderDashboard();
+  if(id==='Dashboard'){
+    /* Set default filter ke bulan dan tahun berjalan */
+    const now=new Date();
+    const dashBulanEl=$('dashBulan');
+    const dashTahunEl=$('dashTahun');
+    if(dashBulanEl&&!dashBulanEl.dataset.userSet)dashBulanEl.value=String(now.getMonth()+1);
+    if(dashTahunEl&&!dashTahunEl.dataset.userSet)dashTahunEl.value=String(now.getFullYear());
+    renderDashboard();
+  }
   if(id==='Pelatihan')    renderPelatihan();
   if(id==='Karyawan')     {karyPage=1;renderKaryawan();}
   if(id==='RekapCore')    {rekapPage=1;renderRekap();}
@@ -1671,10 +1689,16 @@ window.goRekap=(topik,status)=>{
   showPage('RekapCore');
 };
 $('btnApplyDash')?.addEventListener('click',renderDashboard);
-['dashUnit','dashBulan','dashTahun'].forEach(id=>$(id)?.addEventListener('change',renderDashboard));
+['dashUnit','dashBulan','dashTahun'].forEach(id=>{
+  $(id)?.addEventListener('change',()=>{
+    /* Tandai user sudah ubah manual agar tidak di-reset */
+    const el=$(id);if(el)el.dataset.userSet='1';
+    renderDashboard();
+  });
+});
 
 /* Dashboard shortcuts */
-$('btnShortBuat')?.addEventListener('click',()=>{editPltId=null;$('moPltTitle').textContent='Buat Pelatihan Baru';clearPltForm();const s=S();if(s.role==='unit')$('pltUnit').value=s.unit;loadPesertaSearch('','','');openModal('moPlt');});
+$('btnShortBuat')?.addEventListener('click',()=>{editPltId=null;$('moPltTitle').textContent='Buat Pelatihan Baru';clearPltForm();const s=S();if(s.role==='unit')$('pltUnit').value=s.unit;refreshPesertaBagian();loadPesertaSearch('','','');openModal('moPlt');});
 $('btnShortRiwayat')?.addEventListener('click',()=>{
   const s=S(); const bulan=$('dashBulan').value; const tahun=$('dashTahun').value;
   $('rwyBulan').value=bulan; $('rwyTahun').value=tahun||new Date().getFullYear();
@@ -2009,7 +2033,12 @@ window.togglePltStatus=async(id,field,el,ev)=>{
 };
 
 function buildStatusBadges(p){
-  const canClick=canConfirm(); /* hanya Level 2+ dan Superadmin */
+  const s=S();
+  const st=normStatus(p);
+  /* Level 3 tidak melihat badge sama sekali */
+  if(s.role==='unit')return'';
+  /* Badge tidak bisa diklik jika status masih aktif */
+  const canClick=canConfirm()&&st!=='aktif';
   const pdfDone=!!p.status_pdf;
   const ekpiDone=!!p.status_ekpi;
   const pdfTitle=pdfDone
@@ -2241,7 +2270,7 @@ $('btnToggleExt')?.addEventListener('click',()=>setPltExt(!pltShowExt));
 
 window.showDetailPlt=id=>{
   const p=allPelatihan.find(x=>x.id===id);if(!p)return;
-  const pp=allPesertaMap[id]||[],seen=new Set(),uniq=[];pp.forEach(x=>{if(!seen.has(x.perner)){seen.add(x.perner);uniq.push(x);}});
+  const pp=allPesertaMap[id]||[],seen=new Set(),uniq=[];pp.forEach(x=>{if(!seen.has(x.perner)){seen.add(x.perner);uniq.push(x);}});/* Urutkan abjad */uniq.sort((a,b)=>{const na=allKaryawan.find(k=>k.perner===a.perner)?.nama_lengkap||a.perner;const nb=allKaryawan.find(k=>k.perner===b.perner)?.nama_lengkap||b.perner;return na.localeCompare(nb,'id');});
   $('detailPltTitle').textContent=p.topik;
   $('detailPltBody').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;margin-bottom:16px;">${[['📅 Tanggal',p.tanggal?hariIndo(p.tanggal)+', '+p.tanggal:'–'],['⏰ Waktu',(p.waktu_mulai||'–')+' – '+(p.waktu_selesai||'–')],['📍 Lokasi',p.lokasi||'–'],['👤 Instruktur',p.instruktur||'–'],['🏢 Penyelenggara',p.penyelenggara||'–'],['🏭 Unit',p.unit_pembuat||'–'],['📋 Status',p.status||'aktif']].map(([l,v])=>`<div><div style="font-size:9px;color:#94a3b8;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:2px;">${l}</div><div style="font-size:13px;font-weight:700;">${v}</div></div>`).join('')}</div><div class="sec-label">Daftar Peserta (${uniq.length})</div><div class="tw"><table><thead><tr><th>No</th><th>Nama</th><th>Perner</th><th>Unit</th><th>Absen</th></tr></thead><tbody>${uniq.map((pe,i)=>{const k=allKaryawan.find(k=>k.perner===pe.perner)||{};return`<tr><td class="td-m">${i+1}</td><td style="font-weight:700;">${k.nama_lengkap||pe.perner}</td><td class="td-m">${pe.perner||'–'}</td><td class="td-m">${k.unit||'–'}</td><td><span class="pill ${pe.hadir?'pill-lunas':'pill-belum'}">${pe.hadir?'Hadir':'Belum'}</span></td></tr>`;}).join('')}</tbody></table></div>`;
   openModal('moDetailPlt');
@@ -2260,8 +2289,8 @@ window.selectCore=v=>{$('pltTopik').value=v;$('pltAC').classList.remove('show');
 document.addEventListener('click',e=>{if(!e.target.closest('.ac-wrap'))$('pltAC')?.classList.remove('show');});
 function checkCoreHint(t){const m=getCoreMatch(t),h=$('coreHint');if(m){h.classList.add('show');$('coreHintName').textContent=m;}else h.classList.remove('show');}
 
-$('btnBuatPlt')?.addEventListener('click',()=>{editPltId=null;$('moPltTitle').textContent='Buat Pelatihan Baru';clearPltForm();const s=S();if(s.role==='unit')$('pltUnit').value=s.unit;loadPesertaSearch('','','');openModal('moPlt');});
-window.editPlt=id=>{editPltId=id;const p=allPelatihan.find(x=>x.id===id);if(!p)return;$('moPltTitle').textContent='Edit Pelatihan';$('pltTopik').value=p.topik||'';$('pltUnit').value=p.unit_pembuat||'';$('pltTgl').value=p.tanggal||'';$('pltMulai').value=p.waktu_mulai||'';$('pltSelesai').value=p.waktu_selesai||'';$('pltLokasi').value=p.lokasi||'';$('pltInstruktur').value=p.instruktur||'';$('pltPenyelenggara').value=p.penyelenggara||'';checkCoreHint(p.topik||'');selectedPeserta=new Map();const pp=allPesertaMap[id]||[],seen=new Set();pp.forEach(pe=>{if(seen.has(pe.perner))return;seen.add(pe.perner);const k=allKaryawan.find(k=>k.perner===pe.perner)||{perner:pe.perner,nama_lengkap:pe.perner,unit:'–'};selectedPeserta.set(pe.perner,k);});renderChips();loadPesertaSearch('','','');openModal('moPlt');};
+$('btnBuatPlt')?.addEventListener('click',()=>{editPltId=null;$('moPltTitle').textContent='Buat Pelatihan Baru';clearPltForm();const s=S();if(s.role==='unit')$('pltUnit').value=s.unit;refreshPesertaBagian();loadPesertaSearch('','','');openModal('moPlt');});
+window.editPlt=id=>{editPltId=id;const p=allPelatihan.find(x=>x.id===id);if(!p)return;$('moPltTitle').textContent='Edit Pelatihan';$('pltTopik').value=p.topik||'';$('pltUnit').value=p.unit_pembuat||'';$('pltTgl').value=p.tanggal||'';$('pltMulai').value=p.waktu_mulai||'';$('pltSelesai').value=p.waktu_selesai||'';$('pltLokasi').value=p.lokasi||'';$('pltInstruktur').value=p.instruktur||'';$('pltPenyelenggara').value=p.penyelenggara||'';checkCoreHint(p.topik||'');selectedPeserta=new Map();const pp=allPesertaMap[id]||[],seen=new Set();pp.forEach(pe=>{if(seen.has(pe.perner))return;seen.add(pe.perner);const k=allKaryawan.find(k=>k.perner===pe.perner)||{perner:pe.perner,nama_lengkap:pe.perner,unit:'–'};selectedPeserta.set(pe.perner,k);});renderChips();refreshPesertaBagian();loadPesertaSearch('','','');openModal('moPlt');};
 function clearPltForm(){['pltTopik','pltTgl','pltMulai','pltSelesai','pltLokasi','pltInstruktur','pltPenyelenggara'].forEach(id=>{const el=$(id);if(el)el.value='';});selectedPeserta=new Map();renderChips();$('coreHint').classList.remove('show');$('pltAC')?.classList.remove('show');}
 function loadPesertaSearch(q,unit,bagian){
   const showPKH=$('filterPesertaPKH')?.checked||false;
@@ -3570,6 +3599,31 @@ function startRealtimeListeners(){
     if(!_realtimeReady)return;
     allPesertaMap={};
     snap.docs.forEach(d=>{const x=d.data();if(!allPesertaMap[x.id_pelatihan])allPesertaMap[x.id_pelatihan]=[];allPesertaMap[x.id_pelatihan].push({id:d.id,...x});});
+    /* Merge data hadir dari allAbsensiMap */
+    Object.keys(allPesertaMap).forEach(pltId=>{
+      allPesertaMap[pltId].forEach(pe=>{
+        pe.hadir=!!(allAbsensiMap[pltId]&&allAbsensiMap[pltId][pe.perner]);
+      });
+    });
+    _refreshView();
+  });
+
+  /* Listener absensi — untuk update real-time status hadir di card pelatihan */
+  let _unsubAbs=null;
+  _unsubAbs=onSnapshot(collection(db,'absensi'),snap=>{
+    if(!_realtimeReady)return;
+    allAbsensiMap={};
+    snap.docs.forEach(d=>{
+      const x=d.data();
+      if(!allAbsensiMap[x.id_pelatihan])allAbsensiMap[x.id_pelatihan]={};
+      allAbsensiMap[x.id_pelatihan][x.perner]=true;
+    });
+    /* Update hadir di allPesertaMap */
+    Object.keys(allPesertaMap).forEach(pltId=>{
+      allPesertaMap[pltId].forEach(pe=>{
+        pe.hadir=!!(allAbsensiMap[pltId]&&allAbsensiMap[pltId][pe.perner]);
+      });
+    });
     _refreshView();
   });
 
